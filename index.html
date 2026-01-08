@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>قائمة العهد–قبيلة الموحدون-واعي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ربط ملف التنسيق -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- رأس الصفحة -->
+<header>
+    <h1>قائمة العهد – واعي</h1>
+    <p> نحو غدا مشرق</p>
+</header>
+
+<!-- شريط التنقل -->
+<nav>
+    <a href="#winners">المجاهدون</a>
+    <a href="#about">عهدنا</a>
+    <a href="#vision">رؤيتنا</a>
+    <a href="#goals">أهدافنا</a>
+    <a href="#contact">تواصل معنا</a>
+</nav>
+
+<!-- قسم المنتصرون -->
+<section id="winners">
+    <h2>المجاهدون</h2>
+
+    <div class="slider-container">
+        <button class="arrow left" onclick="slideLeft()">&#10094;</button>
+
+        <div class="slider" id="slider">
+
+            <div class="slide-card">
+                <img src="images/person6.jpg" alt="موحد - أحد الصامدين">
+                <h3> موحد </h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person2.jpg" alt="أحمد عمرو">
+                <h3> أحمد عمرو</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person3.jpg" alt="طموح">
+                <h3> طموح</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person10.jpg" alt="ياسر">
+                <h3> ياسر</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person4.jpg" alt="الريس">
+                <h3> الريس</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person5.jpg" alt="مؤمن">
+                <h3> مؤمن</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person9.jpg" alt="صالح">
+                <h3> صالح</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person8.jpg" alt="أمجد">
+                <h3> أمجد</h3>
+            </div>
+            <div class="slide-card">
+                <img src="images/person7.jpg" alt="سيف الدين">
+                <h3> سيف الدين</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person1.jpg" alt="مؤمن">
+                <h3> عبدالله جنينة</h3>
+            </div>
+
+        </div>
+
+        <button class="arrow right" onclick="slideRight()">&#10095;</button>
+    </div>
+</section>
+
+<!-- من نحن -->
+<section id="about">
+    <h2>عهدنا</h2>
+    <ul>
+        <li>
+            نحن أبناء قبيلة الموحدون. نعاهد على أن لا نقع في أي زلة حتى رمضان القادم, وعلى هذا نعاهد الله والأعضاء
+        </li>
+    </ul>
+</section>
+
+<!-- الرؤية -->
+<section id="vision">
+    <h2>رؤيتنا</h2>
+    <ul>
+        <li>
+         بناء مجتمع واعٍ، ثابت على القيم، وقادر على اتخاذ قراراته بوعي ومسؤولية.
+        </li>
+    </ul>
+</section>
+
+<!-- الأهداف -->
+<section id="goals">
+    <h2>أهدافنا</h2>
+    <ul>
+        <li>تشجيع أعضاء القبيلة على الثبات على عهدهم</li>
+        <li> خلق بيئة مساعدة</li>
+        <li>تشجيع التفكير الواعي</li>
+        <li>خدمة القبيلة</li>
+    </ul>
+</section>
+
+<!-- تواصل -->
+<section id="contact">
+    <h2>تواصل معنا</h2>
+    <p>تستطيع التواصل معنا عبر قبيلة الموحدون</p>
+</section>
+
+<!-- الفوتر -->
+<footer>
+    <p>© 2026 قائمة العهد – واعي</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+/* ===== Slider (RTL-friendly) ===== */
+const slider = document.getElementById("slider");
+const scrollAmount = 220;
+
+function slideLeft() {
+    slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
+}
+function slideRight() {
+    slider.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+}
+
+/* Auto slide - بطيء وهادئ */
+let auto = setInterval(() => slideLeft(), 3500);
+
+slider.addEventListener("mouseenter", () => clearInterval(auto));
+slider.addEventListener("mouseleave", () => {
+    auto = setInterval(() => slideLeft(), 3500);
+});
+
+/* ===== Theme Toggle ===== */
+const toggle = document.getElementById("themeToggle");
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "light") {
+    document.body.classList.add("light");
+    toggle.textContent = "🌞";
+}
+
+toggle.addEventListener("click", () => {
+    document.body.classList.toggle("light");
+    const isLight = document.body.classList.contains("light");
+    toggle.textContent = isLight ? "🌞" : "🌙";
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+});
+</script>
+

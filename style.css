@@ -1,0 +1,267 @@
+/* =====================
+   متغيرات الألوان (Dark Mode)
+===================== */
+:root {
+    --primary: #4ecdc4;      /* اللون التركوازي من الصورة */
+    --dark-bg: #0f1115;      /* الخلفية السوداء */
+    --dark-card: #171a21;    /* خلفية البطاقات */
+    --text-light: #e6e6e6;   /* النص الفاتح */
+    --text-muted: #a0a0a0;
+    --gold: gold;
+}
+
+/* إعدادات عامة */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Arial", sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+/* =====================
+   رأس الصفحة
+===================== */
+header {
+    background: radial-gradient(circle at top, #1c2a2f, #0f1115);
+    color: var(--text-light);
+    padding: 60px 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 34px;
+    color: var(--primary);
+}
+
+header p {
+    margin-top: 12px;
+    font-size: 18px;
+    color: var(--text-muted);
+}
+
+/* =====================
+   شريط التنقل
+===================== */
+nav {
+    background-color: #0b0d11;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--primary);
+    margin: 0 14px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: var(--gold);
+}
+
+/* =====================
+   الأقسام العامة
+===================== */
+section {
+    max-width: 1100px;
+    margin: 50px auto;
+    background-color: var(--dark-card);
+    padding: 45px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+section h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 35px;
+    font-size: 28px;
+}
+
+/* =====================
+   قسم المنتصرون (Slider)
+===================== */
+#winners {
+    max-width: 100%;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.slider {
+    display: flex;
+    gap: 22px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 10px;
+}
+
+.slider::-webkit-scrollbar {
+    display: none;
+}
+
+/* بطاقة الشخص */
+.slide-card {
+    min-width: 200px;
+    background: linear-gradient(160deg, #1b232a, #12161c);
+    border-radius: 18px;
+    padding: 28px 18px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+    transition: transform 0.35s, box-shadow 0.35s;
+}
+
+.slide-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 16px 35px rgba(78,205,196,0.35);
+}
+
+/* الصورة */
+.slide-card img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--gold);
+    margin-bottom: 16px;
+    background-color: #000;
+}
+
+/* الاسم */
+.slide-card h3 {
+    margin: 0;
+    font-size: 17px;
+    color: var(--primary);
+}
+
+/* الأسهم */
+.arrow {
+    background-color: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    font-size: 22px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.arrow:hover {
+    background-color: var(--primary);
+    color: #000;
+}
+
+.left {
+    margin-left: 10px;
+}
+
+.right {
+    margin-right: 10px;
+}
+
+/* =====================
+   القوائم النصية
+===================== */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 14px 0;
+    border-bottom: 1px solid #2a2f36;
+    text-align: center;
+    color: var(--text-light);
+}
+
+/* =====================
+   التواصل
+===================== */
+#contact p {
+    text-align: center;
+    font-size: 18px;
+    color: var(--text-muted);
+}
+
+/* =====================
+   الفوتر
+===================== */
+footer {
+    background-color: #0b0d11;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 18px;
+    margin-top: 60px;
+}
+
+/* =====================
+   استجابة للشاشات الصغيرة
+===================== */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 26px;
+    }
+
+    section {
+        margin: 25px;
+        padding: 30px 18px;
+    }
+
+    .slide-card {
+        min-width: 170px;
+    }
+}
+
+/* ===== Light Mode ===== */
+body.light {
+    --dark-bg: #f6f7f9;
+    --dark-card: #ffffff;
+    --text-light: #1a1a1a;
+    --text-muted: #555;
+}
+
+body.light nav,
+body.light footer {
+    background-color: #ffffff;
+}
+
+/* زر التبديل */
+.theme-toggle {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    border-radius: 20px;
+    padding: 6px 12px;
+    margin-inline-start: 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.theme-toggle:hover {
+    background: var(--primary);
+    color: #000;
+}
+
+/* ===== Glow هادئ للصور ===== */
+.slide-card img {
+    transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+.slide-card:hover img {
+    box-shadow: 0 0 18px rgba(78,205,196,0.6);
+    transform: scale(1.03);
+}
+
