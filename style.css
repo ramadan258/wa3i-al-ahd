@@ -7,12 +7,13 @@
    متغيرات الألوان (Dark Mode + Ramadan)
 ===================== */
 :root {
-    --primary: #4ecdc4;      /* تركوازي هادئ */
-    --dark-bg: #0f1115;      /* خلفية */
-    --dark-card: #171a21;    /* بطاقات */
+    --primary: #4ecdc4;
+    --dark-bg: #0f1115;
+    --dark-card: #171a21;
     --text-light: #e6e6e6;
     --text-muted: #a0a0a0;
-    --gold: #facc15;         /* ذهبي رمضاني */
+    --gold: #facc15;
+    --count-box: #2a1f35;
 }
 
 /* =====================
@@ -20,7 +21,7 @@
 ===================== */
 * {
     box-sizing: border-box;
-    transition: all 0.18s ease-out; /* سكينة */
+    transition: all 0.18s ease-out;
 }
 
 body {
@@ -49,7 +50,6 @@ body::before {
 ===================== */
 header {
     background: radial-gradient(circle at top, #1c2a2f, #0f1115);
-    color: var(--text-light);
     padding: 60px 20px;
     text-align: center;
     border-bottom: 1px solid rgba(250,204,21,0.15);
@@ -69,7 +69,6 @@ header p {
     color: var(--text-muted);
 }
 
-/* سطر رمضاني */
 .ramadan-text {
     margin-top: 8px;
     font-size: 14px;
@@ -97,10 +96,10 @@ nav {
     background-color: #0b0d11;
     padding: 14px;
     text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
 }
 
 nav a {
@@ -133,10 +132,8 @@ section h2 {
     color: var(--primary);
     margin-bottom: 30px;
     font-size: 28px;
-    position: relative;
 }
 
-/* لمسة وقار للعناوين */
 section h2::after {
     content: "✦";
     display: block;
@@ -152,7 +149,6 @@ section h2::after {
 .slider-container {
     display: flex;
     align-items: center;
-    position: relative;
 }
 
 .slider {
@@ -167,7 +163,6 @@ section h2::after {
     display: none;
 }
 
-/* بطاقة الشخص */
 .slide-card {
     min-width: 200px;
     background: linear-gradient(160deg, #1b232a, #12161c);
@@ -182,7 +177,6 @@ section h2::after {
     box-shadow: 0 14px 30px rgba(250,204,21,0.22);
 }
 
-/* الصورة */
 .slide-card img {
     width: 120px;
     height: 120px;
@@ -193,16 +187,51 @@ section h2::after {
     background-color: #000;
 }
 
-.slide-card:hover img {
-    box-shadow: 0 0 16px rgba(250,204,21,0.5);
-    transform: scale(1.03);
-}
-
-/* الاسم */
 .slide-card h3 {
     margin: 0;
     font-size: 16px;
     color: var(--primary);
+}
+
+/* =====================
+   العدّ التنازلي (Ramadan Countdown)
+===================== */
+.countdown-section {
+    background: transparent;
+    box-shadow: none;
+    margin-top: -20px;
+}
+
+.countdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.time-box {
+    background-color: var(--count-box);
+    border-radius: 18px;
+    padding: 30px 10px;
+    text-align: center;
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.4);
+}
+
+.time-box span {
+    display: block;
+    font-size: 52px;
+    font-weight: bold;
+    color: white;
+}
+
+.time-box small {
+    display: block;
+    margin-top: 6px;
+    font-size: 17px;
+    color: #ddd;
+}
+
+.time-box.seconds span {
+    color: #7cf2a4;
 }
 
 /* =====================
@@ -217,17 +246,6 @@ ul li {
     padding: 12px 0;
     border-bottom: 1px solid #2a2f36;
     text-align: center;
-}
-
-/* =====================
-   قسم العهد الرمضاني
-===================== */
-.ramadan-oath {
-    text-align: center;
-    padding: 40px 20px;
-    color: #e5e7eb;
-    font-style: italic;
-    opacity: 0.85;
 }
 
 /* =====================
@@ -257,6 +275,14 @@ footer {
 
     .slide-card {
         min-width: 170px;
+    }
+
+    .countdown {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .time-box span {
+        font-size: 40px;
     }
 }
 
