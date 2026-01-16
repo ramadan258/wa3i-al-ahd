@@ -2,33 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>قائمة العهد – واعي</title>
+    <title>قائمة العهد – واعي | قبيلة الموحدون</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO -->
+    <meta name="description" content="قائمة العهد – واعي. مبادرة رمضانية للثبات، مجاهدة النفس، وتجديد العهد في قبيلة الموحدون.">
+    <meta name="keywords" content="قائمة العهد, واعي, قبيلة الموحدون, رمضان, الثبات, مجاهدة النفس">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
+<!-- رأس الصفحة -->
 <header>
     <h1>قائمة العهد</h1>
-    <p>قبيلة واعي</p>
-    <p class="ramadan-text">
-        🌙 من الآن حتى رمضان… نختار الثبات
-    </p>
+    <p>قبيلة واعي – قبيلة الموحدون</p>
+    <p class="ramadan-text">🌙 من الآن حتى رمضان… نختار الثبات</p>
 </header>
 
+<!-- شريط رمضاني -->
 <div class="ramadan-banner">
-    عهدٌ مع الله • وعيٌ بالنفس • ثباتٌ حتى رمضان
+    🌙 عهدٌ مع الله – وعيٌ بالنفس – ثباتٌ حتى رمضان
 </div>
 
+<!-- شريط التنقل -->
 <nav>
     <a href="#members">الأعضاء</a>
+    <a href="#countdown">العدّ التنازلي</a>
     <a href="#about">ما هي قائمة العهد</a>
-    <a href="#oath">العهد</a>
     <a href="#values">القيم</a>
 </nav>
 
-<!-- الأعضاء أولًا -->
+<!-- =====================
+     الأعضاء
+===================== -->
 <section id="members">
     <h2>أعضاء قائمة العهد</h2>
 
@@ -36,8 +44,8 @@
         <div class="slider">
 
             <div class="slide-card">
-                <img src="images/person6.jpg" alt="موحد">
-                <h3>موحد</h3>
+                <img src="images/person1.jpg" alt="عبدالله جنينة">
+                <h3>عبدالله جنينة</h3>
             </div>
 
             <div class="slide-card">
@@ -51,28 +59,23 @@
             </div>
 
             <div class="slide-card">
-                <img src="images/person10.jpg" alt="ياسر">
-                <h3>ياسر</h3>
-            </div>
-
-            <div class="slide-card">
                 <img src="images/person4.jpg" alt="الريس">
                 <h3>الريس</h3>
             </div>
 
             <div class="slide-card">
-                <img src="images/person5.jpg" alt="مؤمن">
-                <h3>مؤمن</h3>
+                <img src="images/person5.jpg" alt="يوسف صلاح">
+                <h3>يوسف صلاح</h3>
             </div>
 
             <div class="slide-card">
-                <img src="images/person9.jpg" alt="صالح">
-                <h3>صالح</h3>
+                <img src="images/person11.jpg" alt="محمد">
+                <h3>محمد</h3>
             </div>
 
             <div class="slide-card">
-                <img src="images/person8.jpg" alt="أمجد">
-                <h3>أمجد</h3>
+                <img src="images/person6.jpg" alt="موحد">
+                <h3>موحد</h3>
             </div>
 
             <div class="slide-card">
@@ -81,68 +84,116 @@
             </div>
 
             <div class="slide-card">
-                <img src="images/person1.jpg" alt="عبدالله جنينة">
-                <h3>عبدالله جنينة</h3>
+                <img src="images/person8.jpg" alt="أمجد">
+                <h3>أمجد</h3>
             </div>
 
+            <div class="slide-card">
+                <img src="images/person9.jpg" alt="صالح">
+                <h3>صالح</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person10.jpg" alt="أواب">
+                <h3>أواب</h3>
+            </div>
+
+            <div class="slide-card">
+                <img src="images/person10.jpg" alt="ياسر">
+                <h3>ياسر</h3>
+            </div>
+
+        </div>  
+    </div>  
+</section>
+
+<!-- =====================
+     العد التنازلي (تحت الأعضاء مباشرة)
+===================== -->
+<section id="countdown" class="countdown-section">
+    <h2 class="countdown-title">العدّ التنازلي لرمضان</h2>
+
+    <div class="countdown">
+        <div class="time-box">
+            <span id="days">--</span>
+            <small>يوم</small>
+        </div>
+        <div class="time-box">
+            <span id="hours">--</span>
+            <small>ساعة</small>
+        </div>
+        <div class="time-box">
+            <span id="minutes">--</span>
+            <small>دقيقة</small>
+        </div>
+        <div class="time-box seconds">
+            <span id="seconds">--</span>
+            <small>ثواني</small>
         </div>
     </div>
 </section>
 
-<!-- ما هي قائمة العهد -->
+<!-- =====================
+     ما هي قائمة العهد
+===================== -->
 <section id="about">
-    <h2>ما هي قائمة العهد؟</h2>
-    <p>
-        قائمة العهد هي التزام أخلاقي طوعي يضم مجموعة من أعضاء
-        قبيلة واعي، اجتمعوا على مجاهدة النفس، حفظ البصر،
-        والابتعاد عن كل ما يُضعف الإرادة ويشوّش القلب،
-        وذلك من الآن وحتى دخول شهر رمضان المبارك.
-    </p>
-</section>
-
-<!-- العهد -->
-<section id="oath">
-    <h2>نص العهد</h2>
-    <p>
-        نعاهد الله أولًا، ثم أنفسنا، على الصدق مع ذواتنا،
-        ومجاهدة أهوائنا، وحفظ قلوبنا من التعلّق بما يضرّها،
-        وأن يكون الوعي طريقنا، والثبات خيارنا،
-        حتى نلقى رمضان بقلوب أنقى ونفوس أقوى.
-    </p>
-</section>
-
-<!-- القيم -->
-<section id="values">
-    <h2>قيم قائمة العهد</h2>
+    <h2>ما هي قائمة العهد</h2>
     <ul>
-        <li>الصدق مع النفس</li>
-        <li>مجاهدة الشهوة</li>
-        <li>حفظ القلب والبصر</li>
-        <li>الدعم الجماعي</li>
-        <li>الاستعداد الروحي لرمضان</li>
+        <li>
+            قائمة العهد هي التزام جماعي بين أعضاء قبيلة واعي،
+            بعدم الوقوع في المحرمات، ومجاهدة النفس،
+            من الآن وحتى شهر رمضان المبارك.
+        </li>
     </ul>
 </section>
 
+<!-- =====================
+     القيم
+===================== -->
+<section id="values">
+    <h2>قيمنا</h2>
+    <ul>
+        <li>الصدق مع الله</li>
+        <li>الوعي قبل الفعل</li>
+        <li>الثبات والاستمرارية</li>
+        <li>الدعم الأخوي</li>
+    </ul>
+</section>
+
+<!-- الفوتر -->
 <footer>
-    <p>
-        قائمة العهد – قبيلة واعي  
-        <br>
-        { ومن جاهد فإنما يجاهد لنفسه }
-    </p>
+    <p>© 2026 قائمة العهد – واعي</p>
 </footer>
 
+<!-- =====================
+     JavaScript
+===================== -->
 <script>
-const slider = document.querySelector(".slider");
-let auto = setInterval(() => {
-    slider.scrollBy({ left: -220, behavior: "smooth" });
-}, 3500);
+const ramadanDate = new Date("2026-02-17T00:00:00").getTime();
 
-slider.addEventListener("mouseenter", () => clearInterval(auto));
-slider.addEventListener("mouseleave", () => {
-    auto = setInterval(() => {
-        slider.scrollBy({ left: -220, behavior: "smooth" });
-    }, 3500);
-});
+function updateCountdown() {
+    const now = new Date().getTime();
+    const diff = ramadanDate - now;
+
+    if (diff <= 0) {
+        document.querySelector(".countdown").innerHTML =
+            "<p style='color:#7cf2a4;font-size:22px'>🌙 رمضان مبارك 🌙</p>";
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("days").textContent = days;
+    document.getElementById("hours").textContent = hours;
+    document.getElementById("minutes").textContent = minutes;
+    document.getElementById("seconds").textContent = seconds;
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
 </script>
 
 </body>
