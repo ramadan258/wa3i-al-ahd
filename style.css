@@ -500,3 +500,21 @@ footer {
   width: 100%;
 }
 
+/* Fix huge cards on wide screens (identity gate) */
+#identityGrid{
+  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.identity-item{
+  width: 140px;
+  max-width: 160px;
+}
+
+.identity-avatar{
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+}
+
+
