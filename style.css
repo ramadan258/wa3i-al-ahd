@@ -1,302 +1,502 @@
-/* =====================
-   خط عربي أنيق
-===================== */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
-/* =====================
-   متغيرات الألوان (Dark Mode + Ramadan)
-===================== */
 :root {
-    --primary: #4ecdc4;
-    --dark-bg: #0f1115;
-    --dark-card: #171a21;
-    --text-light: #e6e6e6;
-    --text-muted: #a0a0a0;
-    --gold: #facc15;
-    --count-box: #2a1f35;
+  --primary: #4ecdc4;
+  --dark-bg: #0f1115;
+  --dark-card: #171a21;
+  --text-light: #e6e6e6;
+  --text-muted: #a0a0a0;
+  --gold: #facc15;
+  --count-box: #2a1f35;
+  --soft-border: rgba(250,204,21,0.15);
 }
 
-/* =====================
-   إعدادات عامة
-===================== */
-* {
-    box-sizing: border-box;
-    transition: all 0.18s ease-out;
-}
+* { box-sizing: border-box; transition: all 0.18s ease-out; }
 
 body {
-    margin: 0;
-    font-family: "Cairo", "Arial", sans-serif;
-    background-color: var(--dark-bg);
-    color: var(--text-light);
-    line-height: 1.9;
-    position: relative;
+  margin: 0;
+  font-family: "Cairo", Arial, sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--text-light);
+  line-height: 1.9;
+  position: relative;
 }
 
-/* هلال رمضاني خفيف */
 body::before {
-    content: "☾";
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 80px;
-    color: rgba(250, 204, 21, 0.06);
-    z-index: 0;
-    pointer-events: none;
+  content: "☾";
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 80px;
+  color: rgba(250, 204, 21, 0.06);
+  z-index: 0;
+  pointer-events: none;
 }
 
-/* =====================
-   رأس الصفحة
-===================== */
 header {
-    background: radial-gradient(circle at top, #1c2a2f, #0f1115);
-    padding: 60px 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(250,204,21,0.15);
-    position: relative;
-    z-index: 1;
+  background: radial-gradient(circle at top, #1c2a2f, #0f1115);
+  padding: 60px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(250,204,21,0.15);
+  position: relative;
+  z-index: 1;
 }
 
 header h1 {
-    margin: 0;
-    font-size: 34px;
-    color: var(--primary);
+  margin: 0;
+  font-size: 34px;
+  color: var(--primary);
 }
 
 header p {
-    margin-top: 10px;
-    font-size: 17px;
-    color: var(--text-muted);
+  margin-top: 10px;
+  font-size: 17px;
+  color: var(--text-muted);
 }
 
 .ramadan-text {
-    margin-top: 8px;
-    font-size: 14px;
-    color: var(--gold);
-    letter-spacing: 1px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 1px;
 }
 
-/* =====================
-   شريط رمضاني علوي
-===================== */
 .ramadan-banner {
-    background: linear-gradient(90deg, #0f766e, #022c22);
-    color: var(--gold);
-    text-align: center;
-    padding: 12px;
-    font-size: 15px;
-    letter-spacing: 1px;
-    border-bottom: 2px solid rgba(250,204,21,0.35);
+  background: linear-gradient(90deg, #0f766e, #022c22);
+  color: var(--gold);
+  text-align: center;
+  padding: 12px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  border-bottom: 2px solid rgba(250,204,21,0.35);
 }
 
-/* =====================
-   شريط التنقل
-===================== */
 nav {
-    background-color: #0b0d11;
-    padding: 14px;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  background-color: #0b0d11;
+  padding: 14px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.6);
 }
 
 nav a {
-    text-decoration: none;
-    color: var(--primary);
-    margin: 0 14px;
-    font-weight: 600;
+  text-decoration: none;
+  color: var(--primary);
+  margin: 0 14px;
+  font-weight: 700;
 }
 
-nav a:hover {
-    color: var(--gold);
-}
+nav a:hover { color: var(--gold); }
 
-/* =====================
-   الأقسام العامة
-===================== */
 section {
-    max-width: 1100px;
-    margin: 50px auto;
-    background-color: var(--dark-card);
-    padding: 45px 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    position: relative;
-    z-index: 1;
+  width: min(1120px, calc(100% - 48px));
+  margin: 40px auto;
+  background-color: var(--dark-card);
+  padding: 44px 30px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  position: relative;
+  z-index: 1;
 }
 
 section h2 {
-    text-align: center;
-    color: var(--primary);
-    margin-bottom: 30px;
-    font-size: 28px;
+  text-align: center;
+  color: var(--primary);
+  margin: 0 0 30px;
+  font-size: 28px;
 }
 
 section h2::after {
-    content: "✦";
-    display: block;
-    margin: 10px auto 0;
-    color: var(--gold);
-    opacity: 0.6;
-    font-size: 14px;
+  content: "✦";
+  display: block;
+  margin: 10px auto 0;
+  color: var(--gold);
+  opacity: 0.6;
+  font-size: 14px;
 }
 
-/* =====================
-   قسم الأعضاء (Slider)
-===================== */
-.slider-container {
-    display: flex;
-    align-items: center;
-}
+/* Members slider */
+.slider-container { display: flex; align-items: center; }
 
 .slider {
-    display: flex;
-    gap: 22px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding: 20px 10px;
+  display: flex;
+  gap: 22px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 20px 10px;
 }
 
-.slider::-webkit-scrollbar {
-    display: none;
-}
+.slider::-webkit-scrollbar { display: none; }
 
 .slide-card {
-    min-width: 200px;
-    background: linear-gradient(160deg, #1b232a, #12161c);
-    border-radius: 18px;
-    padding: 28px 18px;
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+  min-width: 200px;
+  background: linear-gradient(160deg, #1b232a, #12161c);
+  border-radius: 18px;
+  padding: 28px 18px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.7);
 }
 
 .slide-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 30px rgba(250,204,21,0.22);
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(250,204,21,0.22);
 }
 
 .slide-card img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid var(--gold);
-    margin-bottom: 14px;
-    background-color: #000;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--gold);
+  margin-bottom: 14px;
+  background-color: #000;
 }
 
 .slide-card h3 {
-    margin: 0;
-    font-size: 16px;
-    color: var(--primary);
+  margin: 0;
+  font-size: 16px;
+  color: var(--primary);
 }
 
-/* =====================
-   العدّ التنازلي (Ramadan Countdown)
-===================== */
+/* Countdown */
 .countdown-section {
-    background: transparent;
-    box-shadow: none;
-    margin-top: -20px;
+  background: transparent;
+  box-shadow: none;
+  margin-top: -20px;
 }
 
 .countdown {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
 
 .time-box {
-    background-color: var(--count-box);
-    border-radius: 18px;
-    padding: 30px 10px;
-    text-align: center;
-    box-shadow: inset 0 0 18px rgba(0,0,0,0.4);
+  background-color: var(--count-box);
+  border-radius: 18px;
+  padding: 30px 10px;
+  text-align: center;
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.4);
 }
 
 .time-box span {
-    display: block;
-    font-size: 52px;
-    font-weight: bold;
-    color: white;
+  display: block;
+  font-size: 52px;
+  font-weight: bold;
+  color: white;
 }
 
 .time-box small {
-    display: block;
-    margin-top: 6px;
-    font-size: 17px;
-    color: #ddd;
+  display: block;
+  margin-top: 6px;
+  font-size: 17px;
+  color: #ddd;
 }
 
-.time-box.seconds span {
-    color: #7cf2a4;
-}
+.time-box.seconds span { color: #7cf2a4; }
 
-/* =====================
-   القوائم النصية
-===================== */
-ul {
-    list-style: none;
-    padding: 0;
-}
-
+/* Lists + footer */
+ul { list-style: none; padding: 0; }
 ul li {
-    padding: 12px 0;
-    border-bottom: 1px solid #2a2f36;
-    text-align: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #2a2f36;
+  text-align: center;
 }
 
-/* =====================
-   الفوتر
-===================== */
 footer {
-    background-color: #0b0d11;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 18px;
-    margin-top: 60px;
-    font-size: 14px;
+  background-color: #0b0d11;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 18px;
+  margin-top: 60px;
+  font-size: 14px;
 }
 
-/* =====================
-   استجابة للشاشات الصغيرة
-===================== */
+/* Responsive */
 @media (max-width: 768px) {
-    header h1 {
-        font-size: 26px;
-    }
-
-    section {
-        margin: 25px;
-        padding: 30px 18px;
-    }
-
-    .slide-card {
-        min-width: 170px;
-    }
-
-    .countdown {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .time-box span {
-        font-size: 40px;
-    }
+  header h1 { font-size: 26px; }
+  section { width: calc(100% - 28px); margin: 25px auto; padding: 30px 18px; }
+  .slide-card { min-width: 170px; }
+  .countdown { grid-template-columns: repeat(2, 1fr); }
+  .time-box span { font-size: 40px; }
 }
 
 @media (max-width: 600px) {
-    nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-    }
+  nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  nav a { margin: 4px 6px; font-size: 14px; }
+}
 
-    nav a {
-        margin: 4px 6px;
-        font-size: 14px;
-    }
+/* ---------------------------------
+   Identity Gate + Admin Gate
+---------------------------------- */
+.is-hidden { display: none !important; }
+
+.userbar{
+  margin-top: 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.user-pill{
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.10);
+  border: 1px solid rgba(250, 204, 21, 0.22);
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.identity-btn{
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(78,205,196,0.18);
+  border: 1px solid rgba(78,205,196,0.45);
+  color: var(--text-light);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.identity-btn.ghost{
+  background: rgba(0,0,0,0.20);
+  border-color: rgba(255,255,255,0.14);
+}
+
+.identity-btn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(250,204,21,0.32);
+}
+
+.identity-gate{
+  position: fixed;
+  inset: 0;
+  padding: 22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(15, 17, 21, 0.92);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+}
+
+.identity-card{
+  width: min(920px, 100%);
+  background: rgba(23, 26, 33, 0.96);
+  border: 1px solid rgba(250, 204, 21, 0.18);
+  border-radius: 22px;
+  padding: 26px 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+}
+
+.identity-title{
+  margin: 0;
+  font-size: 26px;
+  color: var(--primary);
+  text-align:center;
+}
+
+.identity-sub{
+  margin: 10px 0 0;
+  text-align:center;
+  color: var(--text-muted);
+}
+
+.identity-search{ margin-top: 16px; }
+
+.text-input{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.24);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-light);
+  font-family: inherit;
+  outline: none;
+}
+
+.text-input:focus{
+  border-color: rgba(78,205,196,0.55);
+  box-shadow: 0 0 0 3px rgba(78,205,196,0.18);
+}
+
+.identity-grid{
+  margin-top: 16px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  padding: 6px;
+  max-height: 52vh;
+  overflow: auto;
+}
+
+.identity-item{
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.22);
+  border-radius: 18px;
+  padding: 12px 10px;
+  cursor:pointer;
+  color: var(--text-light);
+  text-align:center;
+}
+
+.identity-item:hover{
+  transform: translateY(-2px);
+  border-color: rgba(78,205,196,0.55);
+}
+
+.identity-avatar{
+  width: 74px;
+  height: 74px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(250,204,21,0.24);
+}
+
+.identity-name{
+  margin-top: 8px;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.identity-divider{
+  margin: 18px 0 10px;
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  color: var(--text-muted);
+}
+
+.identity-divider::before,
+.identity-divider::after{
+  content:"";
+  height: 1px;
+  flex: 1;
+  background: rgba(255,255,255,0.10);
+}
+
+.identity-guest{
+  display:flex;
+  gap: 12px;
+  align-items:center;
+  flex-wrap: wrap;
+}
+
+.identity-guest .text-input{
+  flex: 1;
+  min-width: 220px;
+}
+
+.identity-empty{
+  padding: 16px 10px;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  text-align:center;
+}
+
+.identity-note{
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align:center;
+}
+
+.identity-last{
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.identity-last-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.identity-last-text{
+  color: var(--text-muted);
+}
+
+.identity-last-actions{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Admin gate */
+.admin-gate{
+  position: fixed;
+  inset: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 22px;
+  background: rgba(0,0,0,0.62);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+}
+
+.admin-card{
+  width: min(520px, 100%);
+  background: rgba(23, 26, 33, 0.98);
+  border: 1px solid rgba(250, 204, 21, 0.20);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 18px 55px rgba(0,0,0,0.7);
+}
+
+.admin-title{
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.admin-sub{
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.admin-actions{
+  margin-top: 12px;
+  display:flex;
+  gap: 10px;
+  justify-content:flex-end;
+  flex-wrap: wrap;
+}
+
+.admin-error{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,0,0,0.10);
+  border: 1px solid rgba(255,0,0,0.18);
+  color: #ffb4b4;
+}
+
+/* Streak badge next to member name in identity gate */
+.streak-badge{
+  font-weight: 900;
+  font-size: 12px;
+  opacity: 0.95;
+  margin-inline-start: 6px;
+}
+
+/* Member name + streak layout in members slider */
+.member-name-row{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
 }
 
