@@ -24,6 +24,7 @@
       signOut,
       setPersistence,
       inMemoryPersistence,
+          signInAnonymously,
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
     import {
       getFirestore,
@@ -60,6 +61,7 @@
       signOut,
       setPersistence,
       inMemoryPersistence,
+      signInAnonymously,
       collection,
       doc,
       setDoc,
@@ -771,6 +773,10 @@ function readMembersFromDOM() {
 function decorateMemberCardsWithStreaks() {
   const cards = qsa("#members .slide-card");
   cards.forEach((card, idx) => {
+    // Keep stable IDs (member_0..), but visually sort by streak using CSS order.
+    if (!card.dataset.origIndex) card.dataset.origIndex = String(idx);
+    const orig = parseInt(card.dataset.origIndex || "0", 10);
+
     const nameEl = card.querySelector("h3");
     if (!nameEl) return;
 
@@ -782,6 +788,13 @@ function decorateMemberCardsWithStreaks() {
       row.appendChild(nameEl);
     }
 
+
+    let rankEl = row.querySelector(".rank-badge");
+    if (!rankEl) {
+      rankEl = document.createElement("span");
+      rankEl.className = "rank-badge member-rank-badge";
+      row.insertBefore(rankEl, nameEl);
+    }
     let badge = row.querySelector(".streak-badge");
     if (!badge) {
       badge = document.createElement("span");
@@ -790,7 +803,20 @@ function decorateMemberCardsWithStreaks() {
     }
 
     const streak = getStreakForUserId(`member_${idx}`);
-    if (streak > 0) {
+    
+    const orderKey = (streak > 0 ? -streak * 1000 : 1000000) + (Number.isFinite(orig) ? orig : idx);
+    card.style.order = String(orderKey);
+
+    const memberId = `member_${Number.isFinite(orig) ? orig : idx}`;
+    const medal = medalForUserId(memberId);
+    if (medal) {
+      rankEl.textContent = medal;
+      rankEl.style.display = "";
+    } else {
+      rankEl.textContent = "";
+      rankEl.style.display = "none";
+    }
+if (streak > 0) {
       badge.textContent = `🔥${formatArabicNumber(streak)}`;
       badge.style.display = "";
     } else {
@@ -807,15 +833,23 @@ function renderIdentityGrid(members, filterText = "") {
   const q = String(filterText || "").trim();
   const list = q ? members.filter((m) => m.name.includes(q)) : members;
 
-  grid.innerHTML = list.length
-    ? list
+  const sorted = list.slice().sort((a, b) => {
+    const sa = getStreakForUserId(a.id);
+    const sb = getStreakForUserId(b.id);
+    if (sb !== sa) return sb - sa;
+    return (a.name || "").localeCompare(b.name || "", "ar");
+  });
+  grid.innerHTML = sorted.length
+    ? sorted
         .map((m) => {
           const streak = getStreakForUserId(m.id);
           const badge = streak > 0 ? ` <span class="streak-badge">🔥${formatArabicNumber(streak)}</span>` : "";
+          const medal = medalForUserId(m.id);
+          const medalBadge = medal ? ` <span class="rank-badge" aria-label="ترتيب">${medal}</span>` : "";
           return `
         <button class="identity-item" type="button" data-user-id="${m.id}" aria-label="${m.name}">
           <img class="identity-avatar" src="${m.src}" alt="${m.name}" />
-          <div class="identity-name">${m.name}${badge}</div>
+          <div class="identity-name">${m.name}${medalBadge}${badge}</div>
         </button>
       `;
         })
@@ -823,7 +857,7 @@ function renderIdentityGrid(members, filterText = "") {
     : `<div class="identity-empty">لا توجد نتائج… جرّب اسمًا آخر أو ادخل كضيف.</div>`;
 
   grid.querySelectorAll(".identity-item").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-user-id");
       const user = members.find((x) => x.id === id);
       if (!user) return;
@@ -835,6 +869,7 @@ function renderIdentityGrid(members, filterText = "") {
       }
 
       saveCurrentUser({ id: user.id, name: user.name, kind: "member" });
+      try { await ensureMemberBinding(user.id); } catch {}
       startApp();
     });
   });
@@ -1004,8 +1039,13 @@ function startApp() {
 function initIdentityGate() {
   showGate();
 
-  const members = readMembersFromDOM();
+  IDENTITY_MEMBERS_CACHE = readMembersFromDOM();
+  const members = IDENTITY_MEMBERS_CACHE;
+  recomputeRanks(members);
+  resetLocalStreaksForAllMembersOnce();
   renderIdentityGrid(members);
+
+  startSharedStreaksListener();
 
   const lastBox = qs("#identityLast");
   if (lastBox) {
@@ -1023,11 +1063,154 @@ function initIdentityGate() {
   wireSwitchUserButton();
 }
 
+
 function userKey(suffix) {
   return `wa3i_${currentUserId()}_${suffix}`;
 }
 
+// ---------------------------
+// Shared streaks (Firestore) + Anonymous Auth (no UI login)
+// ---------------------------
+const FIRESTORE_BINDINGS = "bindings";
+const FIRESTORE_STREAKS = "streaks";
+const SHARED_STREAKS = new Map();
+let SHARED_STREAKS_LISTENING = false;
+
+
+const MEDALS = ["🥇", "🥈", "🥉"];
+const RANK_BY_ID = new Map();
+
+function recomputeRanks(members) {
+  const list = Array.isArray(members) ? members.slice() : [];
+  list.sort((a, b) => {
+    const sa = getStreakForUserId(a.id);
+    const sb = getStreakForUserId(b.id);
+    if (sb !== sa) return sb - sa;
+    return (a.name || "").localeCompare(b.name || "", "ar");
+  });
+
+  RANK_BY_ID.clear();
+  list.forEach((m, idx) => RANK_BY_ID.set(m.id, idx));
+}
+
+function medalForUserId(userId) {
+  const rank = RANK_BY_ID.get(userId);
+  if (!Number.isFinite(rank)) return "";
+  return rank >= 0 && rank < 3 ? MEDALS[rank] : "";
+}
+
+
+function resetLocalStreaksForAllMembersOnce() {
+  const key = "wa3i_reset_local_streaks_v1";
+  try {
+    if (localStorage.getItem(key) === "1") return;
+    localStorage.setItem(key, "1");
+  } catch {
+    return;
+  }
+
+  const n = IDENTITY_MEMBERS_CACHE.length;
+  for (let i = 0; i < n; i += 1) {
+    try {
+      localStorage.removeItem(`wa3i_member_${i}_streak`);
+      localStorage.removeItem(`wa3i_member_${i}_last_completed_date`);
+    } catch {}
+  }
+}
+
+async function resetFirestoreStreaksForAllMembersOnce() {
+  if (!FB_STATE?.isAdmin) return;
+
+  const key = "wa3i_reset_firestore_streaks_v1";
+  try {
+    if (localStorage.getItem(key) === "1") return;
+    localStorage.setItem(key, "1");
+  } catch {
+    // still attempt without guard
+  }
+
+  try {
+    const { db, doc, setDoc, serverTimestamp } = window.FB;
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    const todayISO = `${y}-${m}-${d}`;
+
+    for (const member of IDENTITY_MEMBERS_CACHE) {
+      await setDoc(
+        doc(db, FIRESTORE_STREAKS, String(member.id)),
+        { count: 0, lastCompletedDate: todayISO, updatedAt: serverTimestamp() },
+        { merge: true }
+      );
+    }
+  } catch {
+    // ignore
+  }
+}
+let IDENTITY_MEMBERS_CACHE = [];
+function refreshIdentityStreaksUI() {
+  try { recomputeRanks(IDENTITY_MEMBERS_CACHE); } catch {}
+  try { decorateMemberCardsWithStreaks(); } catch {}
+  const grid = qs("#identityGrid");
+  if (!grid) return;
+  const q = qs("#identitySearch")?.value || "";
+  renderIdentityGrid(IDENTITY_MEMBERS_CACHE, q);
+}
+
+function startSharedStreaksListener() {
+  if (SHARED_STREAKS_LISTENING) return;
+  const tryInit = () => {
+    if (!fbAvailable()) return setTimeout(tryInit, 80);
+    SHARED_STREAKS_LISTENING = true;
+
+    const { db, onSnapshot, collection } = window.FB;
+    onSnapshot(collection(db, FIRESTORE_STREAKS), (snap) => {
+      SHARED_STREAKS.clear();
+      snap.forEach((d) => SHARED_STREAKS.set(d.id, Number(d.data()?.count || 0)));
+      refreshIdentityStreaksUI();
+    });
+  };
+  tryInit();
+}
+
+async function ensureAnonSignedIn() {
+  if (!fbAvailable()) throw new Error("FB_NOT_READY");
+  const { auth, signInAnonymously } = window.FB;
+  if (auth.currentUser) return auth.currentUser;
+  const cred = await signInAnonymously(auth);
+  return cred.user;
+}
+
+async function ensureMemberBinding(memberId) {
+  const user = await ensureAnonSignedIn();
+  const { db, doc, getDoc, setDoc, serverTimestamp } = window.FB;
+
+  const ref = doc(db, FIRESTORE_BINDINGS, user.uid);
+  const snap = await getDoc(ref);
+  if (snap.exists()) return snap.data();
+
+  await setDoc(ref, { memberId: String(memberId), createdAt: serverTimestamp() });
+  return { memberId };
+}
+
+async function syncStreakToFirestore(memberId, count, todayISO) {
+  try {
+    await ensureMemberBinding(memberId);
+    const { db, doc, setDoc, serverTimestamp } = window.FB;
+
+    await setDoc(
+      doc(db, FIRESTORE_STREAKS, String(memberId)),
+      { count: Number(count) || 0, lastCompletedDate: String(todayISO), updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+  } catch (e) {
+    // non-fatal: keep local streak working even if Firestore is unavailable
+  }
+}
 function getStreakForUserId(userId) {
+  const shared = SHARED_STREAKS.get(userId);
+  if (Number.isFinite(shared)) return shared;
   const raw = localStorage.getItem(`wa3i_${userId}_streak`);
   const n = parseInt(raw || "0", 10);
   return Number.isFinite(n) ? n : 0;
@@ -1208,7 +1391,10 @@ function initAhdPage() {
 
       setAhdAdminVisibility();
       renderAhdPublicList();
-    });
+    
+
+      resetFirestoreStreaksForAllMembersOnce();
+});
 
     // Admin search input
     qs("#ahdAdminSearch")?.addEventListener("input", (e) => {
@@ -1343,7 +1529,10 @@ function previousISODate(isoDate) {
 
       setStreak(streak);
       setLastCompletedDate(todayISO);
-    }
+    
+
+      syncStreakToFirestore(currentUserId(), streak, todayISO);
+}
 
     function applyLinks() {
   const recovery = qs("#recoveryLink");
@@ -2103,16 +2292,16 @@ function previousISODate(isoDate) {
     document.addEventListener("DOMContentLoaded", () => {
       try { localStorage.removeItem(USER_STORAGE_KEY); } catch {}
 
-      // Fix: allow Amjad admin login modal to show while the identity gate is open.
+      
+      try { localStorage.removeItem("wa3i_quran_start_day_v1"); } catch {}
+// Fix: allow Amjad admin login modal to show while the identity gate is open.
       // The gate hides #appRoot (which originally contains the modal), so we move the modal under <body>.
       const adminModal = qs("#adminLoginModal");
       if (adminModal && adminModal.parentElement !== document.body) {
         document.body.appendChild(adminModal);
       }
 
-
       decorateMemberCardsWithStreaks();
-
       initIdentityGate();
     });
 </script>
