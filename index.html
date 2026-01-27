@@ -1,208 +1,2120 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>قائمة العهد – واعي | قبيلة الموحدون</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>الموحدون – واعي | قبيلة الموحدون</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- SEO -->
-    <meta name="description" content="قائمة العهد – واعي. مبادرة رمضانية للثبات، مجاهدة النفس، وتجديد العهد في قبيلة الموحدون.">
-    <meta name="keywords" content="قائمة العهد, واعي, قبيلة الموحدون, رمضان, الثبات, مجاهدة النفس">
+  <!-- SEO -->
+  <meta name="description" content="الموحدون – واعي. مبادرة للثبات، مجاهدة النفس، وتجديد العهد في قبيلة الموحدون." />
+  <meta name="keywords" content="الموحدون, واعي, قبيلة الموحدون, رمضان, الثبات, مجاهدة النفس" />
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="today.css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <!-- Firebase (Firestore + Auth) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      signOut,
+      setPersistence,
+      inMemoryPersistence,
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      deleteDoc,
+      serverTimestamp,
+      onSnapshot,
+      getDocs,
+      query,
+      orderBy,
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYROgGM5ZOSBKNX1cYkJa3s395yf8HDVE",
+      authDomain: "tribe-app-e3e9c.firebaseapp.com",
+      projectId: "tribe-app-e3e9c",
+      storageBucket: "tribe-app-e3e9c.firebasestorage.app",
+      messagingSenderId: "1087669498056",
+      appId: "1:1087669498056:web:f04aed42afb4af483eb5fd",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Expose minimal API to non-module scripts.
+    window.FB = {
+      auth,
+      db,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      signOut,
+      setPersistence,
+      inMemoryPersistence,
+      collection,
+      doc,
+      setDoc,
+      deleteDoc,
+      serverTimestamp,
+      onSnapshot,
+      getDocs,
+      query,
+      orderBy,
+    };
+  </script>
 
 </head>
+
 <body>
 
-<!-- رأس الصفحة -->
-<header>
-    <h1>قائمة العهد</h1>
-    <p>قبيلة واعي – قبيلة الموحدون</p>
-    <p class="ramadan-text">🌙 من الآن حتى رمضان… نختار الثبات</p>
-</header>
+<!-- بوابة اختيار المستخدم -->
+<div id="identityGate" class="identity-gate" role="dialog" aria-modal="true" aria-label="اختيار المستخدم">
+  <div class="identity-card">
+    <h2 class="identity-title">من أنت؟</h2>
+    <p class="identity-sub">اختر صورتك للدخول إلى الواجهة الرئيسية.</p>
 
+    <div id="identityLast" class="identity-last is-hidden" aria-live="polite"></div>
 
+    <div class="identity-search">
+      <input id="identitySearch" class="text-input" type="text" inputmode="search" placeholder="ابحث بالاسم..." autocomplete="off" />
+    </div>
 
-<!-- شريط رمضاني -->
-<div class="ramadan-banner">
-    🌙 عهدٌ مع الله – وعيٌ بالنفس – ثباتٌ حتى رمضان
+    <div id="identityGrid" class="identity-grid" aria-label="قائمة الأعضاء"></div>
+
+    <div class="identity-divider">
+      <span>لم تجد اسمك؟</span>
+    </div>
+
+    <div class="identity-guest">
+      <input id="guestName" class="text-input" type="text" placeholder="اكتب اسمك (اختياري)" autocomplete="name" />
+      <button id="enterGuestBtn" class="identity-btn" type="button">دخول كضيف</button>
+    </div>
+
+    <div class="identity-note">يمكنك لاحقًا تغيير المستخدم من أعلى الصفحة.</div>
+  </div>
 </div>
 
-<!-- شريط التنقل -->
-<nav>
-    <a href="#members">الأعضاء</a>
+</div>
+
+<div id="appRoot" class="app-root is-hidden" aria-hidden="true">
+
+  <!-- رأس الصفحة -->
+  <header>
+    <h1>الموحدون</h1>
+    <p>قبيلة واعي – قبيلة الموحدون</p>
+    <p class="ramadan-text">🌙 من الآن حتى رمضان… نختار الثبات</p>
+
+<div class="userbar">
+  <span class="user-pill" id="currentUserPill">—</span>
+  <button class="identity-btn ghost" id="switchUserBtn" type="button">تبديل المستخدم</button>
+</div>
+
+  </header>
+
+  <!-- شريط رمضاني -->
+  <div class="ramadan-banner">
+    🌙 عهدٌ مع الله – وعيٌ بالنفس – ثباتٌ حتى رمضان
+  </div>
+
+  <!-- شريط التنقل -->
+  <nav>
+    <a href="#today">رحلة اليوم</a>
+        <a href="#ahd">العهد</a>
+<a href="#members">الأعضاء</a>
     <a href="#countdown">العدّ التنازلي</a>
     <a href="#about">ما هي قائمة العهد</a>
     <a href="#values">القيم</a>
-</nav>
+  </nav>
 
-<!-- =====================
-     الأعضاء
-===================== -->
-<section id="members">
-    <h2>أعضاء قائمة العهد</h2>
+  <!-- =====================
+       رحلة اليوم
+  ===================== -->
+  <section id="today">
+    <h2>رحلة اليوم</h2>
+
+    <div class="today-layout">
+      <aside class="today-side">
+        <div class="panel">
+          <div class="panel-title">تاريخ اليوم</div>
+          <div class="panel-value" id="todayDate">—</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">قراءة القرآن اليومية</div>
+          <div class="panel-value" id="hizbNumber">—</div>
+          <div class="panel-sub" id="hizbHint">—</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">سِتريك الثبات</div>
+          <div class="panel-value"><span id="streakCount">0</span> 🔥</div>
+          <div class="panel-sub">يزيد عند إكمال جميع مهام اليوم</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">نسبة الإنجاز اليومي</div>
+          <div class="progress-head">
+            <span class="pill" id="progressText">0%</span>
+            <span class="muted" id="progressSub">ابدأ بخطوة واحدة… ثم أكمل.</span>
+          </div>
+
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">تحكم</div>
+          <button class="btn ghost w-full" id="resetToday" type="button">تصفير مهام اليوم</button>
+          <div class="panel-sub">يتم حفظ تقدمك تلقائيًا على هذا الجهاز.</div>
+        </div>
+      </aside>
+
+      <div class="today-main">
+        <div class="tasks">
+          <div class="task-card">
+            <label class="task-line">
+              <input type="checkbox" data-task="attendance" />
+              <span class="task-title">تسجيل حضور ✅️</span>
+            </label>
+            <div class="task-desc">ابدأ يومك بتجديد النية والحضور.</div>
+          </div>
+
+          <!-- أذكار الصباح -->
+          <div class="task-card">
+            <label class="task-line">
+              <input type="checkbox" data-task="morning_adhkar" />
+              <span class="task-title">أذكار الصباح ✅️</span>
+            </label>
+            <div class="task-desc">
+              <button type="button" class="azkar-open-btn" id="openMorningAzkar">
+                عرض أذكار الصباح كاملة
+              </button>
+            </div>
+          </div>
+
+          <!-- قراءة القرآن: 10 صفحات يومياً -->
+          <div class="task-card">
+            <label class="task-line">
+              <input type="checkbox" data-task="quran_hizb" />
+              <span class="task-title">قراءة 10 صفحات من القرآن ✅️</span>
+            </label>
+
+            <div class="task-desc">
+              اليوم: <b id="hizbLabel">—</b>
+              <div style="margin-top:10px">
+                <button type="button" class="azkar-open-btn" id="openQuranReading">
+                  عرض صفحات اليوم
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- أحاديث نبوية -->
+          <div class="task-card">
+            <label class="task-line">
+              <input type="checkbox" data-task="hadith" />
+              <span class="task-title">أحاديث نبوية اليوم ✅️</span>
+            </label>
+            <div class="task-desc">
+              <button type="button" class="azkar-open-btn" id="openHadithModal">عرض أحاديث اليوم (٥ أحاديث)</button>
+            </div>
+          </div>
+
+          <!-- مقال التعافي -->
+          <div class="task-card">
+            <label class="task-line">
+              <input type="checkbox" data-task="recovery_article" />
+              <span class="task-title">مقال عن التعافي ✅️</span>
+            </label>
+            <div class="task-desc">
+              <a class="task-link" id="recoveryLink" target="_blank" rel="noopener">فتح مقال التعافي</a>
+            </div>
+          </div>
+
+          <!-- التنفس -->
+          <div class="task-card">
+            <div class="task-top">
+              <div class="task-top-title">عادة التنفّس العميق ✅️</div>
+              <span class="pill" id="breathStatus">غير مكتمل</span>
+            </div>
+
+            <div class="breath-box">
+              <div class="breath-left">
+                <div class="breath-time" id="breathTime">01:00</div>
+                <div class="breath-hint" id="breathHint">شهيق 4 • حبس 2 • زفير 6</div>
+              </div>
+
+              <div class="breath-actions">
+                <button class="btn" id="breathStart" type="button">ابدأ</button>
+                <button class="btn ghost" id="breathReset" type="button">إعادة</button>
+
+                <label class="task-line compact">
+                  <input type="checkbox" data-task="deep_breath" />
+                  <span>تم ✅️</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- التحدي -->
+          <div class="task-card">
+            <label class="task-line">
+              <input type="checkbox" data-task="challenge" />
+              <span class="task-title">تحدّي اليوم ✅️</span>
+            </label>
+            <div class="task-desc">
+              <div class="challenge-box">
+                <div class="challenge-title" id="challengeTitle">—</div>
+                <div class="challenge-sub" id="challengeSub">ابدأ الآن… ولو مرة واحدة.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- أذكار المساء -->
+          <div class="task-card">
+            <label class="task-line">
+              <input type="checkbox" data-task="evening_adhkar" />
+              <span class="task-title">أذكار المساء ✅️</span>
+            </label>
+            <div class="task-desc">
+              <button type="button" class="azkar-open-btn" id="openEveningAzkar">
+                عرض أذكار المساء كاملة
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================
+       الأعضاء
+  ===================== -->
+  <section id="members">
+    <h2>أعضاء القبيلة</h2>
 
     <div class="slider-container">
-        <div class="slider">
+      <div class="slider">
+        <div class="slide-card">
+          <img src="images/person12.jpg" alt="الفقير الى الله" />
+          <h3>الفقير الى الله</h3>
+        </div>
 
-            <!-- <div class="slide-card">
-                <img src="images/person12.jpg" alt="الفقير الى الله">
-                <h3>الفقير الى الله</h3>
-            </div> -->
+        <div class="slide-card">
+          <img src="images/person1.jpg" alt="عبدالله جنينة" />
+          <h3>عبدالله جنينة</h3>
+        </div>
 
-            <div class="slide-card">
-                <img src="images/person1.jpg" alt="عبدالله جنينة">
-                <h3>عبدالله جنينة</h3>
-            </div>
+        <div class="slide-card">
+          <img src="images/person2.jpg" alt="أحمد عمرو" />
+          <h3>أحمد عمرو</h3>
+        </div>
 
-            <div class="slide-card">
-                <img src="images/person2.jpg" alt="أحمد عمرو">
-                <h3>أحمد عمرو</h3>
-            </div>
+        <div class="slide-card">
+          <img src="images/person3.jpg" alt="طموح" />
+          <h3>طموح</h3>
+        </div>
 
-            <div class="slide-card">
-                <img src="images/person3.jpg" alt="طموح">
-                <h3>طموح</h3>
-            </div>
+        <div class="slide-card">
+          <img src="images/person4.jpg" alt="الريس" />
+          <h3>الريس</h3>
+        </div>
 
-            <div class="slide-card">
-                <img src="images/person4.jpg" alt="الريس">
-                <h3>الريس</h3>
-            </div>
+        <div class="slide-card">
+          <img src="images/person5.jpg" alt="يوسف صلاح" />
+          <h3>يوسف صلاح</h3>
+        </div>
 
-            <!-- <div class="slide-card">
-                <img src="images/person5.jpg" alt="يوسف صلاح">
-                <h3>يوسف صلاح</h3>
-            </div> -->
+        <div class="slide-card">
+          <img src="images/person11.jpg" alt="محمد" />
+          <h3>محمد</h3>
+        </div>
 
-            <!-- <div class="slide-card">
-                <img src="images/person11.jpg" alt="محمد">
-                <h3>محمد</h3>
-            </div> -->
+        <div class="slide-card">
+          <img src="images/person6.jpg" alt="موحد" />
+          <h3>موحد</h3>
+        </div>
 
-            <div class="slide-card">
-                <img src="images/person6.jpg" alt="موحد">
-                <h3>موحد</h3>
-            </div>
+        <div class="slide-card">
+          <img src="images/person7.jpg" alt="سيف الدين" />
+          <h3>سيف الدين</h3>
+        </div>
 
-            <div class="slide-card">
-                <img src="images/person7.jpg" alt="سيف الدين">
-                <h3>سيف الدين</h3>
-            </div>
+        <div class="slide-card">
+          <img src="images/person8.jpg" alt="أمجد" />
+          <h3>أمجد</h3>
+        </div>
 
-            <div class="slide-card">
-                <img src="images/person8.jpg" alt="أمجد">
-                <h3>أمجد</h3>
-            </div>
+        <div class="slide-card">
+          <img src="images/person9.jpg" alt="صالح" />
+          <h3>صالح</h3>
+        </div>
 
-            <!-- <div class="slide-card">
-                <img src="images/person9.jpg" alt="صالح">
-                <h3>صالح</h3>
-            </div> -->
+        <div class="slide-card">
+          <img src="images/person10.jpg" alt="أواب" />
+          <h3>أواب</h3>
+        </div>
 
-            <!-- <div class="slide-card">
-                <img src="images/person10.jpg" alt="أواب">
-                <h3>أواب</h3>
-            </div> -->
+        <div class="slide-card">
+          <img src="images/person10.jpg" alt="ياسر" />
+          <h3>ياسر</h3>
+        </div>
+        
+        <div class="slide-card">
+          <img src="images/person10.jpg" alt="سيف الدين محمد" />
+          <h3>سيف الدين محمد</h3>
+        </div>
+        
+        <div class="slide-card">
+          <img src="images/person10.jpg" alt="lol" />
+          <h3>lol</h3>
+        </div>
 
-            <!-- <div class="slide-card">
-                <img src="images/person10.jpg" alt="ياسر">
-                <h3>ياسر</h3>
-            </div> -->
-        </div>  
-    </div>  
-</section>
+        <div class="slide-card">
+          <img src="images/person13.jpg" alt="سعد" />
+          <h3>سعد</h3>
+        </div>
 
-<!-- =====================
-     العد التنازلي (تحت الأعضاء مباشرة)
-===================== -->
-<section id="countdown" class="countdown-section">
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- =====================
+       العهد
+  ===================== -->
+  <section id="ahd">
+    <h2>قائمة العهد</h2>
+
+    <div id="ahdCount" style="display:none" aria-hidden="true">—</div>
+
+    <div id="ahdPublicList" class="identity-grid" aria-label="أعضاء العهد"></div>
+
+    <div id="ahdAdminWrap" class="panel" style="margin-top:22px; display:none">
+      <div class="panel-title">إدارة العهد (أمجد)</div>
+
+      <div id="ahdManageBox" style="display:none; margin-top:16px">
+        <div class="panel-sub" style="margin-bottom:10px">اختر عضوًا من القبيلة لإضافته للعهد، أو احذف من قائمة العهد.</div>
+
+        <div class="today-layout" style="gap:14px">
+          <aside class="today-side" style="flex:1">
+            <div class="panel-title" style="margin-bottom:10px">أعضاء القبيلة (غير منضمين)</div>
+            <input id="ahdAdminSearch" class="text-input" type="text" placeholder="بحث..." autocomplete="off" style="margin-bottom:10px" />
+            <div id="tribeNotInAhdList" class="identity-grid" aria-label="أعضاء القبيلة غير المنضمين"></div>
+          </aside>
+
+          <aside class="today-side" style="flex:1">
+            <div class="panel-title" style="margin-bottom:10px">أعضاء العهد</div>
+            <div id="ahdManageList" class="identity-grid" aria-label="أعضاء العهد للإدارة"></div>
+          </aside>
+        </div>
+
+        <div class="panel-sub" style="margin-top:12px">التغييرات تُحفظ على Firebase وتظهر للجميع فورًا.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================
+       العد التنازلي
+  ===================== -->
+  <section id="countdown" class="countdown-section">
     <h2 class="countdown-title">العدّ التنازلي لرمضان</h2>
 
     <div class="countdown">
-        <div class="time-box">
-            <span id="days">--</span>
-            <small>يوم</small>
-        </div>
-        <div class="time-box">
-            <span id="hours">--</span>
-            <small>ساعة</small>
-        </div>
-        <div class="time-box">
-            <span id="minutes">--</span>
-            <small>دقيقة</small>
-        </div>
-        <div class="time-box seconds">
-            <span id="seconds">--</span>
-            <small>ثواني</small>
-        </div>
+      <div class="time-box">
+        <span id="days">--</span>
+        <small>يوم</small>
+      </div>
+      <div class="time-box">
+        <span id="hours">--</span>
+        <small>ساعة</small>
+      </div>
+      <div class="time-box">
+        <span id="minutes">--</span>
+        <small>دقيقة</small>
+      </div>
+      <div class="time-box seconds">
+        <span id="seconds">--</span>
+        <small>ثواني</small>
+      </div>
     </div>
-</section>
+  </section>
 
-<!-- =====================
-     ما هي قائمة العهد
-===================== -->
-<section id="about">
+  <!-- =====================
+       ما هي قائمة العهد
+  ===================== -->
+  <section id="about">
     <h2>ما هي قائمة العهد</h2>
     <ul>
-        <li>
-            قائمة العهد هي التزام جماعي بين أعضاء قبيلة واعي،
-            بعدم الوقوع في المحرمات، ومجاهدة النفس،
-            من الآن وحتى شهر رمضان المبارك.
-        </li>
+      <li>
+        قائمة العهد هي التزام جماعي بين أعضاء قبيلة واعي،
+        بعدم الوقوع في المحرمات، ومجاهدة النفس،
+        من الآن وحتى شهر رمضان المبارك.
+      </li>
     </ul>
-</section>
+  </section>
 
-<!-- =====================
-     القيم
-===================== -->
-<section id="values">
+  <!-- =====================
+       القيم
+  ===================== -->
+  <section id="values">
     <h2>قيمنا</h2>
     <ul>
-        <li>الصدق مع الله</li>
-        <li>الوعي قبل الفعل</li>
-        <li>الثبات والاستمرارية</li>
-        <li>الدعم الأخوي</li>
+      <li>الصدق مع الله</li>
+      <li>الوعي قبل الفعل</li>
+      <li>الثبات والاستمرارية</li>
+      <li>الدعم الأخوي</li>
     </ul>
-</section>
+  </section>
 
-<!-- الفوتر -->
-<footer>
-    <p>© 2026 قائمة العهد – واعي</p>
-</footer>
+  <!-- الفوتر -->
+  <footer>
+    <p>© 2026 الموحدون – واعي</p>
+  </footer>
 
-<!-- =====================
-     JavaScript
-===================== -->
+  <!-- =====================
+       Azkar Modal (Reusable)
+  ===================== -->
+  <div class="azkar-modal-overlay" id="azkarModal" aria-hidden="true">
+    <div class="azkar-modal-card" role="dialog" aria-modal="true" aria-labelledby="azkarModalTitle">
+      <div class="azkar-modal-head">
+        <div class="azkar-modal-title" id="azkarModalTitle">—</div>
+
+        <div class="azkar-modal-tools">
+          <input class="azkar-search" id="azkarSearch" type="search" placeholder="ابحث داخل الأذكار..." />
+          <button class="azkar-tool-btn" id="azkarFindBtn" type="button">بحث</button>
+          <button class="azkar-tool-btn ghost" id="azkarOpenNewTab" type="button">فتح</button>
+          <button type="button" class="azkar-modal-close" id="closeAzkarModal" aria-label="إغلاق">✕</button>
+        </div>
+      </div>
+
+      <div class="azkar-modal-body">
+        <iframe
+          id="azkarFrame"
+          class="azkar-iframe"
+          title="Azkar"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        ></iframe>
+      </div>
+
+      <div class="azkar-modal-foot">
+        <div class="azkar-note" id="azkarNote">—</div>
+        <button type="button" class="azkar-modal-close-btn" id="closeAzkarModal2">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="azkar-toast" id="azkarToast" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- =====================
+       Quran Modal (10 pages/day)
+  ===================== -->
+  <div class="quran-modal-overlay" id="quranModal" aria-hidden="true">
+    <div class="quran-modal-card" role="dialog" aria-modal="true" aria-labelledby="quranModalTitle">
+      <div class="quran-modal-head">
+        <div>
+          <div class="quran-modal-title" id="quranModalTitle">قراءة اليوم</div>
+          <div class="quran-modal-sub" id="quranModalSub">—</div>
+        </div>
+
+        <div class="quran-modal-tools">
+          <button class="quran-tool-btn ghost" id="quranCopyPlan" type="button">نسخ الخطة</button>
+          <button class="quran-tool-btn" id="quranMarkDone" type="button">تم ✅️</button>
+          <button type="button" class="quran-modal-close" id="closeQuranModal" aria-label="إغلاق">✕</button>
+        </div>
+      </div>
+
+      <div class="quran-modal-body">
+        <div class="quran-page-nav" id="quranPageNav"></div>
+
+        <div class="quran-loader" id="quranLoader">جارِ تحميل صفحات اليوم…</div>
+        <div class="quran-pages" id="quranPages"></div>
+
+        <div class="quran-error" id="quranError" hidden>
+          تعذّر تحميل الصفحات الآن. تأكد من الإنترنت وحاول مرة ثانية.
+        </div>
+      </div>
+
+      <div class="quran-modal-foot">
+        <div class="quran-note">مصدر البيانات: Quran.com API (Madani Mushaf pages 1–604)</div>
+        <button type="button" class="quran-modal-close-btn" id="closeQuranModal2">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================
+       Hadith Modal (5/day)
+  ===================== -->
+  <div class="tafsir-modal-overlay" id="hadithModal" aria-hidden="true">
+    <div class="tafsir-modal-card" role="dialog" aria-modal="true" aria-labelledby="hadithModalTitle">
+      <div class="tafsir-modal-head">
+        <div>
+          <div class="tafsir-modal-title" id="hadithModalTitle">أحاديث اليوم (صحيحة)</div>
+          <div class="tafsir-modal-sub" id="hadithModalSub">—</div>
+        </div>
+
+        <div class="tafsir-modal-tools">
+          <button class="tafsir-tool-btn ghost" id="hadithCopy" type="button">نسخ الأحاديث</button>
+          <button class="tafsir-tool-btn" id="hadithMarkDone" type="button">تم ✅️</button>
+          <button type="button" class="tafsir-modal-close" id="closeHadithModal" aria-label="إغلاق">✕</button>
+        </div>
+      </div>
+
+      <div class="tafsir-modal-body">
+        <div class="tafsir-page-nav" id="hadithMeta"></div>
+        <div class="tafsir-pages" id="hadithList"></div>
+      </div>
+
+      <div class="tafsir-modal-foot">
+        <div class="tafsir-note">المصادر: صحيح البخاري وصحيح مسلم</div>
+        <button type="button" class="tafsir-modal-close-btn" id="closeHadithModal2">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- =====================
+       Admin Login Modal (Amjad)
+  ===================== -->
+  <div class="tafsir-modal-overlay" id="adminLoginModal" aria-hidden="true">
+    <div class="tafsir-modal-card" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle">
+      <div class="tafsir-modal-head">
+        <div>
+          <div class="tafsir-modal-title" id="adminLoginTitle">دخول أمجد</div>
+          <div class="tafsir-modal-sub">أدخل البريد وكلمة المرور للدخول كمسؤول.</div>
+        </div>
+        <button type="button" class="tafsir-modal-close" id="closeAdminLoginModal" aria-label="إغلاق">×</button>
+      </div>
+
+      <div class="tafsir-modal-body">
+        <div class="identity-guest" style="gap:10px; flex-wrap:wrap; justify-content:center">
+          <input id="adminLoginEmail" class="text-input" type="email" inputmode="email" placeholder="البريد الإلكتروني" autocomplete="username" style="min-width:240px" />
+          <input id="adminLoginPassword" class="text-input" type="password" placeholder="كلمة المرور" autocomplete="current-password" style="min-width:200px" />
+          <button id="adminLoginSubmitBtn" class="identity-btn" type="button">تسجيل الدخول</button>
+          <button id="adminLoginCancelBtn" class="identity-btn ghost" type="button">إلغاء</button>
+        </div>
+        <div id="adminLoginStatus" class="panel-sub" style="margin-top:10px; text-align:center"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================
+       JavaScript
+  ===================== -->
+  
+  </div>
+
 <script>
-const ramadanDate = new Date("2026-02-17T00:00:00").getTime();
+    const CONFIG = {
+      RAMADAN_DATE_ISO: "2026-02-17T00:00:00",
+      FORCE_HIZB_NUMBER: null,
 
-function updateCountdown() {
-    const now = new Date().getTime();
-    const diff = ramadanDate - now;
+      LINKS: {
+        DEFAULT_TAFSIR: "https://example.com/tafsir",
+        DEFAULT_RECOVERY_ARTICLE: "https://example.com/recovery-article",
+      },
 
-    if (diff <= 0) {
-        document.querySelector(".countdown").innerHTML =
-            "<p style='color:#7cf2a4;font-size:22px'>🌙 رمضان مبارك 🌙</p>";
-        return;
-    }
+      CHALLENGES: [
+        "تمرين الضغط 10 مرات",
+        "ترتيب الغرفة 10 دقائق",
+        "مشي 15 دقيقة",
+        "شرب 6 أكواب ماء",
+        "قراءة 10 صفحات مفيدة",
+        "بلانك 45 ثانية",
+      ],
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
+      BREATH: {
+        TOTAL_SECONDS: 60,
+        PATTERN_TEXT: "شهيق 4 • حبس 2 • زفير 6",
+      },
 
-    document.getElementById("days").textContent = days;
-    document.getElementById("hours").textContent = hours;
-    document.getElementById("minutes").textContent = minutes;
-    document.getElementById("seconds").textContent = seconds;
+      AZKAR: {
+        MORNING: {
+          title: "أذكار الصباح",
+          url: "https://www.islambook.com/AzkarPrint/1",
+          note: "المصدر: islambook (نسخة الطباعة لأذكار الصباح)",
+        },
+        EVENING: {
+          title: "أذكار المساء",
+          url: "https://www.islambook.com/AzkarPrint/2",
+          note: "المصدر: islambook (نسخة الطباعة لأذكار المساء)",
+        },
+      },
+
+      TAFSIR: {
+        NAME: "تفسير ابن كثير",
+        RESOURCE_ID: null,
+        RESOURCES_API: "https://api.quran.com/api/v4/resources/tafsirs",
+      },
+
+      QURAN: {
+            START_DATE_ISO: "2026-01-26T00:00:00", // غيّره لتاريخ بداية التحدي (نفسه للجميع)
+            TOTAL_PAGES: 604,
+            PAGES_PER_DAY: 10,
+            API_BASE: "https://api.quran.com/api/v4/verses/by_page/",
+            FIELDS: "text_uthmani,verse_key",
+       },
+    };
+
+    const TASK_KEYS = [
+      "attendance",
+      "morning_adhkar",
+      "quran_hizb",
+      "hadith",
+      "recovery_article",
+      "deep_breath",
+      "challenge",
+      "evening_adhkar",
+    ];
+
+    const WA3I_CTX = { todayISO: null, state: null };
+    let breathInterval = null;
+
+    function qs(sel) { return document.querySelector(sel); }
+    function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
+    function pad2(n) { return String(n).padStart(2, "0"); }
+
+    
+
+    
+// ---------------------------
+// Identity (local app user)
+// ---------------------------
+const USER_STORAGE_KEY = "wa3i_current_user_v1";
+let WA3I_USER = null;
+let COUNTDOWN_INTERVAL_ID = null;
+
+function slugifyName(name) {
+  const s = String(name || "").trim();
+  if (!s) return "guest";
+  return s
+    .replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "") || "guest";
 }
 
-updateCountdown();
-setInterval(updateCountdown, 1000);
-</script>
+function currentUserId() {
+  return WA3I_USER?.id || "guest";
+}
 
+function readCurrentUser() {
+  // Intentionally disabled: we never persist or restore the last user.
+  return null;
+}
+
+function saveCurrentUser(user) {
+  WA3I_USER = user;
+  updateUserBar();
+}
+
+function clearCurrentUser() {
+  WA3I_USER = null;
+  updateUserBar();
+}
+
+function updateUserBar() {
+  const pill = qs("#currentUserPill");
+  if (pill) pill.textContent = WA3I_USER?.name || "ضيف";
+}
+
+function showGate() {
+  qs("#identityGate")?.classList.remove("is-hidden");
+  const app = qs("#appRoot");
+  if (app) {
+    app.classList.add("is-hidden");
+    app.setAttribute("aria-hidden", "true");
+  }
+}
+
+function hideGate() {
+  qs("#identityGate")?.classList.add("is-hidden");
+  const app = qs("#appRoot");
+  if (app) {
+    app.classList.remove("is-hidden");
+    app.setAttribute("aria-hidden", "false");
+  }
+  updateUserBar();
+}
+
+function readMembersFromDOM() {
+  const cards = qsa("#members .slide-card");
+  const out = [];
+  cards.forEach((card, idx) => {
+    const img = card.querySelector("img");
+    const nameEl = card.querySelector("h3");
+    const name = (nameEl?.textContent || img?.getAttribute("alt") || "").trim();
+    const src = img?.getAttribute("src") || "";
+    if (!name || !src) return;
+    out.push({
+      id: `member_${idx}`,
+      name,
+      src,
+    });
+  });
+  return out;
+}
+
+
+function decorateMemberCardsWithStreaks() {
+  const cards = qsa("#members .slide-card");
+  cards.forEach((card, idx) => {
+    const nameEl = card.querySelector("h3");
+    if (!nameEl) return;
+
+    let row = card.querySelector(".member-name-row");
+    if (!row) {
+      row = document.createElement("div");
+      row.className = "member-name-row";
+      nameEl.parentNode?.insertBefore(row, nameEl);
+      row.appendChild(nameEl);
+    }
+
+    let badge = row.querySelector(".streak-badge");
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "streak-badge member-streak-badge";
+      row.appendChild(badge);
+    }
+
+    const streak = getStreakForUserId(`member_${idx}`);
+    if (streak > 0) {
+      badge.textContent = `🔥${formatArabicNumber(streak)}`;
+      badge.style.display = "";
+    } else {
+      badge.textContent = "";
+      badge.style.display = "none";
+    }
+  });
+}
+
+function renderIdentityGrid(members, filterText = "") {
+  const grid = qs("#identityGrid");
+  if (!grid) return;
+
+  const q = String(filterText || "").trim();
+  const list = q ? members.filter((m) => m.name.includes(q)) : members;
+
+  grid.innerHTML = list.length
+    ? list
+        .map((m) => {
+          const streak = getStreakForUserId(m.id);
+          const badge = streak > 0 ? ` <span class="streak-badge">🔥${formatArabicNumber(streak)}</span>` : "";
+          return `
+        <button class="identity-item" type="button" data-user-id="${m.id}" aria-label="${m.name}">
+          <img class="identity-avatar" src="${m.src}" alt="${m.name}" />
+          <div class="identity-name">${m.name}${badge}</div>
+        </button>
+      `;
+        })
+        .join("")
+    : `<div class="identity-empty">لا توجد نتائج… جرّب اسمًا آخر أو ادخل كضيف.</div>`;
+
+  grid.querySelectorAll(".identity-item").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-user-id");
+      const user = members.find((x) => x.id === id);
+      if (!user) return;
+
+      if (isAmjadMember(user)) {
+        wireAdminLoginModal();
+        openAdminLoginModal(user);
+        return;
+      }
+
+      saveCurrentUser({ id: user.id, name: user.name, kind: "member" });
+      startApp();
+    });
+  });
+}
+
+function wireGuestEntry() {
+  const btn = qs("#enterGuestBtn");
+  const input = qs("#guestName");
+
+  const enter = () => {
+    const raw = (input?.value || "").trim();
+    const name = raw || "ضيف";
+    const id = raw ? `guest_${slugifyName(raw)}` : "guest";
+    saveCurrentUser({ id, name, kind: "guest" });
+    if (input) input.value = "";
+    startApp();
+  };
+
+  btn?.addEventListener("click", enter);
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") enter();
+  });
+}
+
+function closeAllModals() {
+  document.querySelectorAll(".tafsir-modal-overlay.open").forEach((m) => {
+    m.classList.remove("open");
+    m.setAttribute("aria-hidden", "true");
+  });
+  document.body.style.overflow = "";
+}
+
+let PENDING_ADMIN_USER = null;
+let ADMIN_MODAL_WIRED = false;
+
+function isAmjadMember(user) {
+  return Boolean(user && String(user.name || "").trim() === "أمجد");
+}
+
+function openAdminLoginModal(user) {
+  PENDING_ADMIN_USER = user;
+
+  const modal = qs("#adminLoginModal");
+  const status = qs("#adminLoginStatus");
+  const email = qs("#adminLoginEmail");
+  const pass = qs("#adminLoginPassword");
+
+  if (status) status.textContent = "";
+  if (email) email.value = "";
+  if (pass) pass.value = "";
+
+  if (!modal) return;
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
+  // Focus password first (you usually paste email once)
+  setTimeout(() => {
+    (email || pass)?.focus?.();
+  }, 50);
+}
+
+function closeAdminLoginModal() {
+  const modal = qs("#adminLoginModal");
+  if (!modal) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  PENDING_ADMIN_USER = null;
+}
+
+async function submitAdminLogin() {
+  const status = qs("#adminLoginStatus");
+  const email = (qs("#adminLoginEmail")?.value || "").trim();
+  const password = (qs("#adminLoginPassword")?.value || "").trim();
+
+  if (!email || !password) {
+    if (status) status.textContent = "اكتب البريد وكلمة المرور.";
+    return;
+  }
+
+  const trySignIn = async () => {
+    if (!fbAvailable()) throw new Error("FB_NOT_READY");
+    const { auth, setPersistence, inMemoryPersistence, signInWithEmailAndPassword } = window.FB;
+
+    // Force "ask every time": do not persist the session.
+    await setPersistence(auth, inMemoryPersistence);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  try {
+    if (status) status.textContent = "جاري تسجيل الدخول…";
+    await trySignIn();
+
+    // Success: enter app as Amjad.
+    const pending = PENDING_ADMIN_USER;
+    closeAdminLoginModal();
+    if (pending) {
+      saveCurrentUser({ id: pending.id, name: pending.name, kind: "member" });
+      startApp();
+    }
+  } catch (e) {
+    if (String(e?.message || "").includes("FB_NOT_READY")) {
+      if (status) status.textContent = "انتظر لحظة…";
+      setTimeout(submitAdminLogin, 250);
+      return;
+    }
+    if (status) status.textContent = "بيانات الدخول غير صحيحة أو لا يوجد اتصال.";
+  }
+}
+
+function wireAdminLoginModal() {
+  if (ADMIN_MODAL_WIRED) return;
+  ADMIN_MODAL_WIRED = true;
+
+  const modal = qs("#adminLoginModal");
+  const closeBtn = qs("#closeAdminLoginModal");
+  const cancelBtn = qs("#adminLoginCancelBtn");
+  const submitBtn = qs("#adminLoginSubmitBtn");
+  const pass = qs("#adminLoginPassword");
+
+  closeBtn?.addEventListener("click", closeAdminLoginModal);
+  cancelBtn?.addEventListener("click", closeAdminLoginModal);
+  submitBtn?.addEventListener("click", submitAdminLogin);
+
+  pass?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitAdminLogin();
+  });
+
+  // Click outside closes
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeAdminLoginModal();
+  });
+}
+
+function wireSwitchUserButton() {
+  const btn = qs("#switchUserBtn");
+  if (!btn) return;
+
+  btn.addEventListener("click", async () => {
+    closeAllModals();
+    if (COUNTDOWN_INTERVAL_ID) {
+      clearInterval(COUNTDOWN_INTERVAL_ID);
+      COUNTDOWN_INTERVAL_ID = null;
+    }
+
+    clearCurrentUser();
+
+    // Force "ask every time" for Amjad: sign out Firebase on user switch.
+    try {
+      if (fbAvailable()) await window.FB.signOut(window.FB.auth);
+    } catch {}
+
+    initIdentityGate();
+  });
+}
+
+function startApp() {
+  hideGate();
+  initCountdown();
+  initDailyFlow();
+  setupAzkarModal();
+  initAhdPage();
+}
+
+function initIdentityGate() {
+  showGate();
+
+  const members = readMembersFromDOM();
+  renderIdentityGrid(members);
+
+  const lastBox = qs("#identityLast");
+  if (lastBox) {
+    lastBox.classList.add("is-hidden");
+    lastBox.innerHTML = "";
+  }
+
+  const search = qs("#identitySearch");
+  if (search) {
+    search.value = "";
+    search.addEventListener("input", () => renderIdentityGrid(members, search.value));
+  }
+
+  wireGuestEntry();
+  wireSwitchUserButton();
+}
+
+function userKey(suffix) {
+  return `wa3i_${currentUserId()}_${suffix}`;
+}
+
+function getStreakForUserId(userId) {
+  const raw = localStorage.getItem(`wa3i_${userId}_streak`);
+  const n = parseInt(raw || "0", 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+// ---------------------------
+// Ahd (Firebase Firestore + Auth)
+// ---------------------------
+// Firebase Ahd (Firestore + Auth)
+// ---------------------------
+const AMJAD_ADMIN_UID = "OpXzKToeVbd9xp1KHuqnD95yXlm2";
+
+let FB_STATE = {
+  ready: false,
+  user: null,
+  isAdmin: false,
+  tribe: new Map(), // memberId -> {name, src}
+  ahd: new Set(),   // memberId
+  unsubscribers: [],
+};
+
+function fbAvailable() {
+  return typeof window.FB !== "undefined" && window.FB?.db && window.FB?.auth;
+}
+
+function rebuildTribeMapFromDOM() {
+  const members = readMembersFromDOM();
+  FB_STATE.tribe = new Map(members.map((m) => [m.id, { name: m.name, src: m.src }]));
+}
+
+function setAhdAdminVisibility() {
+  const wrap = qs("#ahdAdminWrap");
+  const manageBox = qs("#ahdManageBox");
+  if (wrap) wrap.style.display = FB_STATE.isAdmin ? "block" : "none";
+  if (manageBox) manageBox.style.display = FB_STATE.isAdmin ? "block" : "none";
+}
+
+function renderAhdPublicList() {
+  const el = qs("#ahdPublicList");
+  const count = qs("#ahdCount");
+  if (!el || !count) return;
+
+  const ahdMembers = Array.from(FB_STATE.ahd)
+    .map((id) => ({ id, ...(FB_STATE.tribe.get(id) || { name: id, src: "" }) }))
+    .sort((a, b) => (a.name || "").localeCompare(b.name || "", "ar"));
+
+  count.textContent = `${formatArabicNumber(ahdMembers.length)} عضو`;
+
+  el.innerHTML = ahdMembers.length
+    ? ahdMembers
+        .map(
+          (m) => `
+        <div class="identity-item" style="cursor:default">
+          <img class="identity-avatar" src="${m.src || "images/person1.jpg"}" alt="${escapeHtml(m.name || m.id)}" />
+          <div class="identity-name">${escapeHtml(m.name || m.id)}</div>
+        </div>
+      `
+        )
+        .join("")
+    : `<div class="identity-empty">لا يوجد أعضاء في العهد بعد.</div>`;
+
+  if (FB_STATE.isAdmin) {
+    renderAhdAdminLists(qs("#ahdAdminSearch")?.value || "");
+  }
+}
+
+function renderAhdAdminLists(filterText = "") {
+  const notInEl = qs("#tribeNotInAhdList");
+  const ahdEl = qs("#ahdManageList");
+  if (!notInEl || !ahdEl) return;
+
+  const q = String(filterText || "").trim();
+
+  const tribeList = Array.from(FB_STATE.tribe.entries()).map(([id, m]) => ({ id, ...m }));
+  const notIn = tribeList
+    .filter((m) => !FB_STATE.ahd.has(m.id))
+    .filter((m) => (q ? (m.name || "").includes(q) : true))
+    .sort((a, b) => (a.name || "").localeCompare(b.name || "", "ar"));
+
+  const inAhd = tribeList
+    .filter((m) => FB_STATE.ahd.has(m.id))
+    .sort((a, b) => (a.name || "").localeCompare(b.name || "", "ar"));
+
+  notInEl.innerHTML = notIn.length
+    ? notIn
+        .map(
+          (m) => `
+        <button class="identity-item" type="button" data-add-ahd="${m.id}" aria-label="إضافة ${escapeHtml(m.name)}">
+          <img class="identity-avatar" src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <div class="identity-name">${escapeHtml(m.name)}</div>
+        </button>
+      `
+        )
+        .join("")
+    : `<div class="identity-empty">لا يوجد أعضاء متاحون للإضافة.</div>`;
+
+  ahdEl.innerHTML = inAhd.length
+    ? inAhd
+        .map(
+          (m) => `
+        <button class="identity-item" type="button" data-remove-ahd="${m.id}" aria-label="حذف ${escapeHtml(m.name)}">
+          <img class="identity-avatar" src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <div class="identity-name">${escapeHtml(m.name)}</div>
+        </button>
+      `
+        )
+        .join("")
+    : `<div class="identity-empty">لا يوجد أعضاء في العهد.</div>`;
+
+  notInEl.querySelectorAll("[data-add-ahd]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-add-ahd");
+      await addMemberToAhd(id);
+    });
+  });
+
+  ahdEl.querySelectorAll("[data-remove-ahd]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-remove-ahd");
+      const ok = confirm("هل تريد حذف هذا العضو من العهد؟");
+      if (!ok) return;
+      await removeMemberFromAhd(id);
+    });
+  });
+}
+
+async function addMemberToAhd(memberId) {
+  if (!FB_STATE.isAdmin) return;
+  const id = String(memberId || "").trim();
+  if (!id) return;
+
+  const { db, doc, setDoc, serverTimestamp } = window.FB;
+  await setDoc(doc(db, "ahdMembers", id), { joinedAt: serverTimestamp() }, { merge: true });
+}
+
+async function removeMemberFromAhd(memberId) {
+  if (!FB_STATE.isAdmin) return;
+  const id = String(memberId || "").trim();
+  if (!id) return;
+
+  const { db, doc, deleteDoc } = window.FB;
+  await deleteDoc(doc(db, "ahdMembers", id));
+}
+
+function attachAhdFirestoreListener() {
+  const { db, onSnapshot, collection } = window.FB;
+
+  // Clean old listeners if any
+  FB_STATE.unsubscribers.forEach((u) => {
+    try {
+      u();
+    } catch {}
+  });
+  FB_STATE.unsubscribers = [];
+
+  const unsubAhd = onSnapshot(collection(db, "ahdMembers"), (snap) => {
+    FB_STATE.ahd = new Set();
+    snap.forEach((docSnap) => FB_STATE.ahd.add(docSnap.id));
+    renderAhdPublicList();
+  });
+
+  FB_STATE.unsubscribers.push(unsubAhd);
+}
+
+function initAhdPage() {
+  // Always use local (DOM) tribe members for names/avatars.
+  rebuildTribeMapFromDOM();
+
+  const tryInit = () => {
+    if (!fbAvailable()) return setTimeout(tryInit, 50);
+    if (FB_STATE.ready) return;
+
+    FB_STATE.ready = true;
+
+    window.FB.onAuthStateChanged(window.FB.auth, (user) => {
+      FB_STATE.user = user || null;
+      FB_STATE.isAdmin = Boolean(user && user.uid === AMJAD_ADMIN_UID);
+
+      setAhdAdminVisibility();
+      renderAhdPublicList();
+    });
+
+    // Admin search input
+    qs("#ahdAdminSearch")?.addEventListener("input", (e) => {
+      if (!FB_STATE.isAdmin) return;
+      renderAhdAdminLists(e.target.value || "");
+    });
+
+    attachAhdFirestoreListener();
+    setAhdAdminVisibility();
+    renderAhdPublicList();
+  };
+
+  tryInit();
+}
+
+function toLocalISODate(d) {
+      return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    }
+
+    function dayOfYear(d) {
+      const start = new Date(d.getFullYear(), 0, 0);
+      return Math.floor((d - start) / 86400000);
+    }
+
+    function formatArabicNumber(n) {
+      return String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
+    }
+
+    function storageKeyForToday(isoDate) {
+      return `wa3i_${currentUserId()}_daily_${isoDate}`;
+    }
+
+    function getDailyState(isoDate) {
+      const raw = localStorage.getItem(storageKeyForToday(isoDate));
+      if (!raw) return null;
+      try {
+        const st = JSON.parse(raw);
+        if (st && st.tasks && typeof st.tasks === "object") {
+          if (st.tasks.hadith === undefined && st.tasks.tafsir !== undefined) {
+            st.tasks.hadith = Boolean(st.tasks.tafsir);
+          }
+          TASK_KEYS.forEach((k) => {
+            if (st.tasks[k] === undefined) st.tasks[k] = false;
+          });
+        }
+        return st;
+      } catch {
+        return null;
+      }
+    }
+
+    function setDailyState(isoDate, state) {
+      localStorage.setItem(storageKeyForToday(isoDate), JSON.stringify(state));
+    }
+
+    function defaultDailyState() {
+      const tasks = {};
+      TASK_KEYS.forEach((k) => (tasks[k] = false));
+      return {
+        tasks,
+        breathSecondsLeft: CONFIG.BREATH.TOTAL_SECONDS,
+        breathRunning: false,
+        completedAll: false,
+        completedAt: null,
+      };
+    }
+
+    function setCheckbox(taskKey, checked) {
+      const el = qs(`input[type="checkbox"][data-task="${taskKey}"]`);
+      if (el) el.checked = Boolean(checked);
+    }
+
+    function isAllCompleted(state) {
+      return TASK_KEYS.every((k) => Boolean(state.tasks[k]));
+    }
+
+    function getStreak() {
+      const raw = localStorage.getItem(userKey("streak"));
+      const n = parseInt(raw || "0", 10);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+function setStreak(n) {
+      localStorage.setItem(userKey("streak"), String(n));
+      const el = qs("#streakCount");
+      if (el) el.textContent = String(n);
+    }
+
+function getLastCompletedDate() {
+      return localStorage.getItem(userKey("last_completed_date"));
+    }
+
+function setLastCompletedDate(isoDate) {
+      localStorage.setItem(userKey("last_completed_date"), isoDate);
+    }
+
+function previousISODate(isoDate) {
+      const [y, m, d] = isoDate.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      dt.setDate(dt.getDate() - 1);
+      return toLocalISODate(dt);
+    }
+
+    function updateProgressUI(state) {
+      const done = TASK_KEYS.filter((k) => state.tasks[k]).length;
+      const pct = Math.round((done / TASK_KEYS.length) * 100);
+
+      qs("#progressText").textContent = `${pct}%`;
+      qs("#progressFill").style.width = `${pct}%`;
+
+      qs("#progressSub").textContent =
+        pct === 100 ? "تمت رحلة اليوم بالكامل… ثبتك الله 🤍" :
+        pct >= 60 ? "قريب جدًا… أكمل وارتاح." :
+        pct >= 25 ? "بداية ممتازة… واصل." :
+        "ابدأ بخطوة واحدة… ثم أكمل.";
+    }
+
+    function maybeUpdateStreakOnFullCompletion(todayISO, state) {
+      if (!isAllCompleted(state)) return;
+      if (state.completedAll) return;
+
+      const last = getLastCompletedDate();
+      const yesterday = previousISODate(todayISO);
+
+      let streak = getStreak();
+      if (last === yesterday) streak += 1;
+      else if (last === todayISO) streak = streak;
+      else streak = 1;
+
+      state.completedAll = true;
+      state.completedAt = new Date().toISOString();
+
+      setStreak(streak);
+      setLastCompletedDate(todayISO);
+    }
+
+    function applyLinks() {
+  const recovery = qs("#recoveryLink");
+  if (recovery) recovery.href = CONFIG.LINKS.DEFAULT_RECOVERY_ARTICLE;
+}
+
+    // ---------------------------
+    // Countdown
+    // ---------------------------
+    function initCountdown() {
+      const ramadanDate = new Date(CONFIG.RAMADAN_DATE_ISO).getTime();
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const diff = ramadanDate - now;
+
+        if (diff <= 0) {
+          const el = document.querySelector(".countdown");
+          if (el) el.innerHTML = "<p style='color:#7cf2a4;font-size:22px'>🌙 رمضان مبارك 🌙</p>";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        qs("#days").textContent = days;
+        qs("#hours").textContent = hours;
+        qs("#minutes").textContent = minutes;
+        qs("#seconds").textContent = seconds;
+      }
+
+      updateCountdown();
+      if (COUNTDOWN_INTERVAL_ID) clearInterval(COUNTDOWN_INTERVAL_ID);
+      COUNTDOWN_INTERVAL_ID = setInterval(updateCountdown, 1000);
+    }
+
+    // ---------------------------
+    // Breath timer
+    // ---------------------------
+    function fmtTime(totalSeconds) {
+      const m = Math.floor(totalSeconds / 60);
+      const s = totalSeconds % 60;
+      return `${pad2(m)}:${pad2(s)}`;
+    }
+
+    function setBreathUI(state) {
+      qs("#breathTime").textContent = fmtTime(state.breathSecondsLeft);
+      qs("#breathHint").textContent = CONFIG.BREATH.PATTERN_TEXT;
+
+      const done = Boolean(state.tasks.deep_breath);
+      const pill = qs("#breathStatus");
+      pill.textContent = done ? "مكتمل ✅️" : "غير مكتمل";
+      pill.classList.toggle("ok", done);
+
+      qs("#breathStart").textContent = state.breathRunning ? "إيقاف" : "ابدأ";
+    }
+
+    function stopBreathTimer(state) {
+      if (breathInterval) {
+        clearInterval(breathInterval);
+        breathInterval = null;
+      }
+      state.breathRunning = false;
+      setBreathUI(state);
+    }
+
+    function startBreathTimer(todayISO, state) {
+      if (state.breathRunning) {
+        stopBreathTimer(state);
+        setDailyState(todayISO, state);
+        return;
+      }
+
+      state.breathRunning = true;
+      setBreathUI(state);
+      setDailyState(todayISO, state);
+
+      breathInterval = setInterval(() => {
+        if (!state.breathRunning) return;
+
+        state.breathSecondsLeft = Math.max(0, state.breathSecondsLeft - 1);
+
+        if (state.breathSecondsLeft === 0) {
+          state.tasks.deep_breath = true;
+          setCheckbox("deep_breath", true);
+          stopBreathTimer(state);
+          updateProgressUI(state);
+          maybeUpdateStreakOnFullCompletion(todayISO, state);
+        }
+
+        setBreathUI(state);
+        setDailyState(todayISO, state);
+      }, 1000);
+    }
+
+    function resetBreathTimer(todayISO, state) {
+      stopBreathTimer(state);
+      state.breathSecondsLeft = CONFIG.BREATH.TOTAL_SECONDS;
+      setBreathUI(state);
+      setDailyState(todayISO, state);
+    }
+
+    // ---------------------------
+    // Toast
+    // ---------------------------
+    function showToast(msg) {
+      const t = qs("#azkarToast");
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add("open");
+      window.setTimeout(() => t.classList.remove("open"), 2400);
+    }
+
+    // ---------------------------
+    // Azkar Modal
+    // ---------------------------
+    function setupAzkarModal() {
+      const modal = qs("#azkarModal");
+      const frame = qs("#azkarFrame");
+      const title = qs("#azkarModalTitle");
+      const note = qs("#azkarNote");
+      const search = qs("#azkarSearch");
+      const findBtn = qs("#azkarFindBtn");
+      const openBtn = qs("#azkarOpenNewTab");
+      const closeBtn = qs("#closeAzkarModal");
+      const closeBtn2 = qs("#closeAzkarModal2");
+
+      let currentUrl = null;
+
+      function openModal(cfg) {
+        currentUrl = cfg.url;
+        title.textContent = cfg.title;
+        note.textContent = cfg.note;
+        search.value = "";
+        frame.src = cfg.url;
+
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        frame.src = "about:blank";
+        currentUrl = null;
+        document.body.style.overflow = "";
+      }
+
+      qs("#openMorningAzkar").addEventListener("click", () => openModal(CONFIG.AZKAR.MORNING));
+      qs("#openEveningAzkar").addEventListener("click", () => openModal(CONFIG.AZKAR.EVENING));
+
+      closeBtn.addEventListener("click", closeModal);
+      closeBtn2.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+      });
+
+      openBtn.addEventListener("click", () => {
+        if (!currentUrl) return;
+        window.open(currentUrl, "_blank", "noopener,noreferrer");
+      });
+
+      async function doFind() {
+        const q = (search.value || "").trim();
+        if (!q) return;
+
+        try {
+          const ok = frame.contentWindow && frame.contentWindow.find && frame.contentWindow.find(q);
+          if (ok) return;
+        } catch { /* cross-origin */ }
+
+        try {
+          await navigator.clipboard.writeText(q);
+          showToast(`انسخنا "${q}". داخل الأذكار اضغط Ctrl+F ثم لصق`);
+        } catch {
+          showToast(`داخل الأذكار اضغط Ctrl+F وابحث عن: ${q}`);
+        }
+      }
+
+      findBtn.addEventListener("click", doFind);
+      search.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doFind();
+      });
+    }
+
+    // ---------------------------
+    // Quran (10 pages/day)
+    // ---------------------------
+    function getOrInitQuranStartDate(today) {
+      const key = "wa3i_quran_start_day_v1"; // يبدأ من أول صفحة يوم تشغيل أول مرة
+      let stored = localStorage.getItem(key);
+
+      if (!stored) {
+        const y = today.getFullYear();
+        const m = String(today.getMonth() + 1).padStart(2, "0");
+        const d = String(today.getDate()).padStart(2, "0");
+        stored = `${y}-${m}-${d}`;
+        localStorage.setItem(key, stored);
+      }
+
+      const parts = stored.split("-").map((v) => parseInt(v, 10));
+      if (parts.length === 3 && parts.every((n) => Number.isFinite(n))) {
+        const [y, m, d] = parts;
+        return new Date(y, m - 1, d);
+      }
+
+      const startDateRaw = new Date(CONFIG.QURAN.START_DATE_ISO);
+      return new Date(startDateRaw.getFullYear(), startDateRaw.getMonth(), startDateRaw.getDate());
+    }
+
+    function computeDailyQuranPages(today) {
+    const total = CONFIG.QURAN.TOTAL_PAGES;
+    const perDay = CONFIG.QURAN.PAGES_PER_DAY;
+
+    const startDate = getOrInitQuranStartDate(today);
+    const todayLocal = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    const diffDays = Math.floor((todayLocal.getTime() - startDate.getTime()) / 86400000);
+    const dayIndex = Math.max(0, diffDays); // قبل تاريخ البداية => اليوم الأول
+
+    const cycleLen = Math.ceil(total / perDay); // 604/10 => 61 يوم
+    const dayInCycle = dayIndex % cycleLen;
+
+    const start = (dayInCycle * perDay) + 1;
+    const end = Math.min(total, start + perDay - 1);
+
+    const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    return { start, end, pages };
+    }
+
+    async function fetchVersesByPage(pageNumber, opts = {}) {
+      const tafsirId = Number.isFinite(opts?.tafsirId) ? opts.tafsirId : null;
+      const cacheKey = tafsirId
+        ? `wa3i_quran_page_${pageNumber}_tafsir_${tafsirId}_v2`
+        : `wa3i_quran_page_${pageNumber}_v2`;
+
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed?.data && parsed?.savedAt && (Date.now() - parsed.savedAt) < 1000 * 60 * 60 * 24 * 30) {
+            return parsed.data;
+          }
+        } catch { /* ignore */ }
+      }
+
+      const url =
+        `${CONFIG.QURAN.API_BASE}${pageNumber}` +
+        `?language=ar&words=false&fields=${encodeURIComponent(CONFIG.QURAN.FIELDS)}` +
+        (tafsirId ? `&tafsirs=${encodeURIComponent(tafsirId)}` : "");
+
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const json = await res.json();
+      const verses = Array.isArray(json?.verses) ? json.verses : [];
+
+      const data = verses.map((v) => {
+        const key = v.verse_key || "";
+        const text = v.text_uthmani || v.text_qpc_hafs || v.text_imlaei || v.text || "";
+        const tafsirHtml = Array.isArray(v.tafsirs) && v.tafsirs[0]?.text ? String(v.tafsirs[0].text) : "";
+        return { key, text, tafsirHtml };
+      }).filter((x) => x.text);
+
+      localStorage.setItem(cacheKey, JSON.stringify({ savedAt: Date.now(), data }));
+      return data;
+    }
+
+    function buildQuranNav(pages) {
+      const nav = qs("#quranPageNav");
+      nav.innerHTML = "";
+
+      pages.forEach((p) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quran-page-chip";
+        btn.textContent = formatArabicNumber(p);
+        btn.addEventListener("click", () => {
+          const target = qs(`#quran-page-${p}`);
+          if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        nav.appendChild(btn);
+      });
+    }
+
+    function renderQuranPages(pages, pagesData) {
+      const pagesEl = qs("#quranPages");
+      pagesEl.innerHTML = "";
+
+      for (const page of pages) {
+        const verses = pagesData.get(page) || [];
+
+        const pageCard = document.createElement("div");
+        pageCard.className = "quran-page";
+        pageCard.id = `quran-page-${page}`;
+
+        const head = document.createElement("div");
+        head.className = "quran-page-head";
+        head.innerHTML = `<div class="quran-page-badge">صفحة ${formatArabicNumber(page)}</div>`;
+
+        const body = document.createElement("div");
+        body.className = "quran-text";
+
+        verses.forEach((v) => {
+          const ayahNo = (v.key.split(":")[1] || "").trim();
+
+          const span = document.createElement("span");
+          span.className = "quran-ayah";
+          span.innerHTML = `
+            <span class="ayah-text">${v.text}</span>
+            ${ayahNo ? `<span class="ayah-num">${formatArabicNumber(ayahNo)}</span>` : ""}
+          `;
+          body.appendChild(span);
+          body.appendChild(document.createTextNode(" "));
+        });
+
+        pageCard.appendChild(head);
+        pageCard.appendChild(body);
+        pagesEl.appendChild(pageCard);
+      }
+    }
+
+    function setupQuranModal(quranPlan) {
+      const modal = qs("#quranModal");
+      const openBtn = qs("#openQuranReading");
+      const closeBtn = qs("#closeQuranModal");
+      const closeBtn2 = qs("#closeQuranModal2");
+      const loader = qs("#quranLoader");
+      const error = qs("#quranError");
+      const title = qs("#quranModalTitle");
+      const sub = qs("#quranModalSub");
+
+      const copyPlanBtn = qs("#quranCopyPlan");
+      const markDoneBtn = qs("#quranMarkDone");
+
+      async function openModal() {
+        title.textContent = "قراءة اليوم";
+        sub.textContent = `صفحات ${formatArabicNumber(quranPlan.start)} إلى ${formatArabicNumber(quranPlan.end)}`;
+
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        loader.hidden = false;
+        error.hidden = true;
+        qs("#quranPages").innerHTML = "";
+        buildQuranNav(quranPlan.pages);
+
+        try {
+          const pagesData = new Map();
+          for (const p of quranPlan.pages) {
+            const verses = await fetchVersesByPage(p);
+            pagesData.set(p, verses);
+          }
+          renderQuranPages(quranPlan.pages, pagesData);
+          loader.hidden = true;
+        } catch {
+          loader.hidden = true;
+          error.hidden = false;
+        }
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      openBtn.addEventListener("click", openModal);
+      closeBtn.addEventListener("click", closeModal);
+      closeBtn2.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+      });
+
+      copyPlanBtn.addEventListener("click", async () => {
+        const txt = `قراءة اليوم: صفحات ${quranPlan.start} إلى ${quranPlan.end} (10 صفحات)`;
+        try {
+          await navigator.clipboard.writeText(txt);
+          showToast("تم نسخ الخطة ✅");
+        } catch {
+          showToast("تعذّر النسخ تلقائيًا");
+        }
+      });
+
+      markDoneBtn.addEventListener("click", () => {
+        if (!WA3I_CTX.state || !WA3I_CTX.todayISO) return;
+
+        WA3I_CTX.state.tasks.quran_hizb = true;
+        setCheckbox("quran_hizb", true);
+
+        updateProgressUI(WA3I_CTX.state);
+        maybeUpdateStreakOnFullCompletion(WA3I_CTX.todayISO, WA3I_CTX.state);
+        setDailyState(WA3I_CTX.todayISO, WA3I_CTX.state);
+
+        closeModal();
+      });
+    }
+
+
+    
+
+// ---------------------------
+    // Hadith (5/day, ثابت لنفس اليوم)
+    // ---------------------------
+    const HADITH_CFG = {
+      CACHE_KEY: "wa3i_hadith_bank_cache_v1",
+      CACHE_TTL_MS: 1000 * 60 * 60 * 24 * 30,
+      REMOTE: {
+        BUKHARI: "https://raw.githubusercontent.com/AhmedBaset/hadith-json/main/db/by_book/the_9_books/bukhari.json",
+        MUSLIM: "https://raw.githubusercontent.com/AhmedBaset/hadith-json/main/db/by_book/the_9_books/muslim.json",
+      },
+      FALLBACK: [{"id": "fallback_1", "book": "متفق عليه", "text": "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ."}, {"id": "fallback_2", "book": "متفق عليه", "text": "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ."}, {"id": "fallback_3", "book": "متفق عليه", "text": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ."}, {"id": "fallback_4", "book": "صحيح مسلم", "text": "الدِّينُ النَّصِيحَةُ."}, {"id": "fallback_5", "book": "صحيح مسلم", "text": "إِنَّ اللَّهَ جَمِيلٌ يُحِبُّ الْجَمَالَ."}, {"id": "fallback_6", "book": "صحيح البخاري", "text": "لَا تَغْضَبْ."}, {"id": "fallback_7", "book": "متفق عليه", "text": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ."}, {"id": "fallback_8", "book": "صحيح مسلم", "text": "مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ."}, {"id": "fallback_9", "book": "صحيح مسلم", "text": "لَا يَدْخُلُ الْجَنَّةَ مَنْ كَانَ فِي قَلْبِهِ مِثْقَالُ ذَرَّةٍ مِنْ كِبْرٍ."}, {"id": "fallback_10", "book": "متفق عليه", "text": "الْمَرْءُ مَعَ مَنْ أَحَبَّ."}],
+    };
+
+    function hash32(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0);
+    }
+
+    function mulberry32(seed) {
+      let a = seed >>> 0;
+      return function rnd() {
+        a |= 0;
+        a = (a + 0x6D2B79F5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function safeJsonParse(raw, fallbackValue) {
+      try {
+        const v = JSON.parse(raw);
+        return (v === null || v === undefined) ? fallbackValue : v;
+      } catch {
+        return fallbackValue;
+      }
+    }
+
+    function normalizeRemoteHadith(bookLabel, item) {
+      const id = item?.id;
+      const text = (item?.arabic || "").trim();
+      if (!Number.isFinite(id) || !text) return null;
+      return {
+        id: `${bookLabel}_${id}`,
+        book: bookLabel === "bukhari" ? "صحيح البخاري" : "صحيح مسلم",
+        text,
+      };
+    }
+
+    async function loadHadithBank() {
+      const cachedRaw = localStorage.getItem(HADITH_CFG.CACHE_KEY);
+      const cached = cachedRaw ? safeJsonParse(cachedRaw, null) : null;
+
+      if (cached?.savedAt && Array.isArray(cached?.data)) {
+        const age = Date.now() - Number(cached.savedAt);
+        if (age >= 0 && age < HADITH_CFG.CACHE_TTL_MS) return cached.data;
+      }
+
+      try {
+        const [bRes, mRes] = await Promise.all([
+          fetch(HADITH_CFG.REMOTE.BUKHARI, { headers: { Accept: "application/json" } }),
+          fetch(HADITH_CFG.REMOTE.MUSLIM, { headers: { Accept: "application/json" } }),
+        ]);
+
+        if (!bRes.ok || !mRes.ok) throw new Error("Hadith fetch failed");
+
+        const [bJson, mJson] = await Promise.all([bRes.json(), mRes.json()]);
+        const bArr = Array.isArray(bJson) ? bJson : [];
+        const mArr = Array.isArray(mJson) ? mJson : [];
+
+        const bank = [];
+        bArr.forEach((it) => {
+          const v = normalizeRemoteHadith("bukhari", it);
+          if (v) bank.push(v);
+        });
+        mArr.forEach((it) => {
+          const v = normalizeRemoteHadith("muslim", it);
+          if (v) bank.push(v);
+        });
+
+        if (bank.length < 50) throw new Error("Hadith bank too small");
+
+        localStorage.setItem(HADITH_CFG.CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data: bank }));
+        return bank;
+      } catch {
+        return HADITH_CFG.FALLBACK;
+      }
+    }
+
+    function pickDailyHadithIds(todayISO, allIds, usedSet) {
+      const available = allIds.filter((id) => !usedSet.has(id));
+      const pool = available.length >= 5 ? available : allIds;
+
+      const rng = mulberry32(hash32(`${todayISO}|${currentUserId()}`));
+      const arr = pool.slice();
+
+      // Fisher–Yates
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+
+      return arr.slice(0, 5);
+    }
+
+    async function getHadithOfDay(todayISO) {
+      const dailyKey = userKey(`hadith_daily_${todayISO}_v1`);
+      const usedKey = userKey("hadith_used_v1");
+
+      const stored = safeJsonParse(localStorage.getItem(dailyKey) || "", null);
+      if (stored?.ids && Array.isArray(stored.ids) && stored.ids.length === 5) {
+        const bank = await loadHadithBank();
+        const map = new Map(bank.map((h) => [h.id, h]));
+        const out = stored.ids.map((id) => map.get(id)).filter(Boolean);
+        if (out.length === 5) return out;
+      }
+
+      const bank = await loadHadithBank();
+      const allIds = bank.map((h) => h.id);
+
+      const usedArr = safeJsonParse(localStorage.getItem(usedKey) || "", []);
+      const usedSet = new Set(Array.isArray(usedArr) ? usedArr : []);
+
+      const ids = pickDailyHadithIds(todayISO, allIds, usedSet);
+      const map = new Map(bank.map((h) => [h.id, h]));
+      const hadiths = ids.map((id) => map.get(id)).filter(Boolean);
+
+      localStorage.setItem(dailyKey, JSON.stringify({ ids, savedAt: Date.now() }));
+
+      // Update used
+      const nextUsed = new Set(usedSet);
+      if (hadiths.length === 5) hadiths.forEach((h) => nextUsed.add(h.id));
+      // If we اضطررنا نرجع للقائمة كلها (بسبب نقص المتاح)، نعيد البدء من جديد
+      if (allIds.filter((id) => !usedSet.has(id)).length < 5) {
+        localStorage.setItem(usedKey, JSON.stringify(hadiths.map((h) => h.id)));
+      } else {
+        localStorage.setItem(usedKey, JSON.stringify(Array.from(nextUsed)));
+      }
+
+      return hadiths.length === 5 ? hadiths : HADITH_CFG.FALLBACK.slice(0, 5);
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderHadithUI(todayISO, hadiths) {
+      const sub = qs("#hadithModalSub");
+      if (sub) {
+        sub.textContent = `٥ أحاديث ثابتة لليوم • ${todayISO}`;
+      }
+
+      const meta = qs("#hadithMeta");
+      if (meta) {
+        meta.innerHTML = `
+          <span class="tafsir-page-chip">مصادر: الصحيحين</span>
+          <span class="tafsir-page-chip">لا تتكرر حتى تنفد القائمة</span>
+        `;
+      }
+
+      const list = qs("#hadithList");
+      if (!list) return;
+
+      list.innerHTML = hadiths.map((h, i) => {
+        const num = formatArabicNumber(i + 1);
+        return `
+          <div class="tafsir-page">
+            <div class="tafsir-page-head">
+              <span class="tafsir-page-badge">حديث ${num}</span>
+              <span class="tafsir-page-badge secondary">${escapeHtml(h.book || "—")}</span>
+            </div>
+            <div class="quran-text" style="font-size:18px;line-height:2.1">${escapeHtml(h.text)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function setupHadithModal(todayISO, state) {
+      const modal = qs("#hadithModal");
+      if (!modal) return;
+
+      const openBtn = qs("#openHadithModal");
+      const closeBtn = qs("#closeHadithModal");
+      const closeBtn2 = qs("#closeHadithModal2");
+      const copyBtn = qs("#hadithCopy");
+      const doneBtn = qs("#hadithMarkDone");
+
+      async function openModal() {
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        const list = qs("#hadithList");
+        if (list) list.innerHTML = `<div class="tafsir-loader">جارِ تحميل أحاديث اليوم…</div>`;
+
+        const hadiths = await getHadithOfDay(todayISO);
+        renderHadithUI(todayISO, hadiths);
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      if (openBtn) openBtn.addEventListener("click", openModal);
+      if (closeBtn) closeBtn.addEventListener("click", closeModal);
+      if (closeBtn2) closeBtn2.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+      });
+
+      if (copyBtn) {
+        copyBtn.addEventListener("click", async () => {
+          const hadiths = await getHadithOfDay(todayISO);
+          const txt = hadiths.map((h, i) => `${i + 1}) ${h.text} — (${h.book})`).join("\n\n");
+          try {
+            await navigator.clipboard.writeText(txt);
+            showToast("تم نسخ الأحاديث ✅");
+          } catch {
+            showToast("تعذّر النسخ تلقائيًا");
+          }
+        });
+      }
+
+      if (doneBtn) {
+        doneBtn.addEventListener("click", () => {
+          if (!WA3I_CTX.state || !WA3I_CTX.todayISO) return;
+
+          const curISO = WA3I_CTX.todayISO;
+          const curState = WA3I_CTX.state;
+
+          curState.tasks.hadith = true;
+          setCheckbox("hadith", true);
+          updateProgressUI(curState);
+          maybeUpdateStreakOnFullCompletion(curISO, curState);
+          setDailyState(curISO, curState);
+          closeModal();
+        });
+      }
+    }
+
+
+    // ---------------------------
+    // Daily init
+    // ---------------------------
+    function initDailyFlow() {
+      const today = new Date();
+      const todayISO = toLocalISODate(today);
+
+      qs("#todayDate").textContent = today.toLocaleDateString("ar", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+      const quranPlan = computeDailyQuranPages(today);
+
+      qs("#hizbNumber").textContent =
+        `صفحات ${formatArabicNumber(quranPlan.start)}–${formatArabicNumber(quranPlan.end)}`;
+
+      qs("#hizbLabel").textContent =
+        `صفحات ${formatArabicNumber(quranPlan.start)}–${formatArabicNumber(quranPlan.end)}`;
+
+      qs("#hizbHint").textContent = "نفس الصفحات للجميع حسب تاريخ اليوم";
+
+      qs("#challengeTitle").textContent = CONFIG.CHALLENGES[dayOfYear(today) % CONFIG.CHALLENGES.length];
+      applyLinks();
+
+      let state = getDailyState(todayISO);
+      if (!state) state = defaultDailyState();
+
+      WA3I_CTX.todayISO = todayISO;
+      WA3I_CTX.state = state;
+
+      TASK_KEYS.forEach((k) => {
+        if (typeof state.tasks?.[k] !== "boolean") state.tasks[k] = false;
+        setCheckbox(k, state.tasks[k]);
+      });
+
+      qs("#streakCount").textContent = String(getStreak());
+      setBreathUI(state);
+      updateProgressUI(state);
+
+      qsa('input[type="checkbox"][data-task]').forEach((el) => {
+        el.addEventListener("change", () => {
+          const key = el.getAttribute("data-task");
+          state.tasks[key] = el.checked;
+
+          if (key === "deep_breath" && el.checked === false) {
+            state.breathSecondsLeft = CONFIG.BREATH.TOTAL_SECONDS;
+            stopBreathTimer(state);
+          }
+
+          setBreathUI(state);
+          updateProgressUI(state);
+          maybeUpdateStreakOnFullCompletion(todayISO, state);
+          setDailyState(todayISO, state);
+        });
+      });
+
+      qs("#breathStart").addEventListener("click", () => startBreathTimer(todayISO, state));
+      qs("#breathReset").addEventListener("click", () => resetBreathTimer(todayISO, state));
+
+      qs("#resetToday").addEventListener("click", () => {
+        stopBreathTimer(state);
+        state = defaultDailyState();
+        WA3I_CTX.state = state;
+
+        TASK_KEYS.forEach((k) => setCheckbox(k, false));
+        setBreathUI(state);
+        updateProgressUI(state);
+        setDailyState(todayISO, state);
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && state.breathRunning) {
+          stopBreathTimer(state);
+          setDailyState(todayISO, state);
+        }
+      });
+
+      setupQuranModal(quranPlan);
+      setupHadithModal(todayISO, state);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      try { localStorage.removeItem(USER_STORAGE_KEY); } catch {}
+
+      // Fix: allow Amjad admin login modal to show while the identity gate is open.
+      // The gate hides #appRoot (which originally contains the modal), so we move the modal under <body>.
+      const adminModal = qs("#adminLoginModal");
+      if (adminModal && adminModal.parentElement !== document.body) {
+        document.body.appendChild(adminModal);
+      }
+
+
+      decorateMemberCardsWithStreaks();
+
+      initIdentityGate();
+    });
+</script>
 </body>
 </html>
