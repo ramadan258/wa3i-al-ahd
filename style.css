@@ -271,6 +271,103 @@ footer {
   border-color: rgba(250,204,21,0.32);
 }
 
+
+.identity-btn.danger{
+  background: rgba(255, 99, 99, 0.12);
+  border-color: rgba(255, 99, 99, 0.40);
+}
+
+.identity-btn.danger:hover{
+  border-color: rgba(255, 99, 99, 0.65);
+}
+
+/* Identity confirm modal */
+.identity-confirm-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 18px;
+}
+
+.identity-confirm-overlay.open{ display: flex; }
+
+.identity-confirm-card{
+  width: min(520px, 100%);
+  background: rgba(23, 26, 33, 0.98);
+  border: 1px solid rgba(250,204,21,0.18);
+  border-radius: 18px;
+  padding: 18px 16px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.65);
+  text-align: center;
+}
+
+.identity-confirm-title{
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.identity-confirm-avatar{
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid rgba(250,204,21,0.24);
+  object-fit: cover;
+  margin-top: 14px;
+}
+
+.identity-confirm-name{
+  margin-top: 10px;
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.identity-confirm-hint{
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.identity-confirm-error{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 99, 99, 0.35);
+  background: rgba(255, 99, 99, 0.10);
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.identity-confirm-actions{
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.identity-toast{
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 10001;
+  background: rgba(0,0,0,.75);
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--text-light);
+  padding: 10px 12px;
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0,0,0,.55);
+  display: none;
+  max-width: min(520px, calc(100% - 36px));
+  font-size: 13px;
+}
+
+.identity-toast.open{ display: block; }
+
 .identity-gate{
   position: fixed;
   inset: 0;
@@ -499,22 +596,4 @@ footer {
   gap: 6px;
   width: 100%;
 }
-
-/* Fix huge cards on wide screens (identity gate) */
-#identityGrid{
-  justify-items: center;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-}
-
-.identity-item{
-  width: 140px;
-  max-width: 160px;
-}
-
-.identity-avatar{
-  width: 110px;
-  height: 110px;
-  object-fit: cover;
-}
-
 
