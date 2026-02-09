@@ -30,7 +30,9 @@
       getFirestore,
       collection,
       doc,
-      setDoc,
+      
+      getDoc,
+setDoc,
       deleteDoc,
       serverTimestamp,
       onSnapshot,
@@ -64,7 +66,9 @@
       signInAnonymously,
       collection,
       doc,
-      setDoc,
+      
+      getDoc,
+setDoc,
       deleteDoc,
       serverTimestamp,
       onSnapshot,
@@ -106,6 +110,33 @@
 </div>
 
 </div>
+
+
+<!-- تأكيد اختيار المستخدم -->
+<div id="identityConfirmOverlay" class="identity-confirm-overlay" role="dialog" aria-modal="true" aria-label="تأكيد اختيار المستخدم">
+  <div class="identity-confirm-card">
+    <div class="identity-confirm-title" id="identityConfirmTitle">تأكيد الدخول</div>
+    <img id="identityConfirmAvatar" class="identity-confirm-avatar" src="" alt="" />
+    <div id="identityConfirmName" class="identity-confirm-name">—</div>
+    <div id="identityConfirmHint" class="identity-confirm-hint">
+      تأكد أنك اخترت اسمك الصحيح. إذا اخترت بالخطأ يمكن إصلاح ذلك عبر زر “تبديل المستخدم”.
+    </div>
+
+    <div id="identityConfirmError" class="identity-confirm-error is-hidden" aria-live="polite"></div>
+
+    <div class="identity-confirm-actions">
+      <button id="identityConfirmYes" class="identity-btn" type="button">نعم هذا أنا</button>
+      <button id="identityConfirmNo" class="identity-btn ghost" type="button">رجوع</button>
+    </div>
+
+    <div class="identity-confirm-actions is-hidden" id="identityResetActions">
+      <button id="identityResetBtn" class="identity-btn danger" type="button">إعادة ضبط هذا الجهاز</button>
+      <button id="identityResetCancel" class="identity-btn ghost" type="button">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="identity-toast" id="identityToast" aria-live="polite" aria-atomic="true"></div>
 
 <div id="appRoot" class="app-root is-hidden" aria-hidden="true">
 
@@ -334,8 +365,8 @@
         </div>
 
         <div class="slide-card">
-          <img src="images/person5.jpg" alt="يوسف صلاح" />
-          <h3>يوسف صلاح</h3>
+          <img src="images/person5.jpg" alt="مجاهد" />
+          <h3> مجاهد</h3>
         </div>
 
         <div class="slide-card">
@@ -374,13 +405,8 @@
         </div>
         
         <div class="slide-card">
-          <img src="images/person10.jpg" alt="سيف الدين محمد" />
-          <h3>سيف الدين محمد</h3>
-        </div>
-        
-        <div class="slide-card">
-          <img src="images/person10.jpg" alt="lol" />
-          <h3>lol</h3>
+          <img src="images/person10.jpg" alt="احمد" />
+          <h3>احمد</h3>
         </div>
 
         <div class="slide-card">
@@ -388,10 +414,31 @@
           <h3>سعد</h3>
         </div>
 
+        <div class="slide-card">
+          <img src="images/person14.jpg" alt="يوسف" />
+          <h3>يوسف</h3>
+        </div>
+
+        <div class="slide-card">
+          <img src="images/person15.jpg" alt="أبو بكر" />
+          <h3>أبو بكر</h3>
+        </div>
+
+        <div class="slide-card">
+          <img src="images/person16.jpg" alt="حبيب الله" />
+          <h3>حبيب الله</h3>
+        </div>
+      
+        <div class="slide-card">
+          <img src="images/person10.jpg" alt="الواثق بالله" />
+          <h3> الواثق بالله</h3>
         </div>
       </div>
     </div>
   </section>
+
+
+
   <!-- =====================
        العهد
   ===================== -->
@@ -713,17 +760,28 @@ function currentUserId() {
 }
 
 function readCurrentUser() {
-  // Intentionally disabled: we never persist or restore the last user.
-  return null;
+  try {
+    const raw = localStorage.getItem(USER_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    if (typeof parsed.id !== "string" || typeof parsed.name !== "string") return null;
+    if (!parsed.id) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 function saveCurrentUser(user) {
   WA3I_USER = user;
+  try { localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user)); } catch {}
   updateUserBar();
 }
 
 function clearCurrentUser() {
   WA3I_USER = null;
+  try { localStorage.removeItem(USER_STORAGE_KEY); } catch {}
   updateUserBar();
 }
 
@@ -868,9 +926,7 @@ function renderIdentityGrid(members, filterText = "") {
         return;
       }
 
-      saveCurrentUser({ id: user.id, name: user.name, kind: "member" });
-      try { await ensureMemberBinding(user.id); } catch {}
-      startApp();
+      openIdentityConfirm(user);
     });
   });
 }
@@ -1061,8 +1117,145 @@ function initIdentityGate() {
 
   wireGuestEntry();
   wireSwitchUserButton();
+  wireIdentityConfirmModal();
 }
 
+
+let PENDING_IDENTITY = null;
+
+function memberNameById(memberId) {
+  const list = IDENTITY_MEMBERS_CACHE || [];
+  const m = list.find((x) => x.id === String(memberId));
+  return m?.name || "";
+}
+
+function memberById(memberId) {
+  const list = IDENTITY_MEMBERS_CACHE || [];
+  return list.find((x) => x.id === String(memberId)) || null;
+}
+
+function showIdentityToast(message) {
+  const el = qs("#identityToast");
+  if (!el) return;
+  el.textContent = String(message || "").trim();
+  if (!el.textContent) return;
+  el.classList.add("open");
+  window.clearTimeout(el._t);
+  el._t = window.setTimeout(() => el.classList.remove("open"), 5200);
+}
+
+function openIdentityConfirm(user) {
+  PENDING_IDENTITY = user;
+  const overlay = qs("#identityConfirmOverlay");
+  const img = qs("#identityConfirmAvatar");
+  const name = qs("#identityConfirmName");
+  const err = qs("#identityConfirmError");
+  const resetActions = qs("#identityResetActions");
+  const yes = qs("#identityConfirmYes");
+  const no = qs("#identityConfirmNo");
+
+  if (err) {
+    err.classList.add("is-hidden");
+    err.textContent = "";
+  }
+  if (resetActions) resetActions.classList.add("is-hidden");
+  if (yes) yes.disabled = false;
+  if (no) no.disabled = false;
+
+  if (img) {
+    img.src = user?.src || "";
+    img.alt = user?.name || "عضو";
+  }
+  if (name) name.textContent = user?.name || "—";
+
+  overlay?.classList.add("open");
+}
+
+function closeIdentityConfirm() {
+  qs("#identityConfirmOverlay")?.classList.remove("open");
+  PENDING_IDENTITY = null;
+}
+
+async function resetDeviceIdentity() {
+  try { clearCurrentUser(); } catch {}
+  try {
+    if (fbAvailable()) await window.FB.signOut(window.FB.auth);
+  } catch {}
+  // Force a clean UID on next entry; simplest: reload.
+  window.location.reload();
+}
+
+function wireIdentityConfirmModal() {
+  const yes = qs("#identityConfirmYes");
+  const no = qs("#identityConfirmNo");
+  const reset = qs("#identityResetBtn");
+  const resetCancel = qs("#identityResetCancel");
+
+  if (no) no.addEventListener("click", () => closeIdentityConfirm());
+  if (resetCancel) resetCancel.addEventListener("click", () => closeIdentityConfirm());
+  if (reset) reset.addEventListener("click", () => resetDeviceIdentity());
+
+  if (yes) {
+    yes.addEventListener("click", async () => {
+      const user = PENDING_IDENTITY;
+      if (!user) return;
+
+      const errBox = qs("#identityConfirmError");
+      const resetActions = qs("#identityResetActions");
+      yes.disabled = true;
+      if (no) no.disabled = true;
+
+      try {
+        saveCurrentUser({ id: user.id, name: user.name, kind: "member" });
+        await ensureMemberBinding(user.id);
+        closeIdentityConfirm();
+        startApp();
+      } catch (e) {
+        const msg = String(e?.message || "");
+        if (msg === "BOUND_TO_OTHER_MEMBER") {
+          const bound = memberNameById(e.boundMemberId) || e.boundMemberId;
+          if (errBox) {
+            errBox.textContent = `هذا الجهاز مربوط مسبقًا بالعضو “${bound}”. لا يمكن تثبيت عضو آخر بدون إعادة ضبط الجهاز.`;
+            errBox.classList.remove("is-hidden");
+          }
+          if (resetActions) resetActions.classList.remove("is-hidden");
+        } else {
+          if (errBox) {
+            errBox.textContent = "تعذّر تأكيد الدخول الآن. جرّب مرة أخرى.";
+            errBox.classList.remove("is-hidden");
+          }
+          showIdentityToast("تعذّر تأكيد الدخول. تحقق من الاتصال ثم أعد المحاولة.");
+        }
+      } finally {
+        yes.disabled = false;
+        if (no) no.disabled = false;
+      }
+    });
+  }
+}
+
+async function tryAutoStartFromBinding() {
+  if (!fbAvailable()) return false;
+  try {
+    const user = await ensureAnonSignedIn();
+    const { db, doc, getDoc } = window.FB;
+    const ref = doc(db, FIRESTORE_BINDINGS, user.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return false;
+
+    const data = snap.data() || {};
+    const memberId = String(data.memberId || "");
+    if (!memberId) return false;
+
+    const member = memberById(memberId);
+    if (!member) return false;
+
+    saveCurrentUser({ id: member.id, name: member.name, kind: "member" });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 function userKey(suffix) {
   return `wa3i_${currentUserId()}_${suffix}`;
@@ -1188,11 +1381,22 @@ async function ensureMemberBinding(memberId) {
 
   const ref = doc(db, FIRESTORE_BINDINGS, user.uid);
   const snap = await getDoc(ref);
-  if (snap.exists()) return snap.data();
+
+  if (snap.exists()) {
+    const data = snap.data() || {};
+    const bound = String(data.memberId || "");
+    if (bound && bound !== String(memberId)) {
+      const err = new Error("BOUND_TO_OTHER_MEMBER");
+      err.boundMemberId = bound;
+      throw err;
+    }
+    return data;
+  }
 
   await setDoc(ref, { memberId: String(memberId), createdAt: serverTimestamp() });
-  return { memberId };
+  return { memberId: String(memberId) };
 }
+
 
 async function syncStreakToFirestore(memberId, count, todayISO) {
   try {
@@ -1205,7 +1409,11 @@ async function syncStreakToFirestore(memberId, count, todayISO) {
       { merge: true }
     );
   } catch (e) {
-    // non-fatal: keep local streak working even if Firestore is unavailable
+    // Keep local streak working, but surface binding mismatch clearly.
+    if (String(e?.message || "") === "BOUND_TO_OTHER_MEMBER") {
+      const name = memberNameById(e.boundMemberId) || e.boundMemberId;
+      showIdentityToast(`هذا الجهاز مربوط بـ “${name}”. اضغط “تبديل المستخدم” لتصحيح الاختيار.`);
+    }
   }
 }
 function getStreakForUserId(userId) {
@@ -2243,7 +2451,9 @@ function previousISODate(isoDate) {
         setCheckbox(k, state.tasks[k]);
       });
 
-      qs("#streakCount").textContent = String(getStreak());
+      const initialStreak = getStreakForUserId(currentUserId());
+      try { localStorage.setItem(userKey("streak"), String(initialStreak)); } catch {}
+      qs("#streakCount").textContent = String(initialStreak);
       setBreathUI(state);
       updateProgressUI(state);
 
@@ -2290,9 +2500,6 @@ function previousISODate(isoDate) {
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      try { localStorage.removeItem(USER_STORAGE_KEY); } catch {}
-
-      
       try { localStorage.removeItem("wa3i_quran_start_day_v1"); } catch {}
 // Fix: allow Amjad admin login modal to show while the identity gate is open.
       // The gate hides #appRoot (which originally contains the modal), so we move the modal under <body>.
@@ -2302,7 +2509,29 @@ function previousISODate(isoDate) {
       }
 
       decorateMemberCardsWithStreaks();
-      initIdentityGate();
+
+      // Bootstrap members cache and attempt automatic entry.
+      IDENTITY_MEMBERS_CACHE = readMembersFromDOM();
+      recomputeRanks(IDENTITY_MEMBERS_CACHE);
+      resetLocalStreaksForAllMembersOnce();
+      startSharedStreaksListener();
+
+      (async () => {
+        const auto = await tryAutoStartFromBinding();
+        if (auto) {
+          startApp();
+          return;
+        }
+
+        const saved = readCurrentUser();
+        if (saved && String(saved.kind || "") === "guest") {
+          saveCurrentUser(saved);
+          startApp();
+          return;
+        }
+
+        initIdentityGate();
+      })();
     });
 </script>
 </body>
