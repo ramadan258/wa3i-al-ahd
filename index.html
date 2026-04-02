@@ -1890,8 +1890,7 @@ setDoc,
             START_DATE_ISO: "2026-01-26T00:00:00", // غيّره لتاريخ بداية التحدي (نفسه للجميع)
             TOTAL_PAGES: 604,
             PAGES_PER_DAY: 3,
-            PDF_URL: "quran/standard1-quran.pdf",
-            PDF_VIEWER_PARAMS: "toolbar=0&navpanes=0&scrollbar=0&view=FitH",
+            PAGE_URL_TEMPLATE: "https://quran.com/page/{page}",
        },
     };
 
@@ -3931,7 +3930,8 @@ function previousISODate(isoDate) {
 
     function openDailyQuran(quranPlan) {
       const startPage = Math.max(1, Number(quranPlan?.start || 1));
-      const quranUrl = `${CONFIG.QURAN.PDF_URL}#page=${startPage}&${CONFIG.QURAN.PDF_VIEWER_PARAMS}`;
+      const quranUrl = String(CONFIG.QURAN.PAGE_URL_TEMPLATE || "https://quran.com/page/{page}")
+        .replace("{page}", String(startPage));
       const link = document.createElement("a");
       link.href = quranUrl;
       link.target = "_blank";
