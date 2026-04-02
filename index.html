@@ -1324,7 +1324,7 @@ setDoc,
 
         <div class="slide-card" data-member-id="member_6">
           <img src="images/person11.jpg" alt="سعيد" />
-          <h3>محمد</h3>
+          <h3>سعيد</h3>
         </div>
 
         <div class="slide-card" data-member-id="member_8">
@@ -1869,11 +1869,13 @@ setDoc,
 
       AZKAR: {
         MORNING: {
+          key: "morning",
           title: "أذكار الصباح",
           url: "https://www.islambook.com/AzkarPrint/1",
           note: "المصدر: islambook (نسخة الطباعة لأذكار الصباح)",
         },
         EVENING: {
+          key: "evening",
           title: "أذكار المساء",
           url: "https://www.islambook.com/AzkarPrint/2",
           note: "المصدر: islambook (نسخة الطباعة لأذكار المساء)",
@@ -3036,13 +3038,13 @@ function toLocalISODate(d) {
       return `آخر تقييم: ${dt.toLocaleTimeString("ar", { hour: "numeric", minute: "2-digit" })}`;
     }
 
-    function chooseRiskAzkarButton(state) {
+    function chooseRiskAzkarConfig(state) {
       const hour = new Date().getHours();
       const needMorning = !state?.tasks?.morning_adhkar;
       const needEvening = !state?.tasks?.evening_adhkar;
-      if (needMorning && (!needEvening || hour < 15)) return qs("#openMorningAzkar");
-      if (needEvening) return qs("#openEveningAzkar");
-      return hour < 15 ? qs("#openMorningAzkar") : qs("#openEveningAzkar");
+      if (needMorning && (!needEvening || hour < 15)) return CONFIG.AZKAR.MORNING;
+      if (needEvening) return CONFIG.AZKAR.EVENING;
+      return hour < 15 ? CONFIG.AZKAR.MORNING : CONFIG.AZKAR.EVENING;
     }
 
     function renderRiskCheckUI(state) {
@@ -3182,8 +3184,7 @@ function toLocalISODate(d) {
       const azkarBtn = qs("#riskActionAzkar");
       if (azkarBtn) {
         azkarBtn.onclick = () => {
-          const target = chooseRiskAzkarButton(WA3I_CTX.state);
-          target?.click();
+          openAzkarReader(chooseRiskAzkarConfig(WA3I_CTX.state));
         };
       }
     }
@@ -3458,7 +3459,7 @@ function toLocalISODate(d) {
       if (azkarBtn) {
         azkarBtn.onclick = () => {
           closeModal();
-          chooseRiskAzkarButton(WA3I_CTX.state)?.click();
+          openAzkarReader(chooseRiskAzkarConfig(WA3I_CTX.state));
         };
       }
 
@@ -3694,85 +3695,23 @@ function previousISODate(isoDate) {
       window.setTimeout(() => t.classList.remove("open"), 2400);
     }
 
+    function getAzkarReaderUrl(cfg) {
+      const key = String(cfg?.key || "morning").trim().toLowerCase() === "evening" ? "evening" : "morning";
+      return `azkar.html?type=${encodeURIComponent(key)}`;
+    }
+
+    function openAzkarReader(cfg) {
+      window.open(getAzkarReaderUrl(cfg), "_blank", "noopener,noreferrer");
+    }
+
     // ---------------------------
-    // Azkar Modal
+    // Azkar Reader
     // ---------------------------
     function setupAzkarModal() {
       if (AZKAR_MODAL_WIRED) return;
       AZKAR_MODAL_WIRED = true;
-
-      const modal = qs("#azkarModal");
-      const frame = qs("#azkarFrame");
-      const title = qs("#azkarModalTitle");
-      const note = qs("#azkarNote");
-      const search = qs("#azkarSearch");
-      const findBtn = qs("#azkarFindBtn");
-      const openBtn = qs("#azkarOpenNewTab");
-      const closeBtn = qs("#closeAzkarModal");
-      const closeBtn2 = qs("#closeAzkarModal2");
-
-      let currentUrl = null;
-
-      function openModal(cfg) {
-        currentUrl = cfg.url;
-        title.textContent = cfg.title;
-        note.textContent = cfg.note;
-        search.value = "";
-        frame.src = cfg.url;
-
-        modal.classList.add("open");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-      }
-
-      function closeModal() {
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
-        frame.src = "about:blank";
-        currentUrl = null;
-        document.body.style.overflow = "";
-      }
-
-      qs("#openMorningAzkar").addEventListener("click", () => openModal(CONFIG.AZKAR.MORNING));
-      qs("#openEveningAzkar").addEventListener("click", () => openModal(CONFIG.AZKAR.EVENING));
-
-      closeBtn.addEventListener("click", closeModal);
-      closeBtn2.addEventListener("click", closeModal);
-
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) closeModal();
-      });
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-      });
-
-      openBtn.addEventListener("click", () => {
-        if (!currentUrl) return;
-        window.open(currentUrl, "_blank", "noopener,noreferrer");
-      });
-
-      async function doFind() {
-        const q = (search.value || "").trim();
-        if (!q) return;
-
-        try {
-          const ok = frame.contentWindow && frame.contentWindow.find && frame.contentWindow.find(q);
-          if (ok) return;
-        } catch { /* cross-origin */ }
-
-        try {
-          await navigator.clipboard.writeText(q);
-          showToast(`انسخنا "${q}". داخل الأذكار اضغط Ctrl+F ثم لصق`);
-        } catch {
-          showToast(`داخل الأذكار اضغط Ctrl+F وابحث عن: ${q}`);
-        }
-      }
-
-      findBtn.addEventListener("click", doFind);
-      search.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") doFind();
-      });
+      qs("#openMorningAzkar")?.addEventListener("click", () => openAzkarReader(CONFIG.AZKAR.MORNING));
+      qs("#openEveningAzkar")?.addEventListener("click", () => openAzkarReader(CONFIG.AZKAR.EVENING));
     }
 
     // ---------------------------
