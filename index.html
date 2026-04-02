@@ -7,7 +7,20 @@
 
   <!-- SEO -->
   <meta name="description" content="الموحدون – واعي. مبادرة للثبات، مجاهدة النفس، وتجديد العهد في قبيلة الموحدون." />
-  <meta name="keywords" content="الموحدون, واعي, قبيلة الموحدون, رمضان, الثبات, مجاهدة النفس" />
+  <meta name="keywords" content="الموحدون, واعي, قبيلة الموحدون, التعافي, الثبات, مجاهدة النفس, عيد الأضحى" />
+  <meta name="theme-color" content="#0c1320" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="الموحدون – واعي" />
+  <meta property="og:title" content="الموحدون – واعي | قبيلة الموحدون" />
+  <meta property="og:description" content="مبادرة للثبات، مجاهدة النفس، وتجديد العهد في قبيلة الموحدون." />
+  <meta property="og:image" content="images/site-preview.png?v=2" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="شعار واعي مع عنوان قبيلة الموحدون" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="الموحدون – واعي | قبيلة الموحدون" />
+  <meta name="twitter:description" content="مبادرة للثبات، مجاهدة النفس، وتجديد العهد في قبيلة الموحدون." />
+  <meta name="twitter:image" content="images/site-preview.png?v=2" />
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
@@ -15,7 +28,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="favicon.ico?v=2" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2" />
+  <link rel="apple-touch-icon" href="images/site-icon-512.png?v=2" />
+  <link rel="manifest" href="site.webmanifest" />
 
   <!-- Firebase (Firestore + Auth) -->
   <script type="module">
@@ -91,16 +107,17 @@ setDoc,
   /* ── Hero bar ── */
   .today-hero {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 32px;
-    padding: 24px 20px;
-    background: linear-gradient(135deg, rgba(78,205,196,.07) 0%, rgba(245,200,66,.05) 100%);
-    border: 1px solid rgba(255,255,255,.06);
-    border-radius: 22px;
+    grid-template-columns: minmax(220px, 1.2fr) minmax(180px, .9fr) minmax(220px, 1.2fr);
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 18px;
+    background: linear-gradient(135deg, rgba(78,205,196,.06) 0%, rgba(245,200,66,.045) 100%);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 26px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 14px 34px rgba(0,0,0,.28);
   }
   .today-hero::before {
     content: "";
@@ -110,65 +127,81 @@ setDoc,
     background: linear-gradient(90deg, transparent, rgba(78,205,196,.35), rgba(245,200,66,.25), transparent);
   }
 
-  .today-hero-left { text-align: right; }
-  .today-hero-right { text-align: left; }
+  .today-hero-left,
+  .today-hero-center,
+  .today-hero-right {
+    position: relative;
+    z-index: 1;
+    min-height: 150px;
+    border-radius: 22px;
+    padding: 18px 20px;
+    background: linear-gradient(180deg, rgba(15,22,34,.9), rgba(10,16,26,.78));
+    border: 1px solid rgba(255,255,255,.05);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+  }
+
+  .today-hero-left { text-align: right; display:flex; flex-direction:column; justify-content:center; }
+  .today-hero-center { display:flex; align-items:center; justify-content:center; }
+  .today-hero-right { text-align: right; display:flex; flex-direction:column; justify-content:center; }
 
   .today-date-label,
-  .today-streak-label {
+  .today-focus-label {
     font-size: 11px;
-    letter-spacing: .8px;
-    text-transform: uppercase;
+    letter-spacing: .4px;
     color: var(--text-muted);
-    font-weight: 700;
-    margin-bottom: 4px;
+    font-weight: 800;
+    margin-bottom: 8px;
   }
   .today-date-val {
     font-family: "Amiri", serif;
-    font-size: 18px;
+    font-size: clamp(20px, 2.1vw, 30px);
     font-weight: 700;
     color: var(--text-light);
-    line-height: 1.4;
+    line-height: 1.5;
   }
-  .today-streak-val {
-    font-size: 42px;
-    font-weight: 900;
-    color: #ff9a3c;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .streak-fire { font-size: 30px; }
-  .today-streak-sub {
-    font-size: 12px;
+  .today-date-note {
+    margin-top: 10px;
+    font-size: 13px;
     color: var(--text-muted);
-    margin-top: 4px;
+    line-height: 1.7;
+  }
+  .today-focus-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-light);
+    margin-bottom: 8px;
+  }
+  .today-focus-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 28ch;
   }
 
   /* ── Ring progress ── */
   .today-ring-wrap {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 132px;
+    height: 132px;
     margin: 0 auto;
   }
   .today-ring-svg {
-    width: 120px;
-    height: 120px;
+    width: 132px;
+    height: 132px;
     transform: rotate(-90deg);
   }
   .ring-bg {
     fill: none;
-    stroke: rgba(255,255,255,.06);
-    stroke-width: 10;
+    stroke: rgba(255,255,255,.055);
+    stroke-width: 12;
   }
   .ring-fill {
     fill: none;
     stroke: url(#ringGrad);
-    stroke-width: 10;
+    stroke-width: 12;
     stroke-linecap: round;
     transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);
-    filter: drop-shadow(0 0 6px rgba(78,205,196,.5));
+    filter: drop-shadow(0 0 8px rgba(78,205,196,.45));
   }
   .today-ring-inner {
     position: absolute;
@@ -180,49 +213,338 @@ setDoc,
     text-align: center;
   }
   .today-ring-pct {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 900;
     color: var(--primary);
     line-height: 1;
   }
   .today-ring-sub {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text-muted);
-    margin-top: 3px;
-    max-width: 70px;
+    margin-top: 6px;
+    max-width: 82px;
     text-align: center;
-    line-height: 1.3;
+    line-height: 1.45;
+  }
+
+  @media(max-width: 920px) {
+    .today-hero {
+      grid-template-columns: 1fr;
+    }
+    .today-hero-center { order: -1; }
   }
 
   @media(max-width: 640px) {
     .today-hero {
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto;
+      padding: 14px;
+      gap: 12px;
+      border-radius: 22px;
     }
-    .today-hero-center { grid-column: 1 / -1; order: -1; }
-    .today-ring-wrap { width: 100px; height: 100px; }
-    .today-ring-svg { width: 100px; height: 100px; }
+    .today-hero-left,
+    .today-hero-center,
+    .today-hero-right {
+      min-height: auto;
+      padding: 16px;
+      border-radius: 18px;
+    }
+    .today-date-val { font-size: 26px; }
+    .today-focus-title { font-size: 21px; }
+    .today-focus-sub,
+    .today-date-note { font-size: 13px; }
+    .today-ring-wrap { width: 112px; height: 112px; }
+    .today-ring-svg { width: 112px; height: 112px; }
+  }
+
+  @media(max-width: 480px) {
+    .today-hero {
+      margin-bottom: 18px;
+      padding: 10px;
+      gap: 10px;
+      border-radius: 18px;
+    }
+    .today-hero-left,
+    .today-hero-center,
+    .today-hero-right {
+      padding: 14px 12px;
+      border-radius: 16px;
+    }
+    .today-date-val {
+      font-size: 23px;
+      line-height: 1.6;
+    }
+    .today-focus-title { font-size: 18px; }
+    .today-focus-sub,
+    .today-date-note {
+      font-size: 12px;
+      line-height: 1.75;
+    }
+    .today-ring-wrap,
+    .today-ring-svg {
+      width: 96px;
+      height: 96px;
+    }
+    .today-ring-pct { font-size: 24px; }
+    .today-ring-sub { font-size: 10px; max-width: 72px; }
+    .today-cards { gap: 10px; }
+    .tcard {
+      min-height: 0;
+      border-radius: 18px;
+      padding: 15px 14px;
+    }
+    .tcard-title { font-size: 16px; }
+    .tcard-desc { font-size: 12px; line-height: 1.8; }
   }
 
   /* ── Task cards ── */
   .today-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
   }
   @media(max-width: 820px) { .today-cards { grid-template-columns: repeat(2, 1fr); } }
   @media(max-width: 500px)  { .today-cards { grid-template-columns: 1fr; } }
 
+  .risk-check-card {
+    margin-bottom: 18px;
+    padding: 18px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,.07);
+    background:
+      radial-gradient(circle at top left, rgba(78,205,196,.12), transparent 38%),
+      linear-gradient(160deg, rgba(17,24,36,.98), rgba(10,15,24,.98));
+    box-shadow: 0 14px 36px rgba(0,0,0,.34);
+    position: relative;
+    overflow: hidden;
+  }
+  .risk-check-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,200,66,.24), rgba(78,205,196,.25), transparent);
+  }
+  .risk-check-card.is-low {
+    border-color: rgba(52,211,153,.18);
+    box-shadow: 0 14px 36px rgba(0,0,0,.34), 0 0 26px rgba(52,211,153,.05);
+  }
+  .risk-check-card.is-medium {
+    border-color: rgba(245,200,66,.2);
+    box-shadow: 0 14px 36px rgba(0,0,0,.34), 0 0 28px rgba(245,200,66,.06);
+  }
+  .risk-check-card.is-high {
+    border-color: rgba(255,120,120,.28);
+    box-shadow: 0 14px 36px rgba(0,0,0,.38), 0 0 34px rgba(255,120,120,.08);
+  }
+  .risk-check-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .risk-check-kicker {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: .4px;
+    margin-bottom: 6px;
+  }
+  .risk-check-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .risk-check-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-light);
+  }
+  .risk-check-desc {
+    margin: 10px 0 0;
+    max-width: 56ch;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .risk-level-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(255,255,255,.05);
+    color: var(--text-light);
+  }
+  .risk-level-pill.is-neutral { color: var(--text-muted); }
+  .risk-level-pill.is-low {
+    color: #7ef0b2;
+    background: rgba(52,211,153,.12);
+    border-color: rgba(52,211,153,.28);
+  }
+  .risk-level-pill.is-medium {
+    color: #ffd977;
+    background: rgba(245,200,66,.12);
+    border-color: rgba(245,200,66,.28);
+  }
+  .risk-level-pill.is-high {
+    color: #ffb4b4;
+    background: rgba(255,120,120,.12);
+    border-color: rgba(255,120,120,.28);
+  }
+  .risk-card-meta {
+    min-width: 170px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .risk-question-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .risk-question {
+    border-radius: 18px;
+    padding: 14px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .risk-question-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-light);
+    margin-bottom: 10px;
+  }
+  .risk-option-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .risk-option-btn {
+    border: 1px solid rgba(255,255,255,.09);
+    background: rgba(0,0,0,.24);
+    color: var(--text-light);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .risk-option-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(78,205,196,.26);
+  }
+  .risk-option-btn.is-selected {
+    background: rgba(78,205,196,.12);
+    border-color: rgba(78,205,196,.38);
+    box-shadow: 0 8px 20px rgba(0,0,0,.18);
+  }
+  .risk-option-btn[data-risk-group="mood"][data-risk-value="threatened"].is-selected,
+  .risk-option-btn[data-risk-group="urge"][data-risk-value="high"].is-selected {
+    background: rgba(255,120,120,.12);
+    border-color: rgba(255,120,120,.4);
+  }
+  .risk-result {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.07);
+    background: rgba(0,0,0,.18);
+  }
+  .risk-result.is-low {
+    border-color: rgba(52,211,153,.22);
+    background: linear-gradient(160deg, rgba(14,38,28,.58), rgba(8,17,21,.78));
+  }
+  .risk-result.is-medium {
+    border-color: rgba(245,200,66,.22);
+    background: linear-gradient(160deg, rgba(44,32,10,.52), rgba(12,15,23,.82));
+  }
+  .risk-result.is-high {
+    border-color: rgba(255,120,120,.24);
+    background: linear-gradient(160deg, rgba(52,16,20,.58), rgba(14,15,24,.84));
+  }
+  .risk-result-head { display: grid; gap: 8px; }
+  .risk-result-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-light);
+  }
+  .risk-result-desc {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.85;
+  }
+  .risk-advice-list {
+    margin-top: 14px;
+    display: grid;
+    gap: 8px;
+  }
+  .risk-advice-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.05);
+    color: var(--text-light);
+    font-size: 13px;
+    line-height: 1.75;
+  }
+  .risk-advice-mark {
+    color: var(--gold);
+    font-weight: 900;
+    line-height: 1.2;
+  }
+  .risk-action-row {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .risk-action-row .btn { min-width: 150px; }
+  .risk-action-row .btn.emergency {
+    background: rgba(255,120,120,.12);
+    color: #ffcece;
+    border: 1px solid rgba(255,120,120,.28);
+  }
+  .risk-action-row .btn.emergency:hover {
+    box-shadow: 0 8px 20px rgba(255,120,120,.14);
+  }
+  .tcard.is-watch {
+    border-color: rgba(245,200,66,.18);
+    box-shadow: 0 8px 26px rgba(0,0,0,.4), 0 0 24px rgba(245,200,66,.06);
+  }
+  .tcard.is-urgent {
+    border-color: rgba(255,120,120,.22);
+    box-shadow: 0 10px 28px rgba(0,0,0,.45), 0 0 28px rgba(255,120,120,.08);
+  }
+  .tcard.is-urgent::after {
+    background: linear-gradient(90deg, transparent, rgba(255,120,120,.28), transparent);
+  }
+
   .tcard {
     background: linear-gradient(155deg, #141d28, #0e1420);
     border: 1px solid rgba(255,255,255,.06);
-    border-radius: 20px;
-    padding: 20px 18px;
+    border-radius: 22px;
+    padding: 18px;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    justify-content: space-between;
+    min-height: 220px;
     transition: transform .25s, border-color .25s, box-shadow .25s;
     box-shadow: 0 6px 24px rgba(0,0,0,.4);
   }
@@ -278,6 +600,9 @@ setDoc,
     background: linear-gradient(155deg, #1a1a0e, #131208);
     border-color: rgba(245,200,66,.12);
   }
+  @media(max-width: 820px) {
+    .tcard-report { grid-column: 1 / -1; }
+  }
   .tcard-report:hover { border-color: rgba(245,200,66,.3); box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 0 28px rgba(245,200,66,.08); }
   .tcard-report::after { background: linear-gradient(90deg, transparent, rgba(245,200,66,.3), transparent); }
 
@@ -286,7 +611,7 @@ setDoc,
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
   }
   .tcard-emoji { font-size: 28px; line-height: 1; }
 
@@ -322,21 +647,22 @@ setDoc,
 
   /* Body */
   .tcard-title {
-    font-size: 15.5px;
+    font-size: 18px;
     font-weight: 900;
     color: var(--text-light);
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     line-height: 1.3;
   }
   .tcard-desc {
-    font-size: 12.5px;
+    font-size: 13.5px;
     color: var(--text-muted);
-    line-height: 1.65;
+    line-height: 1.75;
     flex: 1;
+    max-width: 30ch;
   }
   .tcard-link-btn {
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 16px;
     background: transparent;
     border: none;
     padding: 0;
@@ -350,16 +676,246 @@ setDoc,
   }
   .tcard-link-btn:hover { opacity: .8; }
 
+  .library-meta {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .library-chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(78,205,196,.08);
+    border: 1px solid rgba(78,205,196,.18);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  @media(max-width: 900px) {
+    .risk-question-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media(max-width: 640px) {
+    .risk-check-card {
+      padding: 15px 14px;
+      border-radius: 18px;
+    }
+    .risk-check-top {
+      flex-direction: column;
+      margin-bottom: 14px;
+    }
+    .risk-check-title {
+      font-size: 19px;
+    }
+    .risk-card-meta {
+      min-width: 0;
+      width: 100%;
+    }
+    .risk-question {
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .risk-option-row {
+      gap: 6px;
+    }
+    .risk-option-btn {
+      flex: 1 1 calc(50% - 6px);
+      text-align: center;
+    }
+    .risk-result {
+      padding: 14px;
+      border-radius: 16px;
+    }
+    .risk-action-row {
+      flex-direction: column;
+    }
+    .risk-action-row .btn {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
   /* Footer */
   .today-footer {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 14px;
-    margin-top: 18px;
+    margin-top: 16px;
     flex-wrap: wrap;
   }
   .today-footer .panel-sub { font-size: 12px; }
+
+  /* ── Featured Members ── */
+  .featured-today-wrap {
+    margin-bottom: 28px;
+  }
+  .featured-today-inner {
+    background: linear-gradient(135deg, rgba(250,204,21,.07) 0%, rgba(78,205,196,.05) 100%);
+    border: 1px solid rgba(250,204,21,.22);
+    border-radius: 22px;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .featured-today-inner::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(250,204,21,.45), transparent);
+  }
+  .featured-today-badge {
+    display: inline-block;
+    background: rgba(250,204,21,.13);
+    border: 1px solid rgba(250,204,21,.3);
+    color: var(--gold);
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .5px;
+    margin-bottom: 18px;
+  }
+  .featured-today-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .featured-today-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 30px rgba(250,204,21,.3);
+  }
+  .featured-today-name {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .featured-today-empty {
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 10px;
+  }
+  .featured-list-header {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 14px;
+  }
+  .featured-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .featured-list-item {
+    background: linear-gradient(155deg, #141d28, #0e1420);
+    border: 1px solid rgba(78,205,196,.15);
+    border-radius: 18px;
+    padding: 18px 12px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,.4);
+    transition: transform .2s, border-color .2s;
+  }
+  .featured-list-item:hover {
+    transform: translateY(-4px);
+    border-color: rgba(78,205,196,.35);
+  }
+  .featured-list-item img {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(250,204,21,.3);
+    margin-bottom: 8px;
+  }
+  .featured-list-item-name {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-light);
+  }
+  .featured-list-empty {
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 12px;
+    text-align: center;
+  }
+  /* Admin: today selector highlight */
+  .featured-today-selected {
+    border-color: rgba(250,204,21,.6) !important;
+    background: rgba(250,204,21,.1) !important;
+    box-shadow: 0 0 18px rgba(250,204,21,.2);
+  }
+
+  .library-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .library-item {
+    background: linear-gradient(160deg, rgba(19,27,40,.95), rgba(11,16,27,.96));
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 10px 26px rgba(0,0,0,.28);
+  }
+  .library-item-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+  .library-item-author {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .library-item-desc {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-muted);
+  }
+  .library-item-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .library-btn {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.09);
+    background: rgba(255,255,255,.05);
+    color: var(--text-light);
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .library-btn.primary {
+    background: rgba(78,205,196,.16);
+    border-color: rgba(78,205,196,.3);
+    color: var(--primary);
+  }
+  .library-empty {
+    padding: 22px;
+    border-radius: 18px;
+    text-align: center;
+    color: var(--text-muted);
+    border: 1px dashed rgba(255,255,255,.12);
+    background: rgba(255,255,255,.03);
+    line-height: 1.9;
+  }
 
   </style>
 </head>
@@ -437,7 +993,7 @@ setDoc,
   <header>
     <h1>الموحدون</h1>
     <p>قبيلة واعي – قبيلة الموحدون</p>
-    <p class="ramadan-text">🌙 من الآن حتى رمضان… نختار الثبات</p>
+    <p class="ramadan-text">🕊️ من عيد الفطر إلى عيد الأضحى… نختار الثبات</p>
 
 <div class="userbar">
   <span class="user-pill" id="currentUserPill">—</span>
@@ -446,9 +1002,9 @@ setDoc,
 
   </header>
 
-  <!-- شريط رمضاني -->
+  <!-- شريط العهد -->
   <div class="ramadan-banner">
-    🌙 عهدٌ مع الله – وعيٌ بالنفس – ثباتٌ حتى رمضان
+    🤝 عهدٌ مع الله – وعيٌ بالنفس – ثباتٌ حتى عيد الأضحى
   </div>
 
   <!-- شريط التنقل -->
@@ -472,6 +1028,7 @@ setDoc,
       <div class="today-hero-left">
         <div class="today-date-label">اليوم</div>
         <div class="today-date-val" id="todayDate">—</div>
+        <div class="today-date-note">واجهة أخف، وخطوات أوضح، وإنجازك محفوظ لحظة بلحظة.</div>
       </div>
       <div class="today-hero-center">
         <div class="today-ring-wrap">
@@ -488,9 +1045,9 @@ setDoc,
         </div>
       </div>
       <div class="today-hero-right">
-        <div class="today-streak-label">ستريك الثبات</div>
-        <div class="today-streak-val"><span id="streakCount">0</span><span class="streak-fire">🔥</span></div>
-        <div class="today-streak-sub">يوم متواصل</div>
+        <div class="today-focus-label">إيقاع اليوم</div>
+        <div class="today-focus-title">ست محطات واضحة</div>
+        <div class="today-focus-sub">أذكار، قرآن، خطة نجاة، تنفس، مكتبة تعافٍ، ثم تقريرك اليومي بهدوء وثبات.</div>
       </div>
     </div>
 
@@ -499,24 +1056,70 @@ setDoc,
       <div class="progress-fill" id="progressFill" style="width:0%"></div>
     </div>
 
-    <!-- ══ Task cards ══ -->
-    <div class="today-cards">
-
-      <!-- تسجيل الحضور -->
-      <div class="tcard" id="tcard-attendance">
-        <div class="tcard-glow"></div>
-        <div class="tcard-header">
-          <span class="tcard-emoji">🌅</span>
-          <label class="tcard-toggle">
-            <input type="checkbox" data-task="attendance" />
-            <span class="tcard-knob"></span>
-          </label>
+    <div class="risk-check-card" id="riskCheckCard" aria-labelledby="riskCheckTitle">
+      <div class="risk-check-top">
+        <div>
+          <div class="risk-check-kicker">قبل أن تدخل في الفراغ</div>
+          <div class="risk-check-title-row">
+            <h3 class="risk-check-title" id="riskCheckTitle">مؤشر الخطر اليومي</h3>
+            <span class="risk-level-pill is-neutral" id="riskLevelPill">لم يُفحص بعد</span>
+          </div>
+          <p class="risk-check-desc">
+            ثلاث إجابات سريعة تكشف هل أنت في وضع مطمئن، أم تحتاج تدخلًا هادئًا، أم يجب
+            أن تفعّل النجدة الآن قبل أن تكبر الموجة.
+          </p>
         </div>
-        <div class="tcard-body">
-          <div class="tcard-title">تسجيل الحضور</div>
-          <div class="tcard-desc">جدّد نيتك. هنا وفي هذا اليوم.</div>
+        <div class="risk-card-meta" id="riskAnsweredAt">لا يوجد تقييم محفوظ لهذا اليوم بعد.</div>
+      </div>
+
+      <div class="risk-question-grid">
+        <div class="risk-question" aria-labelledby="riskQuestionMood">
+          <div class="risk-question-title" id="riskQuestionMood">كيف حالك الآن؟</div>
+          <div class="risk-option-row">
+            <button type="button" class="risk-option-btn" data-risk-group="mood" data-risk-value="calm">مطمئن</button>
+            <button type="button" class="risk-option-btn" data-risk-group="mood" data-risk-value="tired">متعب</button>
+            <button type="button" class="risk-option-btn" data-risk-group="mood" data-risk-value="threatened">مهدد</button>
+          </div>
+        </div>
+
+        <div class="risk-question" aria-labelledby="riskQuestionIsolation">
+          <div class="risk-question-title" id="riskQuestionIsolation">أين أنت الآن؟</div>
+          <div class="risk-option-row">
+            <button type="button" class="risk-option-btn" data-risk-group="isolation" data-risk-value="connected">بين الناس</button>
+            <button type="button" class="risk-option-btn" data-risk-group="isolation" data-risk-value="semi">شبه وحيد</button>
+            <button type="button" class="risk-option-btn" data-risk-group="isolation" data-risk-value="alone">وحيد</button>
+          </div>
+        </div>
+
+        <div class="risk-question" aria-labelledby="riskQuestionUrge">
+          <div class="risk-question-title" id="riskQuestionUrge">كيف هي الرغبة الآن؟</div>
+          <div class="risk-option-row">
+            <button type="button" class="risk-option-btn" data-risk-group="urge" data-risk-value="none">لا توجد</button>
+            <button type="button" class="risk-option-btn" data-risk-group="urge" data-risk-value="light">خفيفة</button>
+            <button type="button" class="risk-option-btn" data-risk-group="urge" data-risk-value="high">مرتفعة</button>
+          </div>
         </div>
       </div>
+
+      <div class="risk-result" id="riskResultBox" aria-live="polite">
+        <div class="risk-result-head">
+          <div class="risk-result-title" id="riskResultTitle">ابدأ الفحص السريع أولًا</div>
+          <div class="risk-result-desc" id="riskResultDesc">
+            اختر إجابة واحدة من كل سطر، وسيظهر لك تقييم واضح مع التدخل الأنسب فورًا.
+          </div>
+        </div>
+        <div class="risk-advice-list" id="riskAdviceList"></div>
+        <div class="risk-action-row">
+          <button class="btn" id="riskActionBreath" type="button">ابدأ التنفس الآن</button>
+          <button class="btn ghost" id="riskActionRescue" type="button">افتح مركز النجاة</button>
+          <button class="btn ghost" id="riskActionAzkar" type="button">افتح الأذكار</button>
+          <button class="btn ghost" id="riskResetBtn" type="button">إعادة التقييم</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ Task cards ══ -->
+    <div class="today-cards">
 
       <!-- أذكار الصباح -->
       <div class="tcard" id="tcard-morning">
@@ -563,6 +1166,25 @@ setDoc,
         </div>
       </div>
 
+      <!-- قراءة القرآن -->
+      <div class="tcard" id="tcard-quran">
+        <div class="tcard-glow"></div>
+        <div class="tcard-header">
+          <span class="tcard-emoji">📖</span>
+          <label class="tcard-toggle">
+            <input type="checkbox" data-task="quran_reading" />
+            <span class="tcard-knob"></span>
+          </label>
+        </div>
+        <div class="tcard-body">
+          <div class="tcard-title">قراءة 3 صفحات من القرآن</div>
+          <div class="tcard-desc">ورد يومي خفيف وواضح، يفتح لك المصحف مباشرة على ورد اليوم.</div>
+          <button type="button" class="tcard-link-btn" id="openQuranReading">
+            فتح المصحف ←
+          </button>
+        </div>
+      </div>
+
       <!-- أذكار المساء -->
       <div class="tcard" id="tcard-evening">
         <div class="tcard-glow"></div>
@@ -582,6 +1204,48 @@ setDoc,
         </div>
       </div>
 
+      <!-- خطة النجاة -->
+      <div class="tcard" id="tcard-rescue">
+        <div class="tcard-glow"></div>
+        <div class="tcard-header">
+          <span class="tcard-emoji">🛟</span>
+          <label class="tcard-toggle">
+            <input type="checkbox" data-task="rescue_plan" />
+            <span class="tcard-knob"></span>
+          </label>
+        </div>
+        <div class="tcard-body">
+          <div class="tcard-title">مركز النجاة</div>
+          <div class="tcard-desc">واجهة أعمق عند الحاجة: تدخل سريع، خطة شخصية، وسجل مختصر لما أنقذك في المرات السابقة.</div>
+          <button type="button" class="tcard-link-btn" id="openRescueCenter">
+            فتح المركز ←
+          </button>
+        </div>
+      </div>
+
+      <!-- مكتبة التعافي -->
+      <div class="tcard" id="tcard-library">
+        <div class="tcard-glow"></div>
+        <div class="tcard-header">
+          <span class="tcard-emoji">📚</span>
+          <label class="tcard-toggle">
+            <input type="checkbox" data-task="recovery_book" />
+            <span class="tcard-knob"></span>
+          </label>
+        </div>
+        <div class="tcard-body">
+          <div class="tcard-title">مكتبة التعافي</div>
+          <div class="tcard-desc">افتح كتب التعافي المتاحة للجميع، واختر ما تريد قراءته اليوم.</div>
+          <div class="library-meta">
+            <span class="library-chip" id="libraryCountChip">٠ كتاب</span>
+            <span class="library-chip">قابلة للتوسع</span>
+          </div>
+          <button type="button" class="tcard-link-btn" id="openRecoveryLibrary">
+            فتح المكتبة ←
+          </button>
+        </div>
+      </div>
+
       <!-- تقرير التعافي -->
       <div class="tcard tcard-report">
         <div class="tcard-glow tcard-glow-gold"></div>
@@ -594,7 +1258,7 @@ setDoc,
           <a href="ramadan_report.html" style="text-decoration:none;display:block;margin-top:12px">
             <button class="btn w-full" type="button"
               style="background:rgba(245,200,66,.13);color:var(--gold);border-color:rgba(245,200,66,.28);font-family:inherit">
-              كتابة التقرير 🌙
+              كتابة التقرير
             </button>
           </a>
         </div>
@@ -618,105 +1282,173 @@ setDoc,
 
     <div class="slider-container">
       <div class="slider">
-        <div class="slide-card">
-          <img src="images/person12.jpg" alt="الفقير الى الله" />
-          <h3>الفقير الى الله</h3>
+        <div class="slide-card" data-member-id="member_7">
+          <img src="images/person6.jpg" alt="مؤقد" />
+          <h3>مؤقد</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person1.jpg" alt="عبدالله جنينة" />
-          <h3>عبدالله جنينة</h3>
+        <div class="slide-card" data-member-id="member_0">
+          <img src="images/person12.jpg" alt="الفقير إلى الله" />
+          <h3>الفقير إلى الله</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person2.jpg" alt="أحمد عمرو" />
-          <h3>أحمد عمرو</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person3.jpg" alt="طموح" />
-          <h3>طموح</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person4.jpg" alt="الريس" />
-          <h3>الريس</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person5.jpg" alt="مجاهد" />
-          <h3> مجاهد</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person11.jpg" alt="محمد" />
-          <h3>محمد</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person6.jpg" alt="موحد" />
-          <h3>موحد</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person7.jpg" alt="سيف الدين" />
-          <h3>سيف الدين</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person8.jpg" alt="أمجد" />
-          <h3>أمجد</h3>
-        </div>
-
-        <div class="slide-card">
-          <img src="images/person9.jpg" alt="صالح" />
-          <h3>صالح</h3>
-        </div>
-
-        <div class="slide-card">
+        <div class="slide-card" data-member-id="member_11">
           <img src="images/person17.jpg" alt="أواب" />
           <h3>أواب</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person18.jpg" alt="المقداد" />
-          <h3>المقداد</h3>
-        </div>
-        
-        <div class="slide-card">
-          <img src="images/person16.jpg" alt="ابو يزن" />
-          <h3>ابو يزن</h3>
+        <div class="slide-card" data-member-id="member_10">
+          <img src="images/person9.jpg" alt="صالح" />
+          <h3>صالح</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person13.jpg" alt="سعد" />
+        <div class="slide-card" data-member-id="member_3">
+          <img src="images/person3.jpg" alt="طموح" />
+          <h3>طموح</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_2">
+          <img src="images/person23.jpeg" alt="أحمد عمرو" />
+          <h3>أحمد عمرو</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_4">
+          <img src="images/person4.jpg" alt="الريس" />
+          <h3>الريس</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_9">
+          <img src="images/person8.jpg" alt="أمجد" />
+          <h3>أمجد</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_6">
+          <img src="images/person11.jpg" alt="سعيد" />
+          <h3>سعيد</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_8">
+          <img src="images/person7.jpg" alt="سيف الدين" />
+          <h3>سيف الدين</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_20">
+          <img src="images/person1.jpg" alt="عبد الله جنيبة" />
+          <h3>عبد الله جنيبة</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_14">
+          <img src="images/person29.jpeg" alt="سعد" />
           <h3>سعد</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person14.jpg" alt="يوسف" />
+        <div class="slide-card" data-member-id="member_19">
+          <img src="images/person5.jpg" alt="مجاهد ☝🏻" />
+          <h3>مجاهد ☝🏻</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_15">
+          <img src="images/person30.jpeg" alt="يوسف" />
           <h3>يوسف</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person15.jpg" alt="أبو بكر" />
-          <h3>أبو بكر</h3>
+        <div class="slide-card" data-member-id="member_16">
+          <img src="images/person15.jpg" alt="أبوبكر" />
+          <h3>أبوبكر</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person19.jpg" alt="الواثق بالله" />
-          <h3> الواثق بالله</h3>
+        <div class="slide-card" data-member-id="member_12">
+          <img src="images/person27.jpeg" alt="المقداد" />
+          <h3>المقداد</h3>
         </div>
 
-        <div class="slide-card">
-          <img src="images/person10.jpg" alt="عبدالرحمن" />
-          <h3> عبد الرحمن</h3>
+        <div class="slide-card" data-member-id="member_13">
+          <img src="images/person16.jpg" alt="أبو يزن" />
+          <h3>أبو يزن</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_18">
+          <img src="images/person20.jpeg" alt="عبدالرحمن" />
+          <h3>عبدالرحمن</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_21">
+          <img src="images/person24.jpeg" alt="أحمد هاني" />
+          <h3>أحمد هاني</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_5">
+          <img src="images/person22.jpeg" alt="مجاهد" />
+          <h3>مجاهد</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_22">
+          <img src="images/person25.jpeg" alt="إيهاب سامح" />
+          <h3>إيهاب سامح</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_23">
+          <img src="images/person21.jpeg" alt="دعاء" />
+          <h3>دعاء</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_24">
+          <img src="images/person22.jpeg" alt="راجي لطف الله" />
+          <h3>راجي لطف الله</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_25">
+          <img src="images/person26.jpeg" alt="الأسد الضرغام" />
+          <h3>الأسد الضرغام</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_26">
+          <img src="images/person22.jpeg" alt="محمد بفضل الله" />
+          <h3>محمد بفضل الله</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_27">
+          <img src="images/person31.png" alt="warrior" />
+          <h3>warrior</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_28">
+          <img src="images/person22.jpeg" alt="ميدو علي" />
+          <h3>ميدو علي</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_29">
+          <img src="images/person22.jpeg" alt="التحرر 1" />
+          <h3>التحرر 1</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_30">
+          <img src="images/person28.jpeg" alt="عبد الرحمن حامد" />
+          <h3>عبد الرحمن حامد</h3>
+        </div>
+
+        <div class="slide-card" data-member-id="member_17">
+          <img src="images/person32.png" alt="mahmoud" />
+          <h3>mahmoud</h3>
         </div>
       </div>
     </div>
+
+    <div id="memberStatusAdminWrap" class="panel" style="margin-top:22px; display:none">
+      <div class="panel-title">🎖️ إدارة تمييز الأعضاء (أمجد)</div>
+      <div class="panel-sub" style="margin-top:10px">
+        اختر نوع السوار الذي سيظهر حول صورة العضو للجميع. التغيير يُحفظ مباشرة ويظهر فورًا.
+      </div>
+
+      <div class="status-legend">
+        <div class="status-legend-item elite">العضو المميز جدًا</div>
+        <div class="status-legend-item active">العضو الفعال</div>
+        <div class="status-legend-item lazy">العضو المتكاسل</div>
+      </div>
+
+      <div id="memberStatusAdminList" class="status-admin-grid" aria-label="إدارة حالات الأعضاء"></div>
+    </div>
   </section>
-
-
 
   <!-- =====================
        العهد
@@ -757,7 +1489,7 @@ setDoc,
        العد التنازلي
   ===================== -->
   <section id="countdown" class="countdown-section">
-    <h2 class="countdown-title">العدّ التنازلي حتى عيد الفطر 🌙</h2>
+    <h2 class="countdown-title">العدّ التنازلي حتى عيد الأضحى 🕋</h2>
 
     <div class="countdown">
       <div class="time-box">
@@ -786,9 +1518,9 @@ setDoc,
     <h2>ما هي قائمة العهد؟</h2>
     <ul>
       <li>
-        نعاهد الله — عز وجل — أن لا نسقط في زلة حتى عيد الفطر المبارك.
-        نجاهد أنفسنا ونتعاضد كإخوة في هذا الشهر الكريم،
-        ونسأل الله التوفيق والثبات حتى آخر ليلة منه.
+        نعاهد الله عز وجل أن نثبت على الحق، وأن نجاهد أنفسنا حتى عيد الأضحى، وأن
+        نتعاضد على البر والتقوى، راجين منه سبحانه دوام الثبات، وصدق العزيمة، وصلاح
+        العمل.
       </li>
     </ul>
   </section>
@@ -847,43 +1579,6 @@ setDoc,
   <div class="azkar-toast" id="azkarToast" aria-live="polite" aria-atomic="true"></div>
 
   <!-- =====================
-       Quran Modal (10 pages/day)
-  ===================== -->
-  <div class="quran-modal-overlay" id="quranModal" aria-hidden="true">
-    <div class="quran-modal-card" role="dialog" aria-modal="true" aria-labelledby="quranModalTitle">
-      <div class="quran-modal-head">
-        <div>
-          <div class="quran-modal-title" id="quranModalTitle">قراءة اليوم</div>
-          <div class="quran-modal-sub" id="quranModalSub">—</div>
-        </div>
-
-        <div class="quran-modal-tools">
-          <button class="quran-tool-btn ghost" id="quranCopyPlan" type="button">نسخ الخطة</button>
-          <button class="quran-tool-btn" id="quranMarkDone" type="button">تم ✅️</button>
-          <button type="button" class="quran-modal-close" id="closeQuranModal" aria-label="إغلاق">✕</button>
-        </div>
-      </div>
-
-      <div class="quran-modal-body">
-        <div class="quran-page-nav" id="quranPageNav"></div>
-
-        <div class="quran-loader" id="quranLoader">جارِ تحميل صفحات اليوم…</div>
-        <div class="quran-pages" id="quranPages"></div>
-
-        <div class="quran-error" id="quranError" hidden>
-          تعذّر تحميل الصفحات الآن. تأكد من الإنترنت وحاول مرة ثانية.
-        </div>
-      </div>
-
-      <div class="quran-modal-foot">
-        <div class="quran-note">مصدر البيانات: Quran.com API (Madani Mushaf pages 1–604)</div>
-        <button type="button" class="quran-modal-close-btn" id="closeQuranModal2">إغلاق</button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- =====================
        Hadith Modal (5/day)
   ===================== -->
   <div class="tafsir-modal-overlay" id="hadithModal" aria-hidden="true">
@@ -909,6 +1604,172 @@ setDoc,
       <div class="tafsir-modal-foot">
         <div class="tafsir-note">المصادر: صحيح البخاري وصحيح مسلم</div>
         <button type="button" class="tafsir-modal-close-btn" id="closeHadithModal2">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================
+       Recovery Library Modal
+  ===================== -->
+  <div class="tafsir-modal-overlay" id="recoveryLibraryModal" aria-hidden="true">
+    <div class="tafsir-modal-card" role="dialog" aria-modal="true" aria-labelledby="recoveryLibraryTitle">
+      <div class="tafsir-modal-head">
+        <div>
+          <div class="tafsir-modal-title" id="recoveryLibraryTitle">مكتبة التعافي</div>
+          <div class="tafsir-modal-sub" id="recoveryLibrarySub">كتب عامة متاحة لجميع أعضاء القبيلة.</div>
+        </div>
+        <button type="button" class="tafsir-modal-close" id="closeRecoveryLibraryModal" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="tafsir-modal-body">
+        <div id="recoveryLibraryList" class="library-list"></div>
+      </div>
+
+      <div class="tafsir-modal-foot">
+        <div class="tafsir-note">لإضافة كتب جديدة لاحقًا يكفي وضعها داخل المجلد العام أو ربطها برابط مباشر داخل إعدادات الموقع.</div>
+        <button type="button" class="tafsir-modal-close-btn" id="closeRecoveryLibraryModal2">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================
+       Rescue Plan Modal
+  ===================== -->
+  <div class="tafsir-modal-overlay" id="rescuePlanModal" aria-hidden="true">
+    <div class="tafsir-modal-card" role="dialog" aria-modal="true" aria-labelledby="rescuePlanTitle">
+      <div class="tafsir-modal-head">
+        <div>
+          <div class="tafsir-modal-title" id="rescuePlanTitle">خطة النجاة</div>
+          <div class="tafsir-modal-sub">خطوات سريعة عندما تشعر بضعف أو اقتراب انتكاسة.</div>
+        </div>
+        <button type="button" class="tafsir-modal-close" id="closeRescuePlanModal" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="tafsir-modal-body">
+        <div class="library-list">
+          <div class="library-item">
+            <div class="library-item-title">1. اقطع اللحظة فورًا</div>
+            <div class="library-item-desc">أغلق الجهاز أو غادر المكان أو غيّر وضعية جلوسك مباشرة خلال أول ثوانٍ.</div>
+          </div>
+          <div class="library-item">
+            <div class="library-item-title">2. تنفّس 60 ثانية</div>
+            <div class="library-item-desc">خذ شهيق 4 ثوانٍ، احبس 2، ثم زفير 6. كرر ذلك حتى يهبط التوتر الأول.</div>
+          </div>
+          <div class="library-item">
+            <div class="library-item-title">3. افتح بديلًا نافعًا</div>
+            <div class="library-item-desc">افتح الأذكار أو القرآن أو كتابًا من مكتبة التعافي بدل ترك نفسك في الفراغ.</div>
+          </div>
+          <div class="library-item">
+            <div class="library-item-title">4. اخرج من العزلة</div>
+            <div class="library-item-desc">تحرك لمكان مفتوح أو بجانب الناس أو أرسل رسالة قصيرة لشخص تثق به.</div>
+          </div>
+          <div class="library-item">
+            <div class="library-item-title">5. ذكّر نفسك بالسبب</div>
+            <div class="library-item-desc">قل لنفسك: هذه موجة مؤقتة، وأنا لا أريد لذة لحظة مقابل ندم طويل.</div>
+          </div>
+          <div class="library-item">
+            <div class="library-item-title">6. أكمل يومك</div>
+            <div class="library-item-desc">لا تحوّل التعثر النفسي إلى سقوط. ارجع مباشرة إلى مهمة صغيرة واكسب اليوم.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tafsir-modal-foot">
+        <div class="tafsir-note">الخطة ليست للمشاهدة فقط، بل للتنفيذ السريع بمجرد شعورك بالخطر.</div>
+        <button type="button" class="tafsir-modal-close-btn" id="closeRescuePlanModal2">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================
+       Rescue Center Modal
+  ===================== -->
+  <div class="tafsir-modal-overlay" id="rescueCenterModal" aria-hidden="true">
+    <div class="tafsir-modal-card" role="dialog" aria-modal="true" aria-labelledby="rescueCenterTitle">
+      <div class="tafsir-modal-head">
+        <div>
+          <div class="tafsir-modal-title" id="rescueCenterTitle">مركز النجاة</div>
+          <div class="tafsir-modal-sub">أدوات أعمق تظهر عند الحاجة فقط: تدخل سريع، خطة شخصية، وسجل يساعدك أن تتعلم من نجاتك.</div>
+        </div>
+        <button type="button" class="tafsir-modal-close" id="closeRescueCenterModal" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="tafsir-modal-body">
+        <div class="rescue-center-grid">
+          <section class="rescue-center-section priority">
+            <div class="rescue-center-section-title">التحرك الآن</div>
+            <div class="rescue-center-section-sub">ملخص فوري من مؤشر الخطر الحالي مع أفضل الخطوات التي يجب أن تسبق أي تفاوض مع الرغبة.</div>
+            <div class="rescue-center-status">
+              <div class="rescue-center-status-box" id="rescueCenterStatusBox">
+                <span class="rescue-center-status-pill" id="rescueCenterStatusPill">لم يُفحص بعد</span>
+                <div class="rescue-center-status-title" id="rescueCenterStatusTitle">ابدأ بالفحص السريع أولًا</div>
+                <div class="rescue-center-status-desc" id="rescueCenterStatusDesc">عندما تجيب عن الأسئلة الثلاثة، يعرض لك المركز أولويات التدخل مباشرة.</div>
+              </div>
+              <div class="rescue-center-actions">
+                <button class="btn" id="rescueCenterBreathBtn" type="button">ابدأ التنفس الآن</button>
+                <button class="btn ghost" id="rescueCenterAzkarBtn" type="button">افتح الأذكار</button>
+                <button class="btn ghost" id="rescueCenterLibraryBtn" type="button">افتح مكتبة التعافي</button>
+                <button class="btn ghost" id="rescueCenterClassicPlanBtn" type="button">عرض خطة النجاة المختصرة</button>
+              </div>
+              <div class="rescue-center-advice" id="rescueCenterAdviceList"></div>
+            </div>
+          </section>
+
+          <section class="rescue-center-section">
+            <div class="rescue-center-section-title">خطة ما قبل السقوط</div>
+            <div class="rescue-center-section-sub">اكتب ما تعرفه عن نفسك مرة واحدة، وسيبقى حاضرًا هنا وقت الحاجة بدل أن تبدأ من الصفر.</div>
+
+            <div class="rescue-center-form">
+              <div class="rescue-center-field">
+                <label class="rescue-center-label" for="rescuePlanDangerTime">أخطر وقت عليك</label>
+                <input id="rescuePlanDangerTime" class="text-input" type="text" placeholder="مثال: بعد 11 مساءً أو بعد الاستيقاظ" />
+              </div>
+              <div class="rescue-center-field">
+                <label class="rescue-center-label" for="rescuePlanDangerPlace">أخطر مكان أو وضع</label>
+                <input id="rescuePlanDangerPlace" class="text-input" type="text" placeholder="مثال: وحدي في الغرفة مع الهاتف" />
+              </div>
+              <div class="rescue-center-field">
+                <label class="rescue-center-label" for="rescuePlanFirstSign">أول علامة أعرف منها أني بدأت أنجرف</label>
+                <textarea id="rescuePlanFirstSign" class="text-input rescue-center-textarea" placeholder="مثال: تشتت، ملل، بحث عن شيء بلا هدف، توتر مفاجئ"></textarea>
+              </div>
+              <div class="rescue-center-field">
+                <label class="rescue-center-label" for="rescuePlanBestReplacement">أفضل بديل سريع ينفعني</label>
+                <textarea id="rescuePlanBestReplacement" class="text-input rescue-center-textarea" placeholder="مثال: دقيقة تنفس ثم أذكار ثم أخرج من المكان"></textarea>
+              </div>
+              <div class="rescue-center-field">
+                <label class="rescue-center-label" for="rescuePlanSupportPerson">رفيق يثبتني أو يذكرني</label>
+                <input id="rescuePlanSupportPerson" class="text-input" type="text" placeholder="اسم شخص أو وصف مختصر" />
+              </div>
+              <button class="btn" id="saveRescuePlanBtn" type="button">حفظ الخطة الشخصية</button>
+            </div>
+
+            <div class="rescue-center-plan-preview" id="rescueCenterPlanPreview"></div>
+          </section>
+
+          <section class="rescue-center-section">
+            <div class="rescue-center-section-title">سجل النجاة</div>
+            <div class="rescue-center-section-sub">كل مرة تنجو من موجة ضعف، سجّل السبب وما الذي أنقذك. بعد مدة ستتعرف على أنماطك الحقيقية.</div>
+
+            <div class="rescue-center-form">
+              <div class="rescue-center-field">
+                <label class="rescue-center-label" for="rescueLogTrigger">ما الذي كان يضغط عليك؟</label>
+                <textarea id="rescueLogTrigger" class="text-input rescue-center-textarea" placeholder="مثال: فراغ، سهر، غضب، وحدة، هاتف بلا هدف"></textarea>
+              </div>
+              <div class="rescue-center-field">
+                <label class="rescue-center-label" for="rescueLogHelped">ما الذي نفعك هذه المرة؟</label>
+                <textarea id="rescueLogHelped" class="text-input rescue-center-textarea" placeholder="مثال: خرجت من الغرفة، تنفست، فتحت الأذكار، تحدثت مع شخص"></textarea>
+              </div>
+              <button class="btn" id="saveRescueLogBtn" type="button">إضافة للسجل</button>
+            </div>
+
+            <div class="rescue-center-log-list" id="rescueCenterLogList"></div>
+          </section>
+        </div>
+      </div>
+
+      <div class="tafsir-modal-foot">
+        <div class="tafsir-note">المركز لا يظهر كقسم مستقل في الصفحة الرئيسية حتى تبقى الواجهة خفيفة، لكنه يجمع كل الأدوات المهمة وقت الحاجة.</div>
+        <button type="button" class="tafsir-modal-close-btn" id="closeRescueCenterModal2">إغلاق</button>
       </div>
     </div>
   </div>
@@ -948,7 +1809,7 @@ setDoc,
 
 <script>
     const CONFIG = {
-      RAMADAN_DATE_ISO: "2026-03-20T00:00:00",
+      AHD_TARGET_DATE_ISO: "2026-05-27T00:00:00",
       FORCE_HIZB_NUMBER: null,
 
       LINKS: {
@@ -969,6 +1830,42 @@ setDoc,
         TOTAL_SECONDS: 60,
         PATTERN_TEXT: "شهيق 4 • حبس 2 • زفير 6",
       },
+
+      RECOVERY_BOOKS: [
+        {
+          id: "300-qa-book",
+          title: "300 سؤال وجواب",
+          author: "مادة توعوية",
+          description: "مرجع عملي بصيغة سؤال وجواب يساعد على تثبيت المفاهيم وتصحيح التصورات المتعلقة بالتعافي.",
+          href: "books/300 سؤال وجواب.pdf",
+          minutes: 7
+        },
+        {
+          id: "brain-effects-book",
+          title: "تأثيرات الإباحية على الدماغ",
+          author: "مادة توعوية",
+          description: "كتاب يساعد على فهم الأثر العصبي والسلوكي للإباحية، ولماذا يرتبط التعافي بالوعي والفهم لا بمجرد المنع.",
+          href: "books/تأثيرات الإباحية على الدماغ.pdf",
+          minutes: 5
+        },
+        {
+          id: "fast-recovery-guide",
+          title: "وصفة سريعة للتعافي",
+          author: "مادة توعوية",
+          description: "دليل مختصر ومباشر يقدّم خطوات عملية سريعة تساعد العضو على بدء يومه بخطة أوضح في طريق التعافي.",
+          href: "books/وصفة سريعة للتعافي.pdf",
+          minutes: 5
+        },
+        // لإضافة كتاب جديد لاحقًا:
+        // {
+        //   id: "book-2",
+        //   title: "اسم الكتاب",
+        //   author: "اسم المؤلف",
+        //   description: "وصف قصير أو فائدة الكتاب",
+        //   href: "books/اسم-الملف.pdf",
+        //   minutes: 5
+        // }
+      ],
 
       AZKAR: {
         MORNING: {
@@ -992,21 +1889,51 @@ setDoc,
       QURAN: {
             START_DATE_ISO: "2026-01-26T00:00:00", // غيّره لتاريخ بداية التحدي (نفسه للجميع)
             TOTAL_PAGES: 604,
-            PAGES_PER_DAY: 10,
-            API_BASE: "https://api.quran.com/api/v4/verses/by_page/",
-            FIELDS: "text_uthmani,verse_key",
+            PAGES_PER_DAY: 3,
+            PDF_URL: "quran/standard1-quran.pdf",
+            PDF_VIEWER_PARAMS: "toolbar=0&navpanes=0&scrollbar=0&view=FitH",
        },
     };
 
     const TASK_KEYS = [
-      "attendance",
       "morning_adhkar",
       "deep_breath",
+      "quran_reading",
       "evening_adhkar",
+      "rescue_plan",
+      "recovery_book",
     ];
 
-    const WA3I_CTX = { todayISO: null, state: null };
+    const RISK_CHECK_FIELDS = ["mood", "isolation", "urge"];
+    const RISK_CHECK_OPTIONS = {
+      mood: [
+        { value: "calm", label: "مطمئن", score: 0 },
+        { value: "tired", label: "متعب", score: 1 },
+        { value: "threatened", label: "مهدد", score: 3 },
+      ],
+      isolation: [
+        { value: "connected", label: "بين الناس", score: 0 },
+        { value: "semi", label: "شبه وحيد", score: 1 },
+        { value: "alone", label: "وحيد", score: 2 },
+      ],
+      urge: [
+        { value: "none", label: "لا توجد", score: 0 },
+        { value: "light", label: "خفيفة", score: 1 },
+        { value: "high", label: "مرتفعة", score: 3 },
+      ],
+    };
+    const RISK_CHECK_LOOKUP = Object.fromEntries(
+      Object.entries(RISK_CHECK_OPTIONS).map(([group, items]) => [
+        group,
+        Object.fromEntries(items.map((item) => [item.value, item])),
+      ])
+    );
+
+    const WA3I_CTX = { todayISO: null, state: null, riskEvaluation: null };
     let breathInterval = null;
+    let AZKAR_MODAL_WIRED = false;
+    let RISK_CHECK_WIRED = false;
+    let DAILY_VISIBILITY_WIRED = false;
 
     function qs(sel) { return document.querySelector(sel); }
     function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
@@ -1092,9 +2019,10 @@ function readMembersFromDOM() {
     const nameEl = card.querySelector("h3");
     const name = (nameEl?.textContent || img?.getAttribute("alt") || "").trim();
     const src = img?.getAttribute("src") || "";
+    const explicitId = (card.getAttribute("data-member-id") || "").trim();
     if (!name || !src) return;
     out.push({
-      id: `member_${idx}`,
+      id: explicitId || `member_${idx}`,
       name,
       src,
     });
@@ -1102,11 +2030,76 @@ function readMembersFromDOM() {
   return out;
 }
 
+function normalizeMemberStatus(data) {
+  const raw = String(data?.tier || data?.status || "").trim().toLowerCase();
+  if (!raw) {
+    if (data && (Object.prototype.hasOwnProperty.call(data, "addedAt") || Object.prototype.hasOwnProperty.call(data, "updatedAt"))) {
+      return "elite";
+    }
+    return null;
+  }
+  if (raw === "elite" || raw === "featured") return "elite";
+  if (raw === "active") return "active";
+  if (raw === "lazy" || raw === "needs_attention") return "lazy";
+  return null;
+}
+
+function parseMemberStatusDocId(docId) {
+  const id = String(docId || "").trim();
+  if (!id) return null;
+  const match = id.match(/^(elite|active|lazy)__(member_\d+)$/);
+  if (match) {
+    return { status: match[1], memberId: match[2] };
+  }
+  if (/^member_\d+$/.test(id)) {
+    return { status: "elite", memberId: id };
+  }
+  return null;
+}
+
+function memberStatusDocId(memberId, status) {
+  return `${status}__${String(memberId || "").trim()}`;
+}
+
+function memberStatusLabel(status) {
+  if (status === "elite") return "العضو المميز جدًا";
+  if (status === "active") return "العضو الفعال";
+  if (status === "lazy") return "العضو المتكاسل";
+  return "بدون تمييز";
+}
+
+function memberStatusClass(status) {
+  return status ? `member-status-${status}` : "";
+}
+
+function memberStatusPriority(status) {
+  if (status === "elite") return 0;
+  if (status === "active") return 1;
+  if (status === "lazy") return 2;
+  return 3;
+}
+
+function compareMembersByStatusThenName(a, b) {
+  const pa = memberStatusPriority(getMemberStatus(a.id));
+  const pb = memberStatusPriority(getMemberStatus(b.id));
+  if (pa !== pb) return pa - pb;
+  return (a.name || "").localeCompare(b.name || "", "ar");
+}
+
+function getMemberStatus(memberId) {
+  const id = String(memberId);
+  if (PENDING_MEMBER_STATUS.has(id)) {
+    const pending = PENDING_MEMBER_STATUS.get(id);
+    return pending === "__CLEAR__" ? null : pending;
+  }
+  return MEMBER_STATUS_STATE.map.get(id) || null;
+}
+
 
 function decorateMemberCardsWithStreaks() {
   const cards = qsa("#members .slide-card");
   cards.forEach((card, idx) => {
-    // Keep stable IDs (member_0..), but visually sort by streak using CSS order.
+    // Keep stable IDs (member_0..), but visually sort by member status first.
     if (!card.dataset.origIndex) card.dataset.origIndex = String(idx);
     const orig = parseInt(card.dataset.origIndex || "0", 10);
 
@@ -1120,41 +2113,24 @@ function decorateMemberCardsWithStreaks() {
       nameEl.parentNode?.insertBefore(row, nameEl);
       row.appendChild(nameEl);
     }
-
-
-    let rankEl = row.querySelector(".rank-badge");
-    if (!rankEl) {
-      rankEl = document.createElement("span");
-      rankEl.className = "rank-badge member-rank-badge";
-      row.insertBefore(rankEl, nameEl);
-    }
-    let badge = row.querySelector(".streak-badge");
-    if (!badge) {
-      badge = document.createElement("span");
-      badge.className = "streak-badge member-streak-badge";
-      row.appendChild(badge);
-    }
-
-    const streak = getStreakForUserId(`member_${idx}`);
-    
-    const orderKey = (streak > 0 ? -streak * 1000 : 1000000) + (Number.isFinite(orig) ? orig : idx);
+    const explicitMemberId = String(card.getAttribute("data-member-id") || "").trim();
+    const memberId = explicitMemberId || `member_${Number.isFinite(orig) ? orig : idx}`;
+    const status = getMemberStatus(memberId);
+    const orderKey = (memberStatusPriority(status) * 100000) + (Number.isFinite(orig) ? orig : idx);
     card.style.order = String(orderKey);
 
-    const memberId = `member_${Number.isFinite(orig) ? orig : idx}`;
-    const medal = medalForUserId(memberId);
-    if (medal) {
-      rankEl.textContent = medal;
-      rankEl.style.display = "";
-    } else {
-      rankEl.textContent = "";
-      rankEl.style.display = "none";
-    }
-if (streak > 0) {
-      badge.textContent = `🔥${formatArabicNumber(streak)}`;
-      badge.style.display = "";
-    } else {
-      badge.textContent = "";
-      badge.style.display = "none";
+    const img = card.querySelector("img");
+    card.classList.remove("member-status-elite", "member-status-active", "member-status-lazy");
+    if (img) img.classList.remove("member-avatar", "member-status-elite", "member-status-active", "member-status-lazy");
+    if (status) {
+      card.classList.add(memberStatusClass(status));
+      if (img) {
+        img.classList.add("member-avatar", memberStatusClass(status));
+        img.setAttribute("title", memberStatusLabel(status));
+      }
+    } else if (img) {
+      img.classList.add("member-avatar");
+      img.removeAttribute("title");
     }
   });
 }
@@ -1167,22 +2143,19 @@ function renderIdentityGrid(members, filterText = "") {
   const list = q ? members.filter((m) => m.name.includes(q)) : members;
 
   const sorted = list.slice().sort((a, b) => {
-    const sa = getStreakForUserId(a.id);
-    const sb = getStreakForUserId(b.id);
-    if (sb !== sa) return sb - sa;
+    const statusCmp = compareMembersByStatusThenName(a, b);
+    if (statusCmp !== 0) return statusCmp;
     return (a.name || "").localeCompare(b.name || "", "ar");
   });
   grid.innerHTML = sorted.length
     ? sorted
         .map((m) => {
-          const streak = getStreakForUserId(m.id);
-          const badge = streak > 0 ? ` <span class="streak-badge">🔥${formatArabicNumber(streak)}</span>` : "";
-          const medal = medalForUserId(m.id);
-          const medalBadge = medal ? ` <span class="rank-badge" aria-label="ترتيب">${medal}</span>` : "";
+          const status = getMemberStatus(m.id);
+          const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
           return `
         <button class="identity-item" type="button" data-user-id="${m.id}" aria-label="${m.name}">
-          <img class="identity-avatar" src="${m.src}" alt="${m.name}" />
-          <div class="identity-name">${m.name}${medalBadge}${badge}</div>
+          <img class="${avatarClass}" src="${m.src}" alt="${m.name}" />
+          <div class="identity-name">${m.name}</div>
         </button>
       `;
         })
@@ -1373,7 +2346,6 @@ function initIdentityGate() {
 
   IDENTITY_MEMBERS_CACHE = readMembersFromDOM();
   const members = IDENTITY_MEMBERS_CACHE;
-  recomputeRanks(members);
   resetLocalStreaksForAllMembersOnce();
   renderIdentityGrid(members);
 
@@ -1544,31 +2516,6 @@ const FIRESTORE_BINDINGS = "bindings";
 const FIRESTORE_STREAKS = "streaks";
 const SHARED_STREAKS = new Map();
 let SHARED_STREAKS_LISTENING = false;
-
-
-const MEDALS = ["🥇", "🥈", "🥉"];
-const RANK_BY_ID = new Map();
-
-function recomputeRanks(members) {
-  const list = Array.isArray(members) ? members.slice() : [];
-  list.sort((a, b) => {
-    const sa = getStreakForUserId(a.id);
-    const sb = getStreakForUserId(b.id);
-    if (sb !== sa) return sb - sa;
-    return (a.name || "").localeCompare(b.name || "", "ar");
-  });
-
-  RANK_BY_ID.clear();
-  list.forEach((m, idx) => RANK_BY_ID.set(m.id, idx));
-}
-
-function medalForUserId(userId) {
-  const rank = RANK_BY_ID.get(userId);
-  if (!Number.isFinite(rank)) return "";
-  return rank >= 0 && rank < 3 ? MEDALS[rank] : "";
-}
-
-
 function resetLocalStreaksForAllMembersOnce() {
   const key = "wa3i_reset_local_streaks_v1";
   try {
@@ -1619,7 +2566,6 @@ async function resetFirestoreStreaksForAllMembersOnce() {
 }
 let IDENTITY_MEMBERS_CACHE = [];
 function refreshIdentityStreaksUI() {
-  try { recomputeRanks(IDENTITY_MEMBERS_CACHE); } catch {}
   try { decorateMemberCardsWithStreaks(); } catch {}
   const grid = qs("#identityGrid");
   if (!grid) return;
@@ -1739,20 +2685,22 @@ function renderAhdPublicList() {
 
   const ahdMembers = Array.from(FB_STATE.ahd)
     .map((id) => ({ id, ...(FB_STATE.tribe.get(id) || { name: id, src: "" }) }))
-    .sort((a, b) => (a.name || "").localeCompare(b.name || "", "ar"));
+    .sort(compareMembersByStatusThenName);
 
   count.textContent = `${formatArabicNumber(ahdMembers.length)} عضو`;
 
   el.innerHTML = ahdMembers.length
     ? ahdMembers
-        .map(
-          (m) => `
+        .map((m) => {
+          const status = getMemberStatus(m.id);
+          const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
+          return `
         <div class="identity-item" style="cursor:default">
-          <img class="identity-avatar" src="${m.src || "images/person1.jpg"}" alt="${escapeHtml(m.name || m.id)}" />
+          <img class="${avatarClass}" src="${m.src || "images/person1.jpg"}" alt="${escapeHtml(m.name || m.id)}" />
           <div class="identity-name">${escapeHtml(m.name || m.id)}</div>
         </div>
-      `
-        )
+      `;
+        })
         .join("")
     : `<div class="identity-empty">لا يوجد أعضاء في العهد بعد.</div>`;
 
@@ -1772,35 +2720,39 @@ function renderAhdAdminLists(filterText = "") {
   const notIn = tribeList
     .filter((m) => !FB_STATE.ahd.has(m.id))
     .filter((m) => (q ? (m.name || "").includes(q) : true))
-    .sort((a, b) => (a.name || "").localeCompare(b.name || "", "ar"));
+    .sort(compareMembersByStatusThenName);
 
   const inAhd = tribeList
     .filter((m) => FB_STATE.ahd.has(m.id))
-    .sort((a, b) => (a.name || "").localeCompare(b.name || "", "ar"));
+    .sort(compareMembersByStatusThenName);
 
   notInEl.innerHTML = notIn.length
     ? notIn
-        .map(
-          (m) => `
+        .map((m) => {
+          const status = getMemberStatus(m.id);
+          const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
+          return `
         <button class="identity-item" type="button" data-add-ahd="${m.id}" aria-label="إضافة ${escapeHtml(m.name)}">
-          <img class="identity-avatar" src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <img class="${avatarClass}" src="${m.src}" alt="${escapeHtml(m.name)}" />
           <div class="identity-name">${escapeHtml(m.name)}</div>
         </button>
-      `
-        )
+      `;
+        })
         .join("")
     : `<div class="identity-empty">لا يوجد أعضاء متاحون للإضافة.</div>`;
 
   ahdEl.innerHTML = inAhd.length
     ? inAhd
-        .map(
-          (m) => `
+        .map((m) => {
+          const status = getMemberStatus(m.id);
+          const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
+          return `
         <button class="identity-item" type="button" data-remove-ahd="${m.id}" aria-label="حذف ${escapeHtml(m.name)}">
-          <img class="identity-avatar" src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <img class="${avatarClass}" src="${m.src}" alt="${escapeHtml(m.name)}" />
           <div class="identity-name">${escapeHtml(m.name)}</div>
         </button>
-      `
-        )
+      `;
+        })
         .join("")
     : `<div class="identity-empty">لا يوجد أعضاء في العهد.</div>`;
 
@@ -1875,7 +2827,10 @@ function initAhdPage() {
 
       setAhdAdminVisibility();
       renderAhdPublicList();
-    
+      setMemberStatusAdminVisibility();
+      if (FB_STATE.isAdmin) {
+        renderMemberStatusAdminList();
+      }
 
       resetFirestoreStreaksForAllMembersOnce();
 });
@@ -1915,13 +2870,7 @@ function toLocalISODate(d) {
       const raw = localStorage.getItem(storageKeyForToday(isoDate));
       if (!raw) return null;
       try {
-        const st = JSON.parse(raw);
-        if (st && st.tasks && typeof st.tasks === "object") {
-          TASK_KEYS.forEach((k) => {
-            if (st.tasks[k] === undefined) st.tasks[k] = false;
-          });
-        }
-        return st;
+        return normalizeDailyState(JSON.parse(raw));
       } catch {
         return null;
       }
@@ -1940,7 +2889,598 @@ function toLocalISODate(d) {
         breathRunning: false,
         completedAll: false,
         completedAt: null,
+        riskCheck: defaultRiskCheckState(),
       };
+    }
+
+    function defaultRiskCheckState() {
+      return {
+        mood: "",
+        isolation: "",
+        urge: "",
+        level: "unknown",
+        score: null,
+        answeredAt: null,
+      };
+    }
+
+    function normalizeRiskCheckState(risk) {
+      const base = defaultRiskCheckState();
+      if (!risk || typeof risk !== "object") return base;
+
+      RISK_CHECK_FIELDS.forEach((field) => {
+        const raw = String(risk[field] || "");
+        if (raw && RISK_CHECK_LOOKUP[field]?.[raw]) base[field] = raw;
+      });
+
+      base.level = ["low", "medium", "high"].includes(String(risk.level || "")) ? String(risk.level) : "unknown";
+      base.answeredAt = typeof risk.answeredAt === "string" ? risk.answeredAt : null;
+
+      const parsedScore = Number(risk.score);
+      if (Number.isFinite(parsedScore)) base.score = parsedScore;
+
+      return base;
+    }
+
+    function normalizeDailyState(rawState) {
+      const base = defaultDailyState();
+      if (!rawState || typeof rawState !== "object") return base;
+
+      TASK_KEYS.forEach((k) => {
+        base.tasks[k] = Boolean(rawState.tasks && rawState.tasks[k]);
+      });
+
+      const seconds = Number(rawState.breathSecondsLeft);
+      if (Number.isFinite(seconds)) base.breathSecondsLeft = Math.max(0, Math.min(CONFIG.BREATH.TOTAL_SECONDS, Math.floor(seconds)));
+
+      base.breathRunning = Boolean(rawState.breathRunning);
+      base.completedAll = Boolean(rawState.completedAll);
+      base.completedAt = typeof rawState.completedAt === "string" ? rawState.completedAt : null;
+      base.riskCheck = normalizeRiskCheckState(rawState.riskCheck);
+
+      return base;
+    }
+
+    function isRiskCheckComplete(risk) {
+      return RISK_CHECK_FIELDS.every((field) => Boolean(risk?.[field]));
+    }
+
+    function evaluateRiskCheck(risk) {
+      const normalized = normalizeRiskCheckState(risk);
+      if (!isRiskCheckComplete(normalized)) {
+        return {
+          complete: false,
+          level: "neutral",
+          pill: "لم يُفحص بعد",
+          title: "ابدأ الفحص السريع أولًا",
+          description: "اختر إجابة واحدة من كل سطر، وسيظهر لك مستوى الخطر الحالي وما الأنسب فعله الآن.",
+          advices: [
+            "اختر حالتك بصدق حتى يعطيك المؤشر التدخل الأنسب.",
+            "أعد الفحص في أي لحظة إذا تغير مزاجك أو شعرت ببداية ضعف.",
+          ],
+          score: null,
+        };
+      }
+
+      const moodScore = RISK_CHECK_LOOKUP.mood[normalized.mood]?.score || 0;
+      const isolationScore = RISK_CHECK_LOOKUP.isolation[normalized.isolation]?.score || 0;
+      const urgeScore = RISK_CHECK_LOOKUP.urge[normalized.urge]?.score || 0;
+      const score = moodScore + isolationScore + urgeScore;
+
+      let level = "low";
+      if (
+        normalized.mood === "threatened" ||
+        normalized.urge === "high" ||
+        score >= 5 ||
+        (normalized.isolation === "alone" && normalized.urge !== "none")
+      ) {
+        level = "high";
+      } else if (
+        score >= 2 ||
+        normalized.isolation === "alone" ||
+        normalized.mood === "tired"
+      ) {
+        level = "medium";
+      }
+
+      if (level === "high") {
+        return {
+          complete: true,
+          level,
+          pill: "وضع نجدة",
+          title: "الخطر مرتفع الآن، لا تفاوض الرغبة.",
+          description: "المؤشر يرى أنك تحتاج تدخلًا مباشرًا هذه اللحظة. غيّر المكان، ابدأ التنفس، ثم افتح خطة النجاة فورًا.",
+          advices: [
+            "لا تبق وحدك ولا تترك نفسك مع الشاشة في فراغ صامت.",
+            "ابدأ 60 ثانية تنفس الآن ثم نفّذ أول خطوة من خطة النجاة مباشرة.",
+            "افتح الأذكار أو القرآن لتشغل ذهنك ووقتك بشيء نافع فورًا.",
+            "إذا أمكن، اقترب من الناس أو أرسل رسالة سريعة لشخص تثق به.",
+          ],
+          score,
+        };
+      }
+
+      if (level === "medium") {
+        return {
+          complete: true,
+          level,
+          pill: "تنبيه مبكر",
+          title: "هناك مؤشرات ضعف، خذ التدخل الصغير الآن.",
+          description: "الوضع ليس طارئًا بعد، لكنه لا يناسب التسويف. تدخل خفيف الآن قد يمنع موجة أكبر بعد قليل.",
+          advices: [
+            "ابدأ دقيقة التنفس الآن لكسر التوتر الأول.",
+            "لا تطل الجلوس في عزلة؛ تحرك أو بدّل مكانك ولو لدقائق.",
+            "افتح الأذكار أو القرآن قبل أن يتحول التعب إلى انجراف.",
+          ],
+          score,
+        };
+      }
+
+      return {
+        complete: true,
+        level,
+        pill: "وضع مطمئن",
+        title: "وضعك الحالي مطمئن، حافظ على الإيقاع.",
+        description: "المؤشر مطمئن الآن، لكن الأفضل أن تبدأ مهمة نافعة مباشرة حتى لا يعود الفراغ ويتغير مزاجك لاحقًا.",
+        advices: [
+          "ادخل في أول مهمة من مهام اليوم مباشرة ولا تؤجل البداية.",
+          "إذا أحسست بتغير مفاجئ خلال اليوم فأعد الفحص في أقل من 30 ثانية.",
+        ],
+        score,
+      };
+    }
+
+    function formatRiskAnsweredAt(isoString) {
+      if (!isoString) return "لا يوجد تقييم محفوظ لهذا اليوم بعد.";
+      const dt = new Date(isoString);
+      if (Number.isNaN(dt.getTime())) return "تم حفظ التقييم لهذا اليوم.";
+      return `آخر تقييم: ${dt.toLocaleTimeString("ar", { hour: "numeric", minute: "2-digit" })}`;
+    }
+
+    function chooseRiskAzkarButton(state) {
+      const hour = new Date().getHours();
+      const needMorning = !state?.tasks?.morning_adhkar;
+      const needEvening = !state?.tasks?.evening_adhkar;
+      if (needMorning && (!needEvening || hour < 15)) return qs("#openMorningAzkar");
+      if (needEvening) return qs("#openEveningAzkar");
+      return hour < 15 ? qs("#openMorningAzkar") : qs("#openEveningAzkar");
+    }
+
+    function renderRiskCheckUI(state) {
+      const card = qs("#riskCheckCard");
+      const pill = qs("#riskLevelPill");
+      const meta = qs("#riskAnsweredAt");
+      const resultBox = qs("#riskResultBox");
+      const title = qs("#riskResultTitle");
+      const desc = qs("#riskResultDesc");
+      const adviceList = qs("#riskAdviceList");
+      const breathBtn = qs("#riskActionBreath");
+      const rescueCard = qs("#tcard-rescue");
+      if (!card || !pill || !meta || !resultBox || !title || !desc || !adviceList) return;
+
+      const risk = normalizeRiskCheckState(state?.riskCheck);
+      const evaluation = evaluateRiskCheck(risk);
+      WA3I_CTX.riskEvaluation = evaluation;
+
+      qsa(".risk-option-btn").forEach((btn) => {
+        const group = btn.getAttribute("data-risk-group");
+        const value = btn.getAttribute("data-risk-value");
+        const selected = risk[group] === value;
+        btn.classList.toggle("is-selected", selected);
+        btn.setAttribute("aria-pressed", selected ? "true" : "false");
+      });
+
+      card.classList.remove("is-low", "is-medium", "is-high");
+      resultBox.classList.remove("is-low", "is-medium", "is-high");
+      pill.className = "risk-level-pill";
+
+      if (evaluation.level === "low") {
+        card.classList.add("is-low");
+        resultBox.classList.add("is-low");
+        pill.classList.add("is-low");
+      } else if (evaluation.level === "medium") {
+        card.classList.add("is-medium");
+        resultBox.classList.add("is-medium");
+        pill.classList.add("is-medium");
+      } else if (evaluation.level === "high") {
+        card.classList.add("is-high");
+        resultBox.classList.add("is-high");
+        pill.classList.add("is-high");
+      } else {
+        pill.classList.add("is-neutral");
+      }
+
+      pill.textContent = evaluation.pill;
+      meta.textContent = formatRiskAnsweredAt(risk.answeredAt);
+      title.textContent = evaluation.title;
+      desc.textContent = evaluation.description;
+      adviceList.innerHTML = evaluation.advices.map((item) => `
+        <div class="risk-advice-item">
+          <span class="risk-advice-mark">•</span>
+          <span>${escapeHtml(item)}</span>
+        </div>
+      `).join("");
+
+      if (breathBtn) {
+        if (state?.breathRunning) breathBtn.textContent = "التنفس جارٍ الآن";
+        else if (state?.tasks?.deep_breath) breathBtn.textContent = "أعد دقيقة تنفس";
+        else breathBtn.textContent = evaluation.level === "high" ? "ابدأ النجدة الآن" : "ابدأ التنفس الآن";
+        breathBtn.classList.toggle("emergency", evaluation.level === "high");
+      }
+
+      if (rescueCard) {
+        rescueCard.classList.remove("is-watch", "is-urgent");
+        if (evaluation.level === "high") rescueCard.classList.add("is-urgent");
+        else if (evaluation.level === "medium") rescueCard.classList.add("is-watch");
+      }
+    }
+
+    function applyRiskCheckAnswer(group, value) {
+      const todayISO = WA3I_CTX.todayISO;
+      const state = WA3I_CTX.state;
+      if (!todayISO || !state) return;
+
+      const next = normalizeRiskCheckState(state.riskCheck);
+      next[group] = next[group] === value ? "" : value;
+
+      const evaluation = evaluateRiskCheck(next);
+      next.level = evaluation.complete ? evaluation.level : "unknown";
+      next.score = evaluation.complete ? evaluation.score : null;
+      next.answeredAt = new Date().toISOString();
+
+      state.riskCheck = next;
+      renderRiskCheckUI(state);
+      setDailyState(todayISO, state);
+    }
+
+    function resetRiskCheck() {
+      const todayISO = WA3I_CTX.todayISO;
+      const state = WA3I_CTX.state;
+      if (!todayISO || !state) return;
+      state.riskCheck = defaultRiskCheckState();
+      renderRiskCheckUI(state);
+      setDailyState(todayISO, state);
+    }
+
+    function wireRiskCheckUI() {
+      if (RISK_CHECK_WIRED) return;
+      RISK_CHECK_WIRED = true;
+
+      qsa(".risk-option-btn").forEach((btn) => {
+        btn.onclick = () => {
+          const group = btn.getAttribute("data-risk-group");
+          const value = btn.getAttribute("data-risk-value");
+          if (!group || !value) return;
+          applyRiskCheckAnswer(group, value);
+        };
+      });
+
+      const resetBtn = qs("#riskResetBtn");
+      if (resetBtn) resetBtn.onclick = () => resetRiskCheck();
+
+      const breathBtn = qs("#riskActionBreath");
+      if (breathBtn) {
+        breathBtn.onclick = () => {
+          const todayISO = WA3I_CTX.todayISO;
+          const state = WA3I_CTX.state;
+          if (!todayISO || !state) return;
+          if (state.breathRunning) {
+            showToast("مؤقت التنفس يعمل بالفعل.");
+            return;
+          }
+          startBreathTimer(todayISO, state);
+          showToast("ابدأ التنفس الآن وخفف التوتر الأول.");
+        };
+      }
+
+      const rescueBtn = qs("#riskActionRescue");
+      if (rescueBtn) {
+        rescueBtn.onclick = () => {
+          qs("#openRescueCenter")?.click();
+        };
+      }
+
+      const azkarBtn = qs("#riskActionAzkar");
+      if (azkarBtn) {
+        azkarBtn.onclick = () => {
+          const target = chooseRiskAzkarButton(WA3I_CTX.state);
+          target?.click();
+        };
+      }
+    }
+
+    function wireDailyVisibilityPause() {
+      if (DAILY_VISIBILITY_WIRED) return;
+      DAILY_VISIBILITY_WIRED = true;
+
+      document.addEventListener("visibilitychange", () => {
+        const todayISO = WA3I_CTX.todayISO;
+        const state = WA3I_CTX.state;
+        if (!todayISO || !state) return;
+        if (document.hidden && state.breathRunning) {
+          stopBreathTimer(state);
+          setDailyState(todayISO, state);
+        }
+      });
+    }
+
+    function defaultRescueCenterState() {
+      return {
+        plan: {
+          dangerTime: "",
+          dangerPlace: "",
+          firstSign: "",
+          bestReplacement: "",
+          supportPerson: "",
+        },
+        log: [],
+      };
+    }
+
+    function normalizeRescueCenterState(rawState) {
+      const base = defaultRescueCenterState();
+      if (!rawState || typeof rawState !== "object") return base;
+
+      const rawPlan = rawState.plan && typeof rawState.plan === "object" ? rawState.plan : {};
+      base.plan.dangerTime = String(rawPlan.dangerTime || "").trim();
+      base.plan.dangerPlace = String(rawPlan.dangerPlace || "").trim();
+      base.plan.firstSign = String(rawPlan.firstSign || "").trim();
+      base.plan.bestReplacement = String(rawPlan.bestReplacement || "").trim();
+      base.plan.supportPerson = String(rawPlan.supportPerson || "").trim();
+
+      const rawLog = Array.isArray(rawState.log) ? rawState.log : [];
+      base.log = rawLog
+        .map((entry) => ({
+          id: String(entry?.id || "").trim(),
+          createdAt: typeof entry?.createdAt === "string" ? entry.createdAt : new Date().toISOString(),
+          trigger: String(entry?.trigger || "").trim(),
+          helped: String(entry?.helped || "").trim(),
+          level: ["low", "medium", "high"].includes(String(entry?.level || "")) ? String(entry.level) : "unknown",
+        }))
+        .filter((entry) => entry.id && (entry.trigger || entry.helped))
+        .slice(0, 8);
+
+      return base;
+    }
+
+    function rescueCenterStorageKey() {
+      return userKey("rescue_center_v1");
+    }
+
+    function getRescueCenterState() {
+      const raw = localStorage.getItem(rescueCenterStorageKey());
+      if (!raw) return defaultRescueCenterState();
+      return normalizeRescueCenterState(safeJsonParse(raw, defaultRescueCenterState()));
+    }
+
+    function setRescueCenterState(state) {
+      localStorage.setItem(rescueCenterStorageKey(), JSON.stringify(normalizeRescueCenterState(state)));
+    }
+
+    function formatRescueLogDate(isoString) {
+      const dt = new Date(isoString);
+      if (Number.isNaN(dt.getTime())) return "الآن";
+      return dt.toLocaleString("ar", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    }
+
+    function renderRescuePlanPreview(plan) {
+      const preview = qs("#rescueCenterPlanPreview");
+      if (!preview) return;
+
+      const items = [
+        { title: "أخطر وقت", value: plan.dangerTime },
+        { title: "أخطر مكان أو وضع", value: plan.dangerPlace },
+        { title: "أول علامة", value: plan.firstSign },
+        { title: "أفضل بديل سريع", value: plan.bestReplacement },
+        { title: "رفيق التثبيت", value: plan.supportPerson },
+      ].filter((item) => item.value);
+
+      if (!items.length) {
+        preview.innerHTML = `<div class="rescue-center-empty">لم تُكتب خطتك الشخصية بعد. املأ الحقول أعلاه، وعندما يأتيك الضعف سيظهر لك ما يلزمك أنت بالذات بدل النص العام.</div>`;
+        return;
+      }
+
+      preview.innerHTML = items.map((item) => `
+        <div class="rescue-center-preview-card">
+          <div class="rescue-center-preview-title">${escapeHtml(item.title)}</div>
+          <div class="rescue-center-preview-value">${escapeHtml(item.value)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderRescueLog(logItems) {
+      const list = qs("#rescueCenterLogList");
+      if (!list) return;
+      if (!logItems.length) {
+        list.innerHTML = `<div class="rescue-center-empty">لا يوجد سجل بعد. عندما تنجو من موجة ضعف، اكتب باختصار ما الذي ضغط عليك وما الذي أنقذك. بعد مدة ستظهر أنماطك بوضوح.</div>`;
+        return;
+      }
+
+      list.innerHTML = logItems.map((entry, idx) => `
+        <div class="rescue-center-log-item">
+          <div class="rescue-center-log-head">
+            <span class="rescue-center-log-badge">نجاة ${formatArabicNumber(idx + 1)}</span>
+            <span class="rescue-center-log-time">${escapeHtml(formatRescueLogDate(entry.createdAt))}</span>
+          </div>
+          <div class="rescue-center-log-body">
+            <div class="rescue-center-log-line"><span>الضغط:</span> ${escapeHtml(entry.trigger || "—")}</div>
+            <div class="rescue-center-log-line"><span>الذي نفع:</span> ${escapeHtml(entry.helped || "—")}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function fillRescueCenterPlanInputs(plan) {
+      const map = {
+        rescuePlanDangerTime: plan.dangerTime,
+        rescuePlanDangerPlace: plan.dangerPlace,
+        rescuePlanFirstSign: plan.firstSign,
+        rescuePlanBestReplacement: plan.bestReplacement,
+        rescuePlanSupportPerson: plan.supportPerson,
+      };
+      Object.entries(map).forEach(([id, value]) => {
+        const el = qs(`#${id}`);
+        if (el) el.value = value || "";
+      });
+    }
+
+    function renderRescueCenterStatus(evaluation) {
+      const statusBox = qs("#rescueCenterStatusBox");
+      const pill = qs("#rescueCenterStatusPill");
+      const title = qs("#rescueCenterStatusTitle");
+      const desc = qs("#rescueCenterStatusDesc");
+      const list = qs("#rescueCenterAdviceList");
+      if (!statusBox || !pill || !title || !desc || !list) return;
+
+      statusBox.classList.remove("low", "medium", "high");
+      pill.className = "rescue-center-status-pill";
+
+      if (evaluation.level === "low") {
+        statusBox.classList.add("low");
+        pill.classList.add("low");
+      } else if (evaluation.level === "medium") {
+        statusBox.classList.add("medium");
+        pill.classList.add("medium");
+      } else if (evaluation.level === "high") {
+        statusBox.classList.add("high");
+        pill.classList.add("high");
+      }
+
+      pill.textContent = evaluation.pill;
+      title.textContent = evaluation.title;
+      desc.textContent = evaluation.description;
+      list.innerHTML = evaluation.advices.map((item) => `
+        <div class="rescue-center-advice-item">
+          <span class="rescue-center-advice-mark">•</span>
+          <span>${escapeHtml(item)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderRescueCenterModal() {
+      const state = getRescueCenterState();
+      const evaluation = WA3I_CTX.riskEvaluation || evaluateRiskCheck(WA3I_CTX.state?.riskCheck);
+      fillRescueCenterPlanInputs(state.plan);
+      renderRescuePlanPreview(state.plan);
+      renderRescueLog(state.log);
+      renderRescueCenterStatus(evaluation);
+    }
+
+    function saveRescueCenterPlan() {
+      const current = getRescueCenterState();
+      current.plan = {
+        dangerTime: String(qs("#rescuePlanDangerTime")?.value || "").trim(),
+        dangerPlace: String(qs("#rescuePlanDangerPlace")?.value || "").trim(),
+        firstSign: String(qs("#rescuePlanFirstSign")?.value || "").trim(),
+        bestReplacement: String(qs("#rescuePlanBestReplacement")?.value || "").trim(),
+        supportPerson: String(qs("#rescuePlanSupportPerson")?.value || "").trim(),
+      };
+      setRescueCenterState(current);
+      renderRescuePlanPreview(current.plan);
+      showToast("تم حفظ خطتك الشخصية ✅");
+    }
+
+    function saveRescueLogEntry() {
+      const trigger = String(qs("#rescueLogTrigger")?.value || "").trim();
+      const helped = String(qs("#rescueLogHelped")?.value || "").trim();
+      if (!trigger && !helped) {
+        showToast("اكتب سبب الضغط أو ما الذي نفعك أولًا.");
+        return;
+      }
+
+      const current = getRescueCenterState();
+      current.log.unshift({
+        id: `log_${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        trigger,
+        helped,
+        level: WA3I_CTX.riskEvaluation?.level || "unknown",
+      });
+      current.log = current.log.slice(0, 8);
+      setRescueCenterState(current);
+      renderRescueLog(current.log);
+
+      const triggerInput = qs("#rescueLogTrigger");
+      const helpedInput = qs("#rescueLogHelped");
+      if (triggerInput) triggerInput.value = "";
+      if (helpedInput) helpedInput.value = "";
+      showToast("تمت إضافة النجاة إلى السجل ✅");
+    }
+
+    function setupRescueCenterModal() {
+      const modal = qs("#rescueCenterModal");
+      const openBtn = qs("#openRescueCenter");
+      const closeBtn = qs("#closeRescueCenterModal");
+      const closeBtn2 = qs("#closeRescueCenterModal2");
+      const breathBtn = qs("#rescueCenterBreathBtn");
+      const azkarBtn = qs("#rescueCenterAzkarBtn");
+      const libraryBtn = qs("#rescueCenterLibraryBtn");
+      const classicPlanBtn = qs("#rescueCenterClassicPlanBtn");
+      const savePlanBtn = qs("#saveRescuePlanBtn");
+      const saveLogBtn = qs("#saveRescueLogBtn");
+      if (!modal) return;
+
+      function openModal() {
+        renderRescueCenterModal();
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      if (openBtn) openBtn.onclick = () => openModal();
+      if (closeBtn) closeBtn.onclick = () => closeModal();
+      if (closeBtn2) closeBtn2.onclick = () => closeModal();
+
+      modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+      };
+
+      if (breathBtn) {
+        breathBtn.onclick = () => {
+          const todayISO = WA3I_CTX.todayISO;
+          const state = WA3I_CTX.state;
+          if (!todayISO || !state) return;
+          if (!state.breathRunning) startBreathTimer(todayISO, state);
+          else showToast("مؤقت التنفس يعمل بالفعل.");
+        };
+      }
+
+      if (azkarBtn) {
+        azkarBtn.onclick = () => {
+          closeModal();
+          chooseRiskAzkarButton(WA3I_CTX.state)?.click();
+        };
+      }
+
+      if (libraryBtn) {
+        libraryBtn.onclick = () => {
+          closeModal();
+          qs("#openRecoveryLibrary")?.click();
+        };
+      }
+
+      if (classicPlanBtn) {
+        classicPlanBtn.onclick = () => {
+          closeModal();
+          if (typeof window.openRescuePlanModal === "function") {
+            window.openRescuePlanModal();
+          }
+        };
+      }
+
+      if (savePlanBtn) savePlanBtn.onclick = () => saveRescueCenterPlan();
+      if (saveLogBtn) saveLogBtn.onclick = () => saveRescueLogEntry();
     }
 
     function setCheckbox(taskKey, checked) {
@@ -2007,10 +3547,12 @@ function previousISODate(isoDate) {
       // Done-state glow on cards
       document.querySelectorAll(".tcard[id]").forEach(card => {
         const taskMap = {
-          "tcard-attendance": "attendance",
           "tcard-morning": "morning_adhkar",
           "tcard-breath": "deep_breath",
-          "tcard-evening": "evening_adhkar"
+          "tcard-quran": "quran_reading",
+          "tcard-evening": "evening_adhkar",
+          "tcard-rescue": "rescue_plan",
+          "tcard-library": "recovery_book"
         };
         const key = taskMap[card.id];
         if (key) card.classList.toggle("is-done", Boolean(state.tasks[key]));
@@ -2045,15 +3587,15 @@ function previousISODate(isoDate) {
     // Countdown
     // ---------------------------
     function initCountdown() {
-      const ramadanDate = new Date(CONFIG.RAMADAN_DATE_ISO).getTime();
+      const targetDate = new Date(CONFIG.AHD_TARGET_DATE_ISO).getTime();
 
       function updateCountdown() {
         const now = new Date().getTime();
-        const diff = ramadanDate - now;
+        const diff = targetDate - now;
 
         if (diff <= 0) {
           const el = document.querySelector(".countdown");
-          if (el) el.innerHTML = "<p style='color:#7cf2a4;font-size:22px'>🌙 رمضان مبارك 🌙</p>";
+          if (el) el.innerHTML = "<p style='color:#7cf2a4;font-size:22px'>🕋 حل عيد الأضحى المبارك 🕋</p>";
           return;
         }
 
@@ -2101,6 +3643,7 @@ function previousISODate(isoDate) {
       }
       state.breathRunning = false;
       setBreathUI(state);
+      renderRiskCheckUI(state);
     }
 
     function startBreathTimer(todayISO, state) {
@@ -2112,6 +3655,7 @@ function previousISODate(isoDate) {
 
       state.breathRunning = true;
       setBreathUI(state);
+      renderRiskCheckUI(state);
       setDailyState(todayISO, state);
 
       breathInterval = setInterval(() => {
@@ -2136,6 +3680,7 @@ function previousISODate(isoDate) {
       stopBreathTimer(state);
       state.breathSecondsLeft = CONFIG.BREATH.TOTAL_SECONDS;
       setBreathUI(state);
+      renderRiskCheckUI(state);
       setDailyState(todayISO, state);
     }
 
@@ -2154,6 +3699,9 @@ function previousISODate(isoDate) {
     // Azkar Modal
     // ---------------------------
     function setupAzkarModal() {
+      if (AZKAR_MODAL_WIRED) return;
+      AZKAR_MODAL_WIRED = true;
+
       const modal = qs("#azkarModal");
       const frame = qs("#azkarFrame");
       const title = qs("#azkarModalTitle");
@@ -2229,7 +3777,115 @@ function previousISODate(isoDate) {
     }
 
     // ---------------------------
-    // Quran (10 pages/day)
+    // Recovery Library
+    // ---------------------------
+    function setupRecoveryLibrary() {
+      const modal = qs("#recoveryLibraryModal");
+      const openBtn = qs("#openRecoveryLibrary");
+      const closeBtn = qs("#closeRecoveryLibraryModal");
+      const closeBtn2 = qs("#closeRecoveryLibraryModal2");
+      const listEl = qs("#recoveryLibraryList");
+      const countChip = qs("#libraryCountChip");
+      const books = Array.isArray(CONFIG.RECOVERY_BOOKS) ? CONFIG.RECOVERY_BOOKS : [];
+
+      if (countChip) {
+        countChip.textContent = `${formatArabicNumber(books.length)} كتاب`;
+      }
+
+      function renderBooks() {
+        if (!listEl) return;
+        if (!books.length) {
+          listEl.innerHTML = `
+            <div class="library-empty">
+              لا توجد كتب مضافة بعد.<br>
+              أضف ملفات الكتب لاحقًا داخل المجلد <code>books/</code> أو اربطها بروابط عامة مباشرة، وستظهر هنا للجميع.
+            </div>
+          `;
+          return;
+        }
+
+        listEl.innerHTML = books.map((book) => `
+          <div class="library-item">
+            <div class="library-item-title">${escapeHtml(book.title || "كتاب بلا عنوان")}</div>
+            <div class="library-item-author">${escapeHtml(book.author || "مؤلف غير محدد")}</div>
+            <div class="library-meta">
+              ${book.minutes ? `<span class="library-chip">${formatArabicNumber(book.minutes)} دقائق</span>` : ""}
+              <span class="library-chip">مفتوح للجميع</span>
+            </div>
+            <div class="library-item-desc">${escapeHtml(book.description || "كتاب مضاف للمكتبة العامة.")}</div>
+            <div class="library-item-actions">
+              <button class="library-btn primary" type="button" data-open-book="${escapeHtml(book.id || "")}">فتح الكتاب</button>
+            </div>
+          </div>
+        `).join("");
+
+        listEl.querySelectorAll("[data-open-book]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-open-book");
+            const book = books.find((b) => String(b.id || "") === String(id || ""));
+            if (!book?.href) {
+              showToast("هذا الكتاب لا يملك رابطًا صالحًا بعد.");
+              return;
+            }
+            window.open(book.href, "_blank", "noopener,noreferrer");
+          });
+        });
+      }
+
+      function openModal() {
+        renderBooks();
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      openBtn?.addEventListener("click", openModal);
+      closeBtn?.addEventListener("click", closeModal);
+      closeBtn2?.addEventListener("click", closeModal);
+      modal?.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      renderBooks();
+    }
+
+    // ---------------------------
+    // Rescue Plan
+    // ---------------------------
+    function setupRescuePlanModal() {
+      const modal = qs("#rescuePlanModal");
+      const closeBtn = qs("#closeRescuePlanModal");
+      const closeBtn2 = qs("#closeRescuePlanModal2");
+
+      function openModal() {
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      window.openRescuePlanModal = openModal;
+      window.closeRescuePlanModal = closeModal;
+      closeBtn?.addEventListener("click", closeModal);
+      closeBtn2?.addEventListener("click", closeModal);
+      modal?.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    // ---------------------------
+    // Quran (3 pages/day)
     // ---------------------------
     function getOrInitQuranStartDate(today) {
       const key = "wa3i_quran_start_day_v1"; // يبدأ من أول صفحة يوم تشغيل أول مرة
@@ -2273,175 +3929,16 @@ function previousISODate(isoDate) {
     return { start, end, pages };
     }
 
-    async function fetchVersesByPage(pageNumber, opts = {}) {
-      const tafsirId = Number.isFinite(opts?.tafsirId) ? opts.tafsirId : null;
-      const cacheKey = tafsirId
-        ? `wa3i_quran_page_${pageNumber}_tafsir_${tafsirId}_v2`
-        : `wa3i_quran_page_${pageNumber}_v2`;
-
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (parsed?.data && parsed?.savedAt && (Date.now() - parsed.savedAt) < 1000 * 60 * 60 * 24 * 30) {
-            return parsed.data;
-          }
-        } catch { /* ignore */ }
-      }
-
-      const url =
-        `${CONFIG.QURAN.API_BASE}${pageNumber}` +
-        `?language=ar&words=false&fields=${encodeURIComponent(CONFIG.QURAN.FIELDS)}` +
-        (tafsirId ? `&tafsirs=${encodeURIComponent(tafsirId)}` : "");
-
-      const res = await fetch(url, { headers: { Accept: "application/json" } });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const json = await res.json();
-      const verses = Array.isArray(json?.verses) ? json.verses : [];
-
-      const data = verses.map((v) => {
-        const key = v.verse_key || "";
-        const text = v.text_uthmani || v.text_qpc_hafs || v.text_imlaei || v.text || "";
-        const tafsirHtml = Array.isArray(v.tafsirs) && v.tafsirs[0]?.text ? String(v.tafsirs[0].text) : "";
-        return { key, text, tafsirHtml };
-      }).filter((x) => x.text);
-
-      localStorage.setItem(cacheKey, JSON.stringify({ savedAt: Date.now(), data }));
-      return data;
-    }
-
-    function buildQuranNav(pages) {
-      const nav = qs("#quranPageNav");
-      nav.innerHTML = "";
-
-      pages.forEach((p) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "quran-page-chip";
-        btn.textContent = formatArabicNumber(p);
-        btn.addEventListener("click", () => {
-          const target = qs(`#quran-page-${p}`);
-          if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-        nav.appendChild(btn);
-      });
-    }
-
-    function renderQuranPages(pages, pagesData) {
-      const pagesEl = qs("#quranPages");
-      pagesEl.innerHTML = "";
-
-      for (const page of pages) {
-        const verses = pagesData.get(page) || [];
-
-        const pageCard = document.createElement("div");
-        pageCard.className = "quran-page";
-        pageCard.id = `quran-page-${page}`;
-
-        const head = document.createElement("div");
-        head.className = "quran-page-head";
-        head.innerHTML = `<div class="quran-page-badge">صفحة ${formatArabicNumber(page)}</div>`;
-
-        const body = document.createElement("div");
-        body.className = "quran-text";
-
-        verses.forEach((v) => {
-          const ayahNo = (v.key.split(":")[1] || "").trim();
-
-          const span = document.createElement("span");
-          span.className = "quran-ayah";
-          span.innerHTML = `
-            <span class="ayah-text">${v.text}</span>
-            ${ayahNo ? `<span class="ayah-num">${formatArabicNumber(ayahNo)}</span>` : ""}
-          `;
-          body.appendChild(span);
-          body.appendChild(document.createTextNode(" "));
-        });
-
-        pageCard.appendChild(head);
-        pageCard.appendChild(body);
-        pagesEl.appendChild(pageCard);
-      }
-    }
-
-    function setupQuranModal(quranPlan) {
-      const modal = qs("#quranModal");
-      const openBtn = qs("#openQuranReading");
-      const closeBtn = qs("#closeQuranModal");
-      const closeBtn2 = qs("#closeQuranModal2");
-      const loader = qs("#quranLoader");
-      const error = qs("#quranError");
-      const title = qs("#quranModalTitle");
-      const sub = qs("#quranModalSub");
-
-      const copyPlanBtn = qs("#quranCopyPlan");
-      const markDoneBtn = qs("#quranMarkDone");
-
-      async function openModal() {
-        title.textContent = "قراءة اليوم";
-        sub.textContent = `صفحات ${formatArabicNumber(quranPlan.start)} إلى ${formatArabicNumber(quranPlan.end)}`;
-
-        modal.classList.add("open");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-
-        loader.hidden = false;
-        error.hidden = true;
-        qs("#quranPages").innerHTML = "";
-        buildQuranNav(quranPlan.pages);
-
-        try {
-          const pagesData = new Map();
-          for (const p of quranPlan.pages) {
-            const verses = await fetchVersesByPage(p);
-            pagesData.set(p, verses);
-          }
-          renderQuranPages(quranPlan.pages, pagesData);
-          loader.hidden = true;
-        } catch {
-          loader.hidden = true;
-          error.hidden = false;
-        }
-      }
-
-      function closeModal() {
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-      }
-
-      openBtn.addEventListener("click", openModal);
-      closeBtn.addEventListener("click", closeModal);
-      closeBtn2.addEventListener("click", closeModal);
-
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) closeModal();
-      });
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-      });
-
-      copyPlanBtn.addEventListener("click", async () => {
-        const txt = `قراءة اليوم: صفحات ${quranPlan.start} إلى ${quranPlan.end} (10 صفحات)`;
-        try {
-          await navigator.clipboard.writeText(txt);
-          showToast("تم نسخ الخطة ✅");
-        } catch {
-          showToast("تعذّر النسخ تلقائيًا");
-        }
-      });
-
-      markDoneBtn.addEventListener("click", () => {
-        if (!WA3I_CTX.state || !WA3I_CTX.todayISO) return;
-
-                updateProgressUI(WA3I_CTX.state);
-        maybeUpdateStreakOnFullCompletion(WA3I_CTX.todayISO, WA3I_CTX.state);
-        setDailyState(WA3I_CTX.todayISO, WA3I_CTX.state);
-
-        closeModal();
-      });
+    function openDailyQuran(quranPlan) {
+      const startPage = Math.max(1, Number(quranPlan?.start || 1));
+      const quranUrl = `${CONFIG.QURAN.PDF_URL}#page=${startPage}&${CONFIG.QURAN.PDF_VIEWER_PARAMS}`;
+      const link = document.createElement("a");
+      link.href = quranUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     }
 
 
@@ -2718,23 +4215,36 @@ function previousISODate(isoDate) {
 
       let state = getDailyState(todayISO);
       if (!state) state = defaultDailyState();
+      state = normalizeDailyState(state);
+      const quranPlan = computeDailyQuranPages(today);
 
       WA3I_CTX.todayISO = todayISO;
       WA3I_CTX.state = state;
+
+      wireRiskCheckUI();
+      wireDailyVisibilityPause();
 
       TASK_KEYS.forEach((k) => {
         if (typeof state.tasks?.[k] !== "boolean") state.tasks[k] = false;
         setCheckbox(k, state.tasks[k]);
       });
 
-      const initialStreak = getStreakForUserId(currentUserId());
-      try { localStorage.setItem(userKey("streak"), String(initialStreak)); } catch {}
-      qs("#streakCount").textContent = String(initialStreak);
+      // Prefer the current member's local streak so daily completion never appears to "reset"
+      // when Firestore sync is delayed or unavailable.
+      const sharedStreak = getStreakForUserId(currentUserId());
+      const localStreak = getStreak();
+      const initialStreak = Math.max(localStreak, sharedStreak);
+      setStreak(initialStreak);
       setBreathUI(state);
       updateProgressUI(state);
+      renderRiskCheckUI(state);
+      const openQuranBtn = qs("#openQuranReading");
+      if (openQuranBtn) {
+        openQuranBtn.onclick = () => openDailyQuran(quranPlan);
+      }
 
       qsa('input[type="checkbox"][data-task]').forEach((el) => {
-        el.addEventListener("change", () => {
+        el.onchange = () => {
           const key = el.getAttribute("data-task");
           state.tasks[key] = el.checked;
 
@@ -2745,32 +4255,183 @@ function previousISODate(isoDate) {
 
           setBreathUI(state);
           updateProgressUI(state);
+          renderRiskCheckUI(state);
           maybeUpdateStreakOnFullCompletion(todayISO, state);
           setDailyState(todayISO, state);
-        });
+        };
       });
 
-      qs("#breathStart").addEventListener("click", () => startBreathTimer(todayISO, state));
-      qs("#breathReset").addEventListener("click", () => resetBreathTimer(todayISO, state));
+      qs("#breathStart").onclick = () => startBreathTimer(todayISO, state);
+      qs("#breathReset").onclick = () => resetBreathTimer(todayISO, state);
 
-      qs("#resetToday").addEventListener("click", () => {
+      qs("#resetToday").onclick = () => {
         stopBreathTimer(state);
         state = defaultDailyState();
+        state = normalizeDailyState(state);
         WA3I_CTX.state = state;
 
         TASK_KEYS.forEach((k) => setCheckbox(k, false));
         setBreathUI(state);
         updateProgressUI(state);
+        renderRiskCheckUI(state);
         setDailyState(todayISO, state);
-      });
-
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden && state.breathRunning) {
-          stopBreathTimer(state);
-          setDailyState(todayISO, state);
-        }
-      });
+      };
     }
+
+// ---------------------------
+// Featured Members (Firebase)
+// ---------------------------
+function _esc(s) {
+  return typeof escapeHtml === "function" ? escapeHtml(s) : String(s).replace(/[<>"'&]/g, (c) => ({"<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;","&":"&amp;"}[c]));
+}
+const FIRESTORE_MEMBER_STATUS = "featuredMembers";
+
+let MEMBER_STATUS_STATE = {
+  map: new Map(), // memberId -> elite | active | lazy
+  unsubscribers: [],
+};
+const PENDING_MEMBER_STATUS = new Map(); // memberId -> elite | active | lazy | "__CLEAR__"
+
+function setMemberStatusAdminVisibility() {
+  const wrap = qs("#memberStatusAdminWrap");
+  if (wrap) wrap.style.display = FB_STATE.isAdmin ? "block" : "none";
+}
+
+function refreshMemberStatusUI() {
+  try { decorateMemberCardsWithStreaks(); } catch {}
+  try {
+    const q = qs("#identitySearch")?.value || "";
+    renderIdentityGrid(IDENTITY_MEMBERS_CACHE, q);
+  } catch {}
+  try { renderAhdPublicList(); } catch {}
+  if (FB_STATE.isAdmin) {
+    try { renderAhdAdminLists(qs("#ahdAdminSearch")?.value || ""); } catch {}
+    try { renderMemberStatusAdminList(); } catch {}
+  }
+}
+
+function renderMemberStatusAdminList() {
+  const el = qs("#memberStatusAdminList");
+  if (!el) return;
+
+  const tribeList = Array.from(FB_STATE.tribe.entries())
+    .map(([id, m]) => ({ id, ...m }))
+    .sort(compareMembersByStatusThenName);
+
+  el.innerHTML = tribeList.map((m) => {
+    const status = getMemberStatus(m.id);
+    const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
+    return `
+      <div class="status-admin-card">
+        <div class="status-admin-head">
+          <img class="${avatarClass}" src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <div>
+            <div class="status-admin-name">${escapeHtml(m.name)}</div>
+            <div class="status-admin-current">الحالة الحالية: ${memberStatusLabel(status)}</div>
+          </div>
+        </div>
+        <div class="status-admin-actions">
+          <button class="status-btn elite ${status === "elite" ? "is-selected" : ""}" type="button" data-member-status="${m.id}" data-status-value="elite">مميز جدًا</button>
+          <button class="status-btn active ${status === "active" ? "is-selected" : ""}" type="button" data-member-status="${m.id}" data-status-value="active">فعال</button>
+          <button class="status-btn lazy ${status === "lazy" ? "is-selected" : ""}" type="button" data-member-status="${m.id}" data-status-value="lazy">متكاسل</button>
+          <button class="status-btn clear ${!status ? "is-selected" : ""}" type="button" data-member-status="${m.id}" data-status-value="">بدون سوار</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  el.querySelectorAll("[data-member-status]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const memberId = btn.getAttribute("data-member-status");
+      const status = btn.getAttribute("data-status-value") || null;
+      try {
+        await updateMemberStatus(memberId, status);
+      } catch (e) {
+        console.error("Failed to update member status", e);
+        const code = String(e?.code || e?.message || "UNKNOWN");
+        const authInfo = FB_STATE.isAdmin ? "أمجد مسجل" : "أمجد غير مسجل";
+        showIdentityToast(`تعذّر الحفظ: ${code} — ${authInfo}`);
+      }
+    });
+  });
+}
+
+async function updateMemberStatus(memberId, status) {
+  if (!FB_STATE.isAdmin) return;
+  const id = String(memberId || "").trim();
+  if (!id) return;
+
+  const prev = MEMBER_STATUS_STATE.map.has(id) ? MEMBER_STATUS_STATE.map.get(id) : null;
+  PENDING_MEMBER_STATUS.set(id, status || "__CLEAR__");
+  refreshMemberStatusUI();
+
+  const { db, doc, setDoc, deleteDoc, serverTimestamp } = window.FB;
+  try {
+    const deleteTargets = ["elite", "active", "lazy"].map((tier) => deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, tier))));
+    deleteTargets.push(deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, id)));
+    await Promise.allSettled(deleteTargets);
+
+    if (status) {
+      await setDoc(
+        doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, status)),
+        { addedAt: serverTimestamp() },
+        { merge: true }
+      );
+      showIdentityToast(`تم تعيين الحالة: ${memberStatusLabel(status)}`);
+    } else {
+      showIdentityToast("تمت إزالة السوار عن العضو");
+    }
+  } catch (e) {
+    PENDING_MEMBER_STATUS.delete(id);
+    if (prev) MEMBER_STATUS_STATE.map.set(id, prev);
+    else MEMBER_STATUS_STATE.map.delete(id);
+    refreshMemberStatusUI();
+    throw e;
+  }
+}
+
+function attachMemberStatusFirestoreListeners() {
+  MEMBER_STATUS_STATE.unsubscribers.forEach((u) => { try { u(); } catch {} });
+  MEMBER_STATUS_STATE.unsubscribers = [];
+
+  const { db, onSnapshot, collection } = window.FB;
+  const unsub = onSnapshot(collection(db, FIRESTORE_MEMBER_STATUS), (snap) => {
+    MEMBER_STATUS_STATE.map = new Map();
+    snap.forEach((d) => {
+      const parsed = parseMemberStatusDocId(d.id);
+      if (parsed?.status && parsed?.memberId) {
+        MEMBER_STATUS_STATE.map.set(parsed.memberId, parsed.status);
+        return;
+      }
+      const status = normalizeMemberStatus(d.data() || {});
+      if (status) MEMBER_STATUS_STATE.map.set(d.id, status);
+    });
+    for (const [id, pending] of Array.from(PENDING_MEMBER_STATUS.entries())) {
+      const serverStatus = MEMBER_STATUS_STATE.map.get(id) || null;
+      const wanted = pending === "__CLEAR__" ? null : pending;
+      if (serverStatus === wanted) {
+        PENDING_MEMBER_STATUS.delete(id);
+      }
+    }
+    refreshMemberStatusUI();
+  });
+
+  MEMBER_STATUS_STATE.unsubscribers.push(unsub);
+}
+
+function initMemberStatusSystem() {
+  const tryInit = () => {
+    if (!fbAvailable()) return setTimeout(tryInit, 80);
+
+    if (!FB_STATE.tribe || FB_STATE.tribe.size === 0) {
+      rebuildTribeMapFromDOM();
+    }
+
+    attachMemberStatusFirestoreListeners();
+    setMemberStatusAdminVisibility();
+  };
+  tryInit();
+}
 
     document.addEventListener("DOMContentLoaded", () => {
       try { localStorage.removeItem("wa3i_quran_start_day_v1"); } catch {}
@@ -2785,9 +4446,12 @@ function previousISODate(isoDate) {
 
       // Bootstrap members cache and attempt automatic entry.
       IDENTITY_MEMBERS_CACHE = readMembersFromDOM();
-      recomputeRanks(IDENTITY_MEMBERS_CACHE);
       resetLocalStreaksForAllMembersOnce();
       startSharedStreaksListener();
+      initMemberStatusSystem();
+      setupRecoveryLibrary();
+      setupRescuePlanModal();
+      setupRescueCenterModal();
 
       (async () => {
         const auto = await tryAutoStartFromBinding();
