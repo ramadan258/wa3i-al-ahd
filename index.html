@@ -4393,10 +4393,27 @@ function initMemberStatusSystem() {
       setupRescueCenterModal();
 
       (async () => {
+        const saved = readCurrentUser();
+        const wantsResume = new URLSearchParams(window.location.search).get("resume") === "1";
+        if (wantsResume && saved && String(saved.kind || "") === "member") {
+          saveCurrentUser(saved);
+          startApp();
+          if (window.location.hash) {
+            setTimeout(() => {
+              document.querySelector(window.location.hash)?.scrollIntoView({ block: "start" });
+            }, 60);
+          }
+          try {
+            const url = new URL(window.location.href);
+            url.searchParams.delete("resume");
+            history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+          } catch {}
+          return;
+        }
+
         const auto = await tryAutoStartFromBinding();
         if (auto) {
           // لو فيه عضو مربوط بالجهاز → أظهر البوابة مع تأكيد مسبق
-          const saved = readCurrentUser();
           initIdentityGate();
           if (saved && saved.id && String(saved.kind || "") === "member") {
             const member = memberById(saved.id);
@@ -4408,7 +4425,6 @@ function initMemberStatusSystem() {
           return;
         }
 
-        const saved = readCurrentUser();
         if (saved && String(saved.kind || "") === "member") {
           // عضو محفوظ محلياً → أظهر البوابة مع تأكيد
           initIdentityGate();
