@@ -939,10 +939,6 @@ setDoc,
 
     <div id="identityLast" class="identity-last is-hidden" aria-live="polite"></div>
 
-    <div class="identity-search">
-      <input id="identitySearch" class="text-input" type="text" inputmode="search" placeholder="ابحث بالاسم..." autocomplete="off" />
-    </div>
-
     <div id="identityGrid" class="identity-grid" aria-label="قائمة الأعضاء"></div>
 
     <div class="identity-divider">
@@ -2409,12 +2405,6 @@ function initIdentityGate() {
   if (lastBox) {
     lastBox.classList.add("is-hidden");
     lastBox.innerHTML = "";
-  }
-
-  const search = qs("#identitySearch");
-  if (search) {
-    search.value = "";
-    search.addEventListener("input", () => renderIdentityGrid(members, search.value));
   }
 
   wireGuestEntry();
@@ -4495,25 +4485,23 @@ function initMemberStatusSystem() {
 
         const auto = await tryAutoStartFromBinding();
         if (auto) {
-          // لو فيه عضو مربوط بالجهاز → أظهر البوابة مع تأكيد مسبق
-          initIdentityGate();
-          if (saved && saved.id && String(saved.kind || "") === "member") {
-            const member = memberById(saved.id);
-            if (member) {
-              // افتح نافذة التأكيد مباشرة
-              openIdentityConfirm(member);
-            }
-          }
+          startApp();
           return;
         }
 
         if (saved && String(saved.kind || "") === "member") {
-          // عضو محفوظ محلياً → أظهر البوابة مع تأكيد
-          initIdentityGate();
           const member = memberById(saved.id);
           if (member) {
-            openIdentityConfirm(member);
+            saveCurrentUser({ id: member.id, name: member.name, kind: "member" });
+            startApp();
+            return;
           }
+          clearCurrentUser();
+        }
+
+        if (saved && String(saved.kind || "") === "guest") {
+          saveCurrentUser(saved);
+          startApp();
           return;
         }
 
