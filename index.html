@@ -1283,8 +1283,8 @@ setDoc,
     <div class="slider-container">
       <div class="slider">
         <div class="slide-card" data-member-id="member_7">
-          <img src="images/person6.jpg" alt="موحد" />
-          <h3>موحد</h3>
+          <img src="images/person6.jpg" alt="مؤقد" />
+          <h3>مؤقد</h3>
         </div>
 
         <div class="slide-card" data-member-id="member_0">
@@ -1338,8 +1338,8 @@ setDoc,
         </div>
 
         <div class="slide-card" data-member-id="member_14">
-          <img src="images/person29.jpeg" alt="سعد" />
-          <h3>سعد</h3>
+          <img src="images/person29.jpeg" alt="سعيد" />
+          <h3>سعيد</h3>
         </div>
 
         <div class="slide-card" data-member-id="member_19">
@@ -1388,8 +1388,8 @@ setDoc,
         </div>
 
         <div class="slide-card" data-member-id="member_23">
-          <img src="images/person21.jpeg" alt="علاء" />
-          <h3>علاء</h3>
+          <img src="images/person21.jpeg" alt="دعاء" />
+          <h3>دعاء</h3>
         </div>
 
         <div class="slide-card" data-member-id="member_24">
@@ -1947,6 +1947,7 @@ setDoc,
 // Identity (local app user)
 // ---------------------------
 const USER_STORAGE_KEY = "wa3i_current_user_v1";
+const LOCAL_MEMBER_BINDING_KEY = "wa3i_local_member_binding_v1";
 let WA3I_USER = null;
 let COUNTDOWN_INTERVAL_ID = null;
 
@@ -1986,6 +1987,58 @@ function clearCurrentUser() {
   WA3I_USER = null;
   try { localStorage.removeItem(USER_STORAGE_KEY); } catch {}
   updateUserBar();
+}
+
+function readLocalMemberBinding() {
+  try {
+    return String(localStorage.getItem(LOCAL_MEMBER_BINDING_KEY) || "").trim();
+  } catch {
+    return "";
+  }
+}
+
+function writeLocalMemberBinding(memberId) {
+  const id = String(memberId || "").trim();
+  if (!id) return;
+  try { localStorage.setItem(LOCAL_MEMBER_BINDING_KEY, id); } catch {}
+}
+
+function clearLocalMemberBinding() {
+  try { localStorage.removeItem(LOCAL_MEMBER_BINDING_KEY); } catch {}
+}
+
+function createBoundToOtherMemberError(boundMemberId) {
+  const err = new Error("BOUND_TO_OTHER_MEMBER");
+  err.boundMemberId = String(boundMemberId || "").trim();
+  return err;
+}
+
+function assertLocalMemberBinding(memberId) {
+  const target = String(memberId || "").trim();
+  const bound = readLocalMemberBinding();
+  if (bound && bound !== target) {
+    throw createBoundToOtherMemberError(bound);
+  }
+  return bound;
+}
+
+function bindingErrorCode(error) {
+  return String(error?.code || error?.message || "").trim().toUpperCase();
+}
+
+function isBindingUnavailableError(error) {
+  const code = bindingErrorCode(error);
+  return (
+    code.includes("PERMISSION-DENIED") ||
+    code.includes("PERMISSION_DENIED") ||
+    code.includes("MISSING OR INSUFFICIENT PERMISSIONS") ||
+    code.includes("UNAVAILABLE") ||
+    code.includes("NETWORK") ||
+    code.includes("OFFLINE") ||
+    code.includes("FETCH") ||
+    code.includes("AUTH/NETWORK-REQUEST-FAILED") ||
+    code.includes("FB_NOT_READY")
+  );
 }
 
 function updateUserBar() {
@@ -2371,6 +2424,7 @@ function initIdentityGate() {
 
 
 let PENDING_IDENTITY = null;
+let IDENTITY_CONFIRM_WIRED = false;
 
 function memberNameById(memberId) {
   const list = IDENTITY_MEMBERS_CACHE || [];
@@ -2427,6 +2481,7 @@ function closeIdentityConfirm() {
 
 async function resetDeviceIdentity() {
   try { clearCurrentUser(); } catch {}
+  try { clearLocalMemberBinding(); } catch {}
   try {
     if (fbAvailable()) await window.FB.signOut(window.FB.auth);
   } catch {}
@@ -2435,6 +2490,9 @@ async function resetDeviceIdentity() {
 }
 
 function wireIdentityConfirmModal() {
+  if (IDENTITY_CONFIRM_WIRED) return;
+  IDENTITY_CONFIRM_WIRED = true;
+
   const yes = qs("#identityConfirmYes");
   const no = qs("#identityConfirmNo");
   const reset = qs("#identityResetBtn");
@@ -2456,10 +2514,14 @@ function wireIdentityConfirmModal() {
 
       try {
         saveCurrentUser({ id: user.id, name: user.name, kind: "member" });
-        await ensureMemberBinding(user.id);
+        const binding = await ensureMemberBinding(user.id);
         closeIdentityConfirm();
         startApp();
+        if (binding?.localOnly) {
+          showIdentityToast("تم الدخول بنجاح. بعض المزامنة السحابية غير متاحة حاليًا، لكن يمكنك استخدام الموقع بشكل طبيعي.");
+        }
       } catch (e) {
+        clearCurrentUser();
         const msg = String(e?.message || "");
         if (msg === "BOUND_TO_OTHER_MEMBER") {
           const bound = memberNameById(e.boundMemberId) || e.boundMemberId;
@@ -2598,7 +2660,7 @@ async function ensureAnonSignedIn() {
   return cred.user;
 }
 
-async function ensureMemberBinding(memberId) {
+async function ensureRemoteMemberBinding(memberId) {
   const user = await ensureAnonSignedIn();
   const { db, doc, getDoc, setDoc, serverTimestamp } = window.FB;
 
@@ -2609,9 +2671,7 @@ async function ensureMemberBinding(memberId) {
     const data = snap.data() || {};
     const bound = String(data.memberId || "");
     if (bound && bound !== String(memberId)) {
-      const err = new Error("BOUND_TO_OTHER_MEMBER");
-      err.boundMemberId = bound;
-      throw err;
+      throw createBoundToOtherMemberError(bound);
     }
     return data;
   }
@@ -2620,10 +2680,32 @@ async function ensureMemberBinding(memberId) {
   return { memberId: String(memberId) };
 }
 
+async function ensureMemberBinding(memberId) {
+  const target = String(memberId || "").trim();
+  assertLocalMemberBinding(target);
+
+  try {
+    const remote = await ensureRemoteMemberBinding(target);
+    writeLocalMemberBinding(target);
+    return { ...remote, localOnly: false };
+  } catch (e) {
+    if (String(e?.message || "") === "BOUND_TO_OTHER_MEMBER") {
+      if (e?.boundMemberId) writeLocalMemberBinding(e.boundMemberId);
+      throw e;
+    }
+    if (isBindingUnavailableError(e)) {
+      writeLocalMemberBinding(target);
+      return { memberId: target, localOnly: true };
+    }
+    throw e;
+  }
+}
+
 
 async function syncStreakToFirestore(memberId, count, todayISO) {
   try {
-    await ensureMemberBinding(memberId);
+    const binding = await ensureMemberBinding(memberId);
+    if (binding?.localOnly) return;
     const { db, doc, setDoc, serverTimestamp } = window.FB;
 
     await setDoc(
