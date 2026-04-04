@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="favicon.ico?v=3" type="image/x-icon" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=3" />
   <style>
     /* ── Site design tokens (mirrors style.css) ── */
     :root {
@@ -616,6 +617,13 @@
 <script>
 (function(){
   const $ = (q)=>document.querySelector(q);
+  const REPORT_STORAGE_PREFIX = window.location.pathname.toLowerCase().includes("ramadan_report")
+    ? "ramadan_report"
+    : "daily_report";
+  const STATE_STORAGE_KEY = `wa3i_${REPORT_STORAGE_PREFIX}_state_v1`;
+  const ARCHIVE_STORAGE_KEY = `wa3i_${REPORT_STORAGE_PREFIX}_archive_v1`;
+  const LEGACY_STATE_STORAGE_KEY = "tribe_report_state_v2";
+  const LEGACY_ARCHIVE_STORAGE_KEY = "tribe_reports_archive_v2";
 
   // ---------- Helpers ----------
   const todayISO = new Date().toISOString().slice(0,10);
@@ -631,14 +639,14 @@
 
   const loadState = ()=>{
     try{
-      const raw = localStorage.getItem("tribe_report_state_v2");
+      const raw = localStorage.getItem(STATE_STORAGE_KEY) || localStorage.getItem(LEGACY_STATE_STORAGE_KEY);
       if(!raw) return null;
       return JSON.parse(raw);
     }catch(e){ return null; }
   };
 
   const saveState = ()=>{
-    localStorage.setItem("tribe_report_state_v2", JSON.stringify(state));
+    localStorage.setItem(STATE_STORAGE_KEY, JSON.stringify(state));
   };
 
   const defaultState = {
@@ -1364,8 +1372,8 @@ ${notes}
     };
 
     $("#saveToday").onclick = ()=>{
-      const key = "tribe_reports_archive_v2";
-      const archive = JSON.parse(localStorage.getItem(key) || "[]");
+      const key = ARCHIVE_STORAGE_KEY;
+      const archive = JSON.parse(localStorage.getItem(key) || localStorage.getItem(LEGACY_ARCHIVE_STORAGE_KEY) || "[]");
       archive.unshift({
         dateISO: state.dateISO || todayISO,
         hijriDate: state.hijriDate,
@@ -1380,7 +1388,8 @@ ${notes}
 
     $("#clear").onclick = ()=>{
       if(confirm("متأكد تمسح كل شيء؟")){
-        localStorage.removeItem("tribe_report_state_v2");
+        localStorage.removeItem(STATE_STORAGE_KEY);
+        localStorage.removeItem(LEGACY_STATE_STORAGE_KEY);
         toast("تم المسح");
         location.reload();
       }

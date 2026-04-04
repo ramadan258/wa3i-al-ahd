@@ -917,6 +917,276 @@ setDoc,
     line-height: 1.9;
   }
 
+  .admin-quick-menu {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 1200;
+    display: none;
+  }
+  .admin-quick-toggle {
+    width: 56px;
+    height: 56px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px;
+    background: rgba(12,19,32,.92);
+    backdrop-filter: blur(12px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.28);
+    cursor: pointer;
+    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+  }
+  .admin-quick-toggle:hover,
+  .admin-quick-toggle[aria-expanded="true"] {
+    transform: translateY(-1px);
+    border-color: rgba(78,205,196,.42);
+    background: rgba(16,25,39,.98);
+  }
+  .admin-quick-toggle span {
+    width: 24px;
+    height: 2.5px;
+    border-radius: 999px;
+    background: var(--text-light);
+    display: block;
+  }
+  .admin-quick-panel {
+    margin-top: 12px;
+    min-width: 240px;
+    padding: 14px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: linear-gradient(180deg, rgba(13,20,31,.98), rgba(8,13,22,.98));
+    box-shadow: 0 20px 40px rgba(0,0,0,.32);
+    display: none;
+  }
+  .admin-quick-panel.is-open {
+    display: block;
+  }
+  .admin-quick-kicker {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .admin-quick-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+  .admin-quick-option {
+    width: 100%;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.03);
+    color: var(--text-light);
+    border-radius: 16px;
+    padding: 14px 16px;
+    text-align: right;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color .18s ease, background .18s ease, transform .18s ease;
+  }
+  .admin-quick-option + .admin-quick-option {
+    margin-top: 10px;
+  }
+  .admin-quick-option:hover,
+  .admin-quick-option.is-active {
+    border-color: rgba(78,205,196,.38);
+    background: rgba(78,205,196,.1);
+    transform: translateY(-1px);
+  }
+  .admin-quick-option small {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .admin-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .admin-panel-head .panel-title {
+    margin-bottom: 0;
+  }
+  .admin-panel-close {
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.04);
+    color: var(--text-light);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .admin-panel-modal-card {
+    width: min(1120px, calc(100vw - 28px));
+  }
+  .admin-panel-modal-body {
+    max-height: min(72vh, 900px);
+    overflow: auto;
+  }
+  .admin-panel-modal-body .panel {
+    margin: 0 !important;
+  }
+  .admin-panel-modal-foot {
+    justify-content: flex-end;
+  }
+  .member-manage-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .member-manage-form,
+  .member-manage-list-wrap {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 20px;
+    padding: 16px;
+  }
+  .member-manage-form .panel-title,
+  .member-manage-list-wrap .panel-title {
+    margin-bottom: 12px;
+  }
+  .member-manage-preview {
+    width: 112px;
+    height: 112px;
+    border-radius: 24px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,.1);
+    background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    display: block;
+    margin-bottom: 12px;
+  }
+  .member-manage-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .member-manage-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 12px;
+  }
+  .member-manage-card {
+    background: linear-gradient(160deg, rgba(19,27,40,.95), rgba(11,16,27,.96));
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 10px 26px rgba(0,0,0,.22);
+  }
+  .member-manage-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .member-manage-head img {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,.08);
+    flex: 0 0 auto;
+  }
+  .member-manage-name {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+  .member-manage-meta {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .member-manage-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .member-manage-badge {
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.04);
+    color: var(--text-muted);
+  }
+  .member-manage-badge.custom {
+    border-color: rgba(78,205,196,.2);
+    color: var(--primary);
+    background: rgba(78,205,196,.08);
+  }
+  .member-manage-badge.static {
+    border-color: rgba(245,200,66,.18);
+    color: var(--gold);
+    background: rgba(245,200,66,.08);
+  }
+  .member-manage-remove {
+    width: 100%;
+    margin-top: 12px;
+    border: 1px solid rgba(255,120,120,.18);
+    background: rgba(255,120,120,.08);
+    color: #ffd4d4;
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .member-manage-remove[disabled] {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+  .member-manage-empty {
+    padding: 18px;
+    border-radius: 16px;
+    text-align: center;
+    color: var(--text-muted);
+    border: 1px dashed rgba(255,255,255,.1);
+    background: rgba(255,255,255,.02);
+  }
+
+  @media(max-width: 640px) {
+    .admin-quick-menu {
+      top: 12px;
+      left: 12px;
+    }
+    .admin-quick-toggle {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+    }
+    .admin-quick-panel {
+      min-width: min(260px, calc(100vw - 24px));
+    }
+    .admin-panel-modal-card {
+      width: calc(100vw - 16px);
+    }
+    .admin-panel-modal-body {
+      max-height: 76vh;
+    }
+    .member-manage-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   </style>
 </head>
 
@@ -984,6 +1254,29 @@ setDoc,
 <div class="identity-toast" id="identityToast" aria-live="polite" aria-atomic="true"></div>
 
 <div id="appRoot" class="app-root is-hidden" aria-hidden="true">
+  <div id="adminQuickMenu" class="admin-quick-menu" aria-label="لوحة أمجد المختصرة">
+    <button id="adminQuickToggle" class="admin-quick-toggle" type="button" aria-label="فتح خيارات أمجد" aria-expanded="false" aria-controls="adminQuickPanel">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div id="adminQuickPanel" class="admin-quick-panel" aria-hidden="true">
+      <div class="admin-quick-kicker">لوحة أمجد</div>
+      <div class="admin-quick-title">اختصارات الإدارة</div>
+      <button class="admin-quick-option" type="button" data-admin-open="member-status">
+        تقييم الأعضاء
+        <small>فتح لوحة تمييز الأعضاء فقط.</small>
+      </button>
+      <button class="admin-quick-option" type="button" data-admin-open="ahd">
+        إدارة قائمة العهد
+        <small>فتح لوحة الإضافة والحذف للعهد فقط.</small>
+      </button>
+      <button class="admin-quick-option" type="button" data-admin-open="member-manage">
+        إدارة الأعضاء
+        <small>إضافة عضو جديد أو حذف عضو مع صورته.</small>
+      </button>
+    </div>
+  </div>
 
   <!-- رأس الصفحة -->
   <header>
@@ -1375,7 +1668,7 @@ setDoc,
         </div>
 
         <div class="slide-card" data-member-id="member_5">
-          <img src="images/person22.jpeg" alt="مجاهد" />
+          <img src="images/person10.jpg" alt="مجاهد" />
           <h3>مجاهد</h3>
         </div>
 
@@ -1390,7 +1683,7 @@ setDoc,
         </div>
 
         <div class="slide-card" data-member-id="member_24">
-          <img src="images/person22.jpeg" alt="راجي لطف الله" />
+          <img src="images/person10.jpg" alt="راجي لطف الله" />
           <h3>راجي لطف الله</h3>
         </div>
 
@@ -1400,12 +1693,12 @@ setDoc,
         </div>
 
         <div class="slide-card" data-member-id="member_26">
-          <img src="images/person22.jpeg" alt="محمد بفضل الله" />
+          <img src="images/person10.jpg" alt="محمد بفضل الله" />
           <h3>محمد بفضل الله</h3>
         </div>
 
         <div class="slide-card" data-member-id="member_28">
-          <img src="images/person22.jpeg" alt="ميدو علي" />
+          <img src="images/person10.jpg" alt="ميدو علي" />
           <h3>ميدو علي</h3>
         </div>
 
@@ -1424,15 +1717,19 @@ setDoc,
           <h3>mahmoud</h3>
         </div>
         
-        <div class="slide-card" data-member-id="member_7">
+        <div class="slide-card" data-member-id="member_27">
           <img src="images/person19.jpg" alt="راج عفو ربه" />
           <h3>راج عفو ربه</h3>
         </div>
       </div>
     </div>
 
-    <div id="memberStatusAdminWrap" class="panel" style="margin-top:22px; display:none">
-      <div class="panel-title">🎖️ إدارة تمييز الأعضاء (أمجد)</div>
+    <div id="memberStatusAdminSlot" hidden></div>
+    <div id="memberStatusAdminWrap" class="panel" style="margin-top:22px; display:none" aria-hidden="true">
+      <div class="admin-panel-head">
+        <div class="panel-title">🎖️ إدارة تمييز الأعضاء (أمجد)</div>
+        <button class="admin-panel-close" type="button" data-admin-close="member-status">إغلاق</button>
+      </div>
       <div class="panel-sub" style="margin-top:10px">
         اختر نوع السوار الذي سيظهر حول صورة العضو للجميع. التغيير يُحفظ مباشرة ويظهر فورًا.
       </div>
@@ -1444,6 +1741,40 @@ setDoc,
       </div>
 
       <div id="memberStatusAdminList" class="status-admin-grid" aria-label="إدارة حالات الأعضاء"></div>
+    </div>
+
+    <div id="memberManageAdminSlot" hidden></div>
+    <div id="memberManageAdminWrap" class="panel" style="margin-top:22px; display:none" aria-hidden="true">
+      <div class="admin-panel-head">
+        <div class="panel-title">🧩 إدارة الأعضاء (أمجد)</div>
+        <button class="admin-panel-close" type="button" data-admin-close="member-manage">إغلاق</button>
+      </div>
+
+      <div class="panel-sub" style="margin-top:10px">
+        أضف عضوًا جديدًا مع صورته، أو احذف عضوًا موجودًا من القبيلة. الحذف يخفي العضو من الواجهة العامة ومن قوائم الإدارة.
+      </div>
+
+      <div class="member-manage-grid" style="margin-top:16px">
+        <aside class="member-manage-form">
+          <div class="panel-title">إضافة عضو جديد</div>
+          <img id="memberManagePreview" class="member-manage-preview" src="images/person1.jpg" alt="معاينة صورة العضو" />
+          <input id="memberManageName" class="text-input" type="text" placeholder="اسم العضو" autocomplete="off" />
+          <input id="memberManageImage" class="text-input" type="file" accept="image/*" style="margin-top:10px" />
+          <div class="panel-sub" style="margin-top:10px">
+            تُضغط الصورة تلقائيًا بقوة لتناسب الرفع والعرض داخل الموقع.
+          </div>
+          <div class="member-manage-actions">
+            <button id="memberManageAddBtn" class="identity-btn" type="button">إضافة العضو</button>
+            <button id="memberManageResetBtn" class="identity-btn ghost" type="button">إعادة ضبط</button>
+          </div>
+          <div id="memberManageStatus" class="panel-sub" style="margin-top:12px"></div>
+        </aside>
+
+        <aside class="member-manage-list-wrap">
+          <div class="panel-title">الأعضاء الحاليون</div>
+          <div id="memberManageList" class="member-manage-list" aria-label="إدارة أعضاء القبيلة"></div>
+        </aside>
+      </div>
     </div>
   </section>
 
@@ -1457,8 +1788,12 @@ setDoc,
 
     <div id="ahdPublicList" class="identity-grid" aria-label="أعضاء العهد"></div>
 
-    <div id="ahdAdminWrap" class="panel" style="margin-top:22px; display:none">
-      <div class="panel-title">إدارة العهد (أمجد)</div>
+    <div id="ahdAdminSlot" hidden></div>
+    <div id="ahdAdminWrap" class="panel" style="margin-top:22px; display:none" aria-hidden="true">
+      <div class="admin-panel-head">
+        <div class="panel-title">إدارة العهد (أمجد)</div>
+        <button class="admin-panel-close" type="button" data-admin-close="ahd">إغلاق</button>
+      </div>
 
       <div id="ahdManageBox" style="display:none; margin-top:16px">
         <div class="panel-sub" style="margin-bottom:10px">اختر عضوًا من القبيلة لإضافته للعهد، أو احذف من قائمة العهد.</div>
@@ -1793,7 +2128,27 @@ setDoc,
           <button id="adminLoginSubmitBtn" class="identity-btn" type="button">تسجيل الدخول</button>
           <button id="adminLoginCancelBtn" class="identity-btn ghost" type="button">إلغاء</button>
         </div>
-        <div id="adminLoginStatus" class="panel-sub" style="margin-top:10px; text-align:center"></div>
+      <div id="adminLoginStatus" class="panel-sub" style="margin-top:10px; text-align:center"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tafsir-modal-overlay" id="adminPanelModal" aria-hidden="true">
+    <div class="tafsir-modal-card admin-panel-modal-card" role="dialog" aria-modal="true" aria-labelledby="adminPanelModalTitle">
+      <div class="tafsir-modal-head">
+        <div>
+          <div class="tafsir-modal-title" id="adminPanelModalTitle">لوحة الإدارة</div>
+          <div class="tafsir-modal-sub" id="adminPanelModalSub">اختر اللوحة التي تريد العمل عليها من اختصارات أمجد.</div>
+        </div>
+        <button type="button" class="tafsir-modal-close" id="closeAdminPanelModal" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="tafsir-modal-body admin-panel-modal-body">
+        <div id="adminPanelModalMount"></div>
+      </div>
+
+      <div class="tafsir-modal-foot admin-panel-modal-foot">
+        <button type="button" class="tafsir-modal-close-btn" id="closeAdminPanelModal2">إغلاق</button>
       </div>
     </div>
   </div>
@@ -2043,6 +2398,165 @@ function updateUserBar() {
   if (pill) pill.textContent = WA3I_USER?.name || "ضيف";
 }
 
+const FIRESTORE_CUSTOM_MEMBERS = "featuredMembers";
+const FIRESTORE_HIDDEN_MEMBERS = "featuredMembers";
+const LOCAL_MEMBER_DIRECTORY_CUSTOM_KEY = "wa3i_member_directory_custom_v1";
+const LOCAL_MEMBER_DIRECTORY_HIDDEN_KEY = "wa3i_member_directory_hidden_v1";
+const MEMBER_DIRECTORY_STATE = {
+  baseMembers: [],
+  remoteCustomMembers: new Map(),
+  localCustomMembers: new Map(),
+  remoteHiddenMemberIds: new Set(),
+  localHiddenMemberIds: new Set(),
+  pendingHiddenMemberIds: new Set(),
+  pendingDeletedCustomMemberIds: new Set(),
+  listenersAttached: false,
+  controlsWired: false,
+  pendingImageDataUrl: "",
+};
+
+function extractMembersFromCards(cards) {
+  const out = [];
+  cards.forEach((card, idx) => {
+    const img = card.querySelector("img");
+    const nameEl = card.querySelector("h3");
+    const name = (nameEl?.textContent || img?.getAttribute("alt") || "").trim();
+    const src = img?.getAttribute("src") || "";
+    const explicitId = (card.getAttribute("data-member-id") || "").trim();
+    if (!name || !src) return;
+    out.push({
+      id: explicitId || `member_${idx}`,
+      name,
+      src,
+      source: card.getAttribute("data-member-source") === "custom" ? "custom" : "static",
+    });
+  });
+  return out;
+}
+
+function customMemberDocId(memberId) {
+  return `custom__${String(memberId || "").trim()}`;
+}
+
+function hiddenMemberDocId(memberId) {
+  return `hidden__${String(memberId || "").trim()}`;
+}
+
+function persistLocalMemberDirectoryState() {
+  try {
+    const custom = Array.from(MEMBER_DIRECTORY_STATE.localCustomMembers.values()).map((member) => ({
+      id: String(member.id || "").trim(),
+      name: String(member.name || "").trim(),
+      src: String(member.src || "").trim(),
+      source: "custom",
+    })).filter((member) => member.id && member.name && member.src);
+    localStorage.setItem(LOCAL_MEMBER_DIRECTORY_CUSTOM_KEY, JSON.stringify(custom));
+  } catch {}
+
+  try {
+    const hidden = Array.from(MEMBER_DIRECTORY_STATE.localHiddenMemberIds.values()).map((id) => String(id || "").trim()).filter(Boolean);
+    localStorage.setItem(LOCAL_MEMBER_DIRECTORY_HIDDEN_KEY, JSON.stringify(hidden));
+  } catch {}
+}
+
+function loadLocalMemberDirectoryState() {
+  try {
+    const rawCustom = localStorage.getItem(LOCAL_MEMBER_DIRECTORY_CUSTOM_KEY);
+    const arr = rawCustom ? JSON.parse(rawCustom) : [];
+    const next = new Map();
+    if (Array.isArray(arr)) {
+      arr.forEach((member) => {
+        const id = String(member?.id || "").trim();
+        const name = String(member?.name || "").trim();
+        const src = String(member?.src || "").trim();
+        if (!id || !name || !src) return;
+        next.set(id, { id, name, src, source: "custom" });
+      });
+    }
+    MEMBER_DIRECTORY_STATE.localCustomMembers = next;
+  } catch {
+    MEMBER_DIRECTORY_STATE.localCustomMembers = new Map();
+  }
+
+  try {
+    const rawHidden = localStorage.getItem(LOCAL_MEMBER_DIRECTORY_HIDDEN_KEY);
+    const arr = rawHidden ? JSON.parse(rawHidden) : [];
+    const next = new Set();
+    if (Array.isArray(arr)) {
+      arr.forEach((id) => {
+        const value = String(id || "").trim();
+        if (value) next.add(value);
+      });
+    }
+    MEMBER_DIRECTORY_STATE.localHiddenMemberIds = next;
+  } catch {
+    MEMBER_DIRECTORY_STATE.localHiddenMemberIds = new Set();
+  }
+}
+
+function getMergedCustomMembersMap() {
+  const merged = new Map(MEMBER_DIRECTORY_STATE.remoteCustomMembers);
+  MEMBER_DIRECTORY_STATE.localCustomMembers.forEach((value, key) => {
+    merged.set(key, value);
+  });
+  MEMBER_DIRECTORY_STATE.pendingDeletedCustomMemberIds.forEach((id) => {
+    merged.delete(id);
+  });
+  return merged;
+}
+
+function getMergedHiddenMemberIds() {
+  const merged = new Set([
+    ...MEMBER_DIRECTORY_STATE.remoteHiddenMemberIds,
+    ...MEMBER_DIRECTORY_STATE.localHiddenMemberIds,
+    ...MEMBER_DIRECTORY_STATE.pendingHiddenMemberIds,
+  ]);
+  return merged;
+}
+
+function getAllMembersList(options = {}) {
+  const includeHidden = Boolean(options.includeHidden);
+  const base = Array.isArray(MEMBER_DIRECTORY_STATE.baseMembers) ? MEMBER_DIRECTORY_STATE.baseMembers : [];
+  const custom = Array.from(getMergedCustomMembersMap().values());
+  const hidden = getMergedHiddenMemberIds();
+  const merged = [...base, ...custom];
+  return merged.filter((member) => {
+    if (includeHidden) return true;
+    const id = String(member.id || "").trim();
+    return !hidden.has(id);
+  });
+}
+
+function renderMembersSection() {
+  const slider = qs("#members .slider");
+  if (!slider) return;
+
+  const members = getAllMembersList();
+  slider.innerHTML = members.map((member) => `
+        <div class="slide-card" data-member-id="${escapeHtml(member.id)}" data-member-source="${member.source === "custom" ? "custom" : "static"}">
+          <img src="${member.src}" alt="${escapeHtml(member.name)}" />
+          <h3>${escapeHtml(member.name)}</h3>
+        </div>
+      `).join("");
+}
+
+function refreshMemberDirectoryUI() {
+  renderMembersSection();
+  IDENTITY_MEMBERS_CACHE = readMembersFromDOM();
+  rebuildTribeMapFromDOM();
+  try { decorateMemberCardsWithStreaks(); } catch {}
+  try {
+    const q = qs("#identitySearch")?.value || "";
+    renderIdentityGrid(IDENTITY_MEMBERS_CACHE, q);
+  } catch {}
+  try { renderAhdPublicList(); } catch {}
+  if (FB_STATE.isAdmin) {
+    try { renderAhdAdminLists(qs("#ahdAdminSearch")?.value || ""); } catch {}
+    try { renderMemberStatusAdminList(); } catch {}
+    try { renderMemberManageAdminList(); } catch {}
+  }
+}
+
 function showGate() {
   qs("#identityGate")?.classList.remove("is-hidden");
   const app = qs("#appRoot");
@@ -2063,22 +2577,7 @@ function hideGate() {
 }
 
 function readMembersFromDOM() {
-  const cards = qsa("#members .slide-card");
-  const out = [];
-  cards.forEach((card, idx) => {
-    const img = card.querySelector("img");
-    const nameEl = card.querySelector("h3");
-    const name = (nameEl?.textContent || img?.getAttribute("alt") || "").trim();
-    const src = img?.getAttribute("src") || "";
-    const explicitId = (card.getAttribute("data-member-id") || "").trim();
-    if (!name || !src) return;
-    out.push({
-      id: explicitId || `member_${idx}`,
-      name,
-      src,
-    });
-  });
-  return out;
+  return getAllMembersList();
 }
 
 function normalizeMemberStatus(data) {
@@ -2098,11 +2597,11 @@ function normalizeMemberStatus(data) {
 function parseMemberStatusDocId(docId) {
   const id = String(docId || "").trim();
   if (!id) return null;
-  const match = id.match(/^(elite|active|lazy)__(member_\d+)$/);
+  const match = id.match(/^(elite|active|lazy)__(.+)$/);
   if (match) {
     return { status: match[1], memberId: match[2] };
   }
-  if (/^member_\d+$/.test(id)) {
+  if (!id.includes("__")) {
     return { status: "elite", memberId: id };
   }
   return null;
@@ -2204,9 +2703,9 @@ function renderIdentityGrid(members, filterText = "") {
           const status = getMemberStatus(m.id);
           const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
           return `
-        <button class="identity-item" type="button" data-user-id="${m.id}" aria-label="${m.name}">
-          <img class="${avatarClass}" src="${m.src}" alt="${m.name}" />
-          <div class="identity-name">${m.name}</div>
+        <button class="identity-item" type="button" data-user-id="${escapeHtml(m.id)}" aria-label="${escapeHtml(m.name)}">
+          <img class="${avatarClass}" src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <div class="identity-name">${escapeHtml(m.name)}</div>
         </button>
       `;
         })
@@ -2254,7 +2753,13 @@ function closeAllModals() {
     m.classList.remove("open");
     m.setAttribute("aria-hidden", "true");
   });
-  document.body.style.overflow = "";
+  restoreAdminPanelFromModal();
+  ADMIN_UI_STATE.activePanel = null;
+  setAdminMenuOpen(false);
+  setMemberStatusAdminVisibility();
+  setAhdAdminVisibility();
+  setMemberManageAdminVisibility();
+  syncBodyModalLock();
 }
 
 let PENDING_ADMIN_USER = null;
@@ -2385,6 +2890,7 @@ function wireSwitchUserButton() {
 
 function startApp() {
   wireSwitchUserButton(); // ← ضروري لو دخلنا مباشرة بدون gate
+  wireAdminQuickMenu();
   hideGate();
   initCountdown();
   initDailyFlow();
@@ -2736,6 +3242,12 @@ let FB_STATE = {
   unsubscribers: [],
 };
 
+const ADMIN_UI_STATE = {
+  activePanel: null,
+  menuOpen: false,
+  wired: false,
+};
+
 function fbAvailable() {
   return typeof window.FB !== "undefined" && window.FB?.db && window.FB?.auth;
 }
@@ -2745,11 +3257,565 @@ function rebuildTribeMapFromDOM() {
   FB_STATE.tribe = new Map(members.map((m) => [m.id, { name: m.name, src: m.src }]));
 }
 
+function setAdminMenuOpen(isOpen) {
+  ADMIN_UI_STATE.menuOpen = Boolean(isOpen && FB_STATE.isAdmin);
+  const toggle = qs("#adminQuickToggle");
+  const panel = qs("#adminQuickPanel");
+  if (toggle) toggle.setAttribute("aria-expanded", ADMIN_UI_STATE.menuOpen ? "true" : "false");
+  if (panel) {
+    panel.classList.toggle("is-open", ADMIN_UI_STATE.menuOpen);
+    panel.setAttribute("aria-hidden", ADMIN_UI_STATE.menuOpen ? "false" : "true");
+  }
+}
+
+function setAdminMenuVisibility() {
+  const menu = qs("#adminQuickMenu");
+  if (!menu) return;
+
+  if (FB_STATE.isAdmin) {
+    menu.style.display = "block";
+  } else {
+    menu.style.display = "none";
+    setAdminMenuOpen(false);
+    restoreAdminPanelFromModal();
+    const modal = qs("#adminPanelModal");
+    if (modal) {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+    ADMIN_UI_STATE.activePanel = null;
+    setMemberStatusAdminVisibility();
+    setAhdAdminVisibility();
+    setMemberManageAdminVisibility();
+    syncBodyModalLock();
+  }
+
+  document.querySelectorAll("[data-admin-open]").forEach((btn) => {
+    btn.classList.toggle("is-active", FB_STATE.isAdmin && btn.getAttribute("data-admin-open") === ADMIN_UI_STATE.activePanel);
+  });
+}
+
+function setActiveAdminPanel(panelKey) {
+  ADMIN_UI_STATE.activePanel = panelKey || null;
+  setAdminMenuOpen(false);
+  setAdminMenuVisibility();
+  setMemberStatusAdminVisibility();
+  setAhdAdminVisibility();
+  setMemberManageAdminVisibility();
+}
+
+function syncBodyModalLock() {
+  const hasOpenModal = Boolean(document.querySelector(".tafsir-modal-overlay.open, .azkar-modal-overlay.open"));
+  document.body.style.overflow = hasOpenModal ? "hidden" : "";
+}
+
+function getAdminPanelConfig(panelKey) {
+  if (panelKey === "member-status") {
+    return {
+      title: "تقييم الأعضاء",
+      sub: "إدارة تمييز الأعضاء من داخل نافذة مستقلة.",
+      wrap: "#memberStatusAdminWrap",
+      slot: "#memberStatusAdminSlot",
+    };
+  }
+
+  if (panelKey === "ahd") {
+    return {
+      title: "إدارة قائمة العهد",
+      sub: "إضافة الأعضاء إلى العهد أو حذفهم من نافذة مستقلة.",
+      wrap: "#ahdAdminWrap",
+      slot: "#ahdAdminSlot",
+    };
+  }
+
+  if (panelKey === "member-manage") {
+    return {
+      title: "إدارة الأعضاء",
+      sub: "إضافة عضو جديد مع صورته أو حذف عضو موجود من نافذة مستقلة.",
+      wrap: "#memberManageAdminWrap",
+      slot: "#memberManageAdminSlot",
+    };
+  }
+
+  return null;
+}
+
+function restoreAdminPanelFromModal() {
+  const mount = qs("#adminPanelModalMount");
+  if (!mount) return;
+
+  ["member-status", "ahd", "member-manage"].forEach((panelKey) => {
+    const cfg = getAdminPanelConfig(panelKey);
+    const wrap = cfg ? qs(cfg.wrap) : null;
+    const slot = cfg ? qs(cfg.slot) : null;
+    if (!cfg || !wrap || !slot) return;
+    if (wrap.parentElement === mount) {
+      slot.insertAdjacentElement("afterend", wrap);
+    }
+  });
+}
+
+function setMemberManageStatus(message, isError = false) {
+  const el = qs("#memberManageStatus");
+  if (!el) return;
+  el.textContent = String(message || "").trim();
+  el.style.color = isError ? "#ffb4b4" : "";
+}
+
+function resetMemberManageForm() {
+  MEMBER_DIRECTORY_STATE.pendingImageDataUrl = "";
+  const name = qs("#memberManageName");
+  const image = qs("#memberManageImage");
+  const preview = qs("#memberManagePreview");
+  if (name) name.value = "";
+  if (image) image.value = "";
+  if (preview) preview.src = "images/person1.jpg";
+  setMemberManageStatus("");
+}
+
+function createManagedMemberId(name) {
+  return `custom_member_${slugifyName(name)}_${Date.now().toString(36)}`;
+}
+
+function dataUrlSizeEstimate(dataUrl) {
+  const value = String(dataUrl || "");
+  const commaIndex = value.indexOf(",");
+  const payload = commaIndex >= 0 ? value.slice(commaIndex + 1) : value;
+  return Math.ceil((payload.length * 3) / 4);
+}
+
+function readImageAsOptimizedDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return reject(new Error("NO_FILE"));
+
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("READ_FAILED"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("IMAGE_INVALID"));
+      img.onload = () => {
+        try {
+          const attempts = [
+            { maxSide: 320, quality: 0.72 },
+            { maxSide: 280, quality: 0.68 },
+            { maxSide: 240, quality: 0.64 },
+            { maxSide: 220, quality: 0.58 },
+            { maxSide: 180, quality: 0.54 },
+          ];
+          let best = "";
+
+          for (const attempt of attempts) {
+            const scale = Math.min(1, attempt.maxSide / Math.max(img.width || 1, img.height || 1));
+            const width = Math.max(1, Math.round((img.width || 1) * scale));
+            const height = Math.max(1, Math.round((img.height || 1) * scale));
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return reject(new Error("CANVAS_FAILED"));
+            ctx.fillStyle = "#0f1622";
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL("image/jpeg", attempt.quality);
+            best = dataUrl;
+            if (dataUrlSizeEstimate(dataUrl) <= 110 * 1024) {
+              resolve(dataUrl);
+              return;
+            }
+          }
+
+          if (best && dataUrlSizeEstimate(best) <= 150 * 1024) {
+            resolve(best);
+            return;
+          }
+
+          reject(new Error("IMAGE_TOO_LARGE"));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      img.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderMemberManageAdminList() {
+  const el = qs("#memberManageList");
+  if (!el) return;
+
+  const members = getAllMembersList()
+    .slice()
+    .sort(compareMembersByStatusThenName);
+
+  el.innerHTML = members.length
+    ? members.map((member) => {
+        const isCustom = member.source === "custom";
+        const locked = isAmjadMember(member);
+        const status = getMemberStatus(member.id);
+        return `
+          <div class="member-manage-card">
+            <div class="member-manage-head">
+              <img class="${status ? `member-avatar ${memberStatusClass(status)}` : "member-avatar"}" src="${member.src}" alt="${escapeHtml(member.name)}" />
+              <div>
+                <div class="member-manage-name">${escapeHtml(member.name)}</div>
+                <div class="member-manage-meta">المعرّف: ${escapeHtml(member.id)}</div>
+              </div>
+            </div>
+            <div class="member-manage-badges">
+              <span class="member-manage-badge ${isCustom ? "custom" : "static"}">${isCustom ? "مضاف من أمجد" : "عضو أساسي"}</span>
+              <span class="member-manage-badge">${escapeHtml(memberStatusLabel(status))}</span>
+            </div>
+            <button class="member-manage-remove" type="button" data-member-remove="${escapeHtml(member.id)}" ${locked ? "disabled" : ""}>
+              ${locked ? "لا يمكن حذف أمجد" : "حذف العضو"}
+            </button>
+          </div>
+        `;
+      }).join("")
+    : `<div class="member-manage-empty">لا يوجد أعضاء ظاهرون الآن.</div>`;
+
+  el.querySelectorAll("[data-member-remove]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const memberId = btn.getAttribute("data-member-remove");
+      await deleteManagedMember(memberId);
+    });
+  });
+}
+
+async function addManagedMember() {
+  if (!FB_STATE.isAdmin) return;
+
+  const name = String(qs("#memberManageName")?.value || "").trim();
+  const src = MEMBER_DIRECTORY_STATE.pendingImageDataUrl;
+
+  if (!name) {
+    setMemberManageStatus("اكتب اسم العضو أولًا.", true);
+    return;
+  }
+  if (!src) {
+    setMemberManageStatus("اختر صورة العضو أولًا.", true);
+    return;
+  }
+
+  const exists = getAllMembersList().some((member) => String(member.name || "").trim() === name);
+  if (exists) {
+    setMemberManageStatus("يوجد عضو ظاهر بهذا الاسم بالفعل. اختر اسمًا مختلفًا.", true);
+    return;
+  }
+
+  const id = createManagedMemberId(name);
+  const nextMember = { id, name, src, source: "custom" };
+  MEMBER_DIRECTORY_STATE.localCustomMembers.set(id, nextMember);
+  MEMBER_DIRECTORY_STATE.localHiddenMemberIds.delete(id);
+  persistLocalMemberDirectoryState();
+  refreshMemberDirectoryUI();
+  setMemberManageStatus("جارٍ إضافة العضو...");
+
+  const { db, doc, setDoc, serverTimestamp } = window.FB;
+  try {
+    await setDoc(
+      doc(db, FIRESTORE_CUSTOM_MEMBERS, customMemberDocId(id)),
+      { type: "custom_member", memberId: id, name, src, createdAt: serverTimestamp() },
+      { merge: true }
+    );
+    resetMemberManageForm();
+    renderMemberManageAdminList();
+    showIdentityToast(`تمت إضافة العضو ${name}`);
+  } catch (e) {
+    resetMemberManageForm();
+    renderMemberManageAdminList();
+    const code = String(e?.code || e?.message || "unknown-error");
+    setMemberManageStatus(`تمت إضافة العضو على هذا الجهاز، لكن المزامنة السحابية تعذّرت. (${code})`, true);
+    console.error("Failed to sync added member", e);
+  }
+}
+
+async function deleteManagedMember(memberId) {
+  if (!FB_STATE.isAdmin) return;
+
+  const id = String(memberId || "").trim();
+  const member = getAllMembersList({ includeHidden: true }).find((item) => String(item.id) === id);
+  if (!member) return;
+  if (isAmjadMember(member)) {
+    showIdentityToast("لا يمكن حذف أمجد من لوحة الإدارة.");
+    return;
+  }
+
+  const ok = confirm(`هل تريد حذف العضو “${member.name}”؟`);
+  if (!ok) return;
+
+  const mergedCustomMembers = getMergedCustomMembersMap();
+  const wasCustom = mergedCustomMembers.has(id);
+  const wasLocallyHidden = MEMBER_DIRECTORY_STATE.localHiddenMemberIds.has(id);
+
+  if (wasCustom) {
+    MEMBER_DIRECTORY_STATE.localCustomMembers.delete(id);
+    MEMBER_DIRECTORY_STATE.localHiddenMemberIds.add(id);
+    MEMBER_DIRECTORY_STATE.pendingDeletedCustomMemberIds.add(id);
+  } else {
+    MEMBER_DIRECTORY_STATE.localHiddenMemberIds.add(id);
+    MEMBER_DIRECTORY_STATE.pendingHiddenMemberIds.add(id);
+  }
+  persistLocalMemberDirectoryState();
+  refreshMemberDirectoryUI();
+
+  const { db, doc, deleteDoc, setDoc, serverTimestamp } = window.FB;
+  try {
+    const primaryOps = wasCustom
+      ? [
+          deleteDoc(doc(db, FIRESTORE_CUSTOM_MEMBERS, customMemberDocId(id))),
+          deleteDoc(doc(db, FIRESTORE_HIDDEN_MEMBERS, hiddenMemberDocId(id))),
+        ]
+      : [
+          setDoc(
+            doc(db, FIRESTORE_HIDDEN_MEMBERS, hiddenMemberDocId(id)),
+            { type: "hidden_member", memberId: id, hiddenAt: serverTimestamp(), name: member.name },
+            { merge: true }
+          ),
+        ];
+
+    await Promise.all(primaryOps);
+
+    const cleanup = [
+      deleteDoc(doc(db, "ahdMembers", id)),
+      deleteDoc(doc(db, FIRESTORE_STREAKS, id)),
+      deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, id)),
+      deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, "elite"))),
+      deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, "active"))),
+      deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, "lazy"))),
+    ];
+
+    const cleanupResults = await Promise.allSettled(cleanup);
+    const cleanupFailed = cleanupResults.some((item) => item.status === "rejected");
+    if (cleanupFailed) {
+      console.warn("Member deleted but some related cleanup operations failed", { memberId: id, cleanupResults });
+    }
+    showIdentityToast(`تم حذف العضو ${member.name}`);
+  } catch (e) {
+    MEMBER_DIRECTORY_STATE.pendingDeletedCustomMemberIds.delete(id);
+    MEMBER_DIRECTORY_STATE.pendingHiddenMemberIds.delete(id);
+    if (!wasCustom && !wasLocallyHidden) {
+      MEMBER_DIRECTORY_STATE.localHiddenMemberIds.add(id);
+    }
+    persistLocalMemberDirectoryState();
+    refreshMemberDirectoryUI();
+    showIdentityToast("تم حذف العضو على هذا الجهاز، لكن المزامنة السحابية تعذّرت.");
+    console.error("Failed to sync deleted member", e);
+  }
+}
+
+function wireMemberManageAdminControls() {
+  if (MEMBER_DIRECTORY_STATE.controlsWired) return;
+  MEMBER_DIRECTORY_STATE.controlsWired = true;
+
+  const fileInput = qs("#memberManageImage");
+  const preview = qs("#memberManagePreview");
+  const nameInput = qs("#memberManageName");
+  const addBtn = qs("#memberManageAddBtn");
+  const resetBtn = qs("#memberManageResetBtn");
+
+  fileInput?.addEventListener("change", async () => {
+    const file = fileInput.files?.[0];
+    if (!file) {
+      MEMBER_DIRECTORY_STATE.pendingImageDataUrl = "";
+      if (preview) preview.src = "images/person1.jpg";
+      return;
+    }
+
+    setMemberManageStatus("جارٍ تجهيز الصورة...");
+    try {
+      const dataUrl = await readImageAsOptimizedDataUrl(file);
+      MEMBER_DIRECTORY_STATE.pendingImageDataUrl = dataUrl;
+      if (preview) preview.src = dataUrl;
+      setMemberManageStatus("الصورة جاهزة للإضافة.");
+    } catch (e) {
+      MEMBER_DIRECTORY_STATE.pendingImageDataUrl = "";
+      if (preview) preview.src = "images/person1.jpg";
+      const code = String(e?.message || "");
+      setMemberManageStatus(code === "IMAGE_TOO_LARGE" ? "الصورة ما تزال كبيرة جدًا بعد الضغط. اختر صورة أصغر." : "تعذّر قراءة الصورة المختارة.", true);
+    }
+  });
+
+  addBtn?.addEventListener("click", addManagedMember);
+  resetBtn?.addEventListener("click", resetMemberManageForm);
+  nameInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") addManagedMember();
+  });
+}
+
+function initMemberDirectorySystem() {
+  if (!MEMBER_DIRECTORY_STATE.baseMembers.length) {
+    MEMBER_DIRECTORY_STATE.baseMembers = extractMembersFromCards(qsa("#members .slide-card")).map((member) => ({
+      ...member,
+      source: "static",
+    }));
+  }
+
+  loadLocalMemberDirectoryState();
+  wireMemberManageAdminControls();
+  refreshMemberDirectoryUI();
+
+  if (MEMBER_DIRECTORY_STATE.listenersAttached) return;
+
+  const tryInit = () => {
+    if (!fbAvailable()) return setTimeout(tryInit, 80);
+    MEMBER_DIRECTORY_STATE.listenersAttached = true;
+
+    const { db, onSnapshot, collection } = window.FB;
+
+    onSnapshot(collection(db, FIRESTORE_CUSTOM_MEMBERS), (snap) => {
+      const next = new Map();
+      snap.forEach((docSnap) => {
+        if (!String(docSnap.id || "").startsWith("custom__")) return;
+        const data = docSnap.data() || {};
+        const memberId = String(data.memberId || docSnap.id.replace(/^custom__/, "")).trim();
+        const name = String(data.name || "").trim();
+        const src = String(data.src || "").trim();
+        if (!memberId || !name || !src) return;
+        next.set(memberId, { id: memberId, name, src, source: "custom" });
+      });
+      MEMBER_DIRECTORY_STATE.pendingDeletedCustomMemberIds.forEach((id) => {
+        if (!next.has(id)) MEMBER_DIRECTORY_STATE.pendingDeletedCustomMemberIds.delete(id);
+      });
+      MEMBER_DIRECTORY_STATE.remoteCustomMembers = next;
+      refreshMemberDirectoryUI();
+    });
+
+    onSnapshot(collection(db, FIRESTORE_HIDDEN_MEMBERS), (snap) => {
+      const next = new Set();
+      snap.forEach((docSnap) => {
+        if (!String(docSnap.id || "").startsWith("hidden__")) return;
+        const data = docSnap.data() || {};
+        const memberId = String(data.memberId || docSnap.id.replace(/^hidden__/, "")).trim();
+        if (memberId) next.add(memberId);
+      });
+      MEMBER_DIRECTORY_STATE.pendingHiddenMemberIds.forEach((id) => {
+        if (next.has(id)) MEMBER_DIRECTORY_STATE.pendingHiddenMemberIds.delete(id);
+      });
+      MEMBER_DIRECTORY_STATE.remoteHiddenMemberIds = next;
+      refreshMemberDirectoryUI();
+    });
+  };
+
+  tryInit();
+}
+
+function openAdminPanelModal(panelKey) {
+  if (!FB_STATE.isAdmin) return;
+
+  const cfg = getAdminPanelConfig(panelKey);
+  const modal = qs("#adminPanelModal");
+  const mount = qs("#adminPanelModalMount");
+  const title = qs("#adminPanelModalTitle");
+  const sub = qs("#adminPanelModalSub");
+  const wrap = cfg ? qs(cfg.wrap) : null;
+
+  if (!cfg || !modal || !mount || !wrap) return;
+
+  restoreAdminPanelFromModal();
+  setActiveAdminPanel(panelKey);
+
+  if (title) title.textContent = cfg.title;
+  if (sub) sub.textContent = cfg.sub;
+
+  mount.appendChild(wrap);
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  syncBodyModalLock();
+
+  if (panelKey === "member-status") {
+    renderMemberStatusAdminList();
+  }
+  if (panelKey === "ahd") {
+    renderAhdAdminLists(qs("#ahdAdminSearch")?.value || "");
+  }
+  if (panelKey === "member-manage") {
+    renderMemberManageAdminList();
+    setTimeout(() => qs("#memberManageName")?.focus?.(), 60);
+  }
+}
+
+function closeAdminPanelModal() {
+  restoreAdminPanelFromModal();
+  setActiveAdminPanel(null);
+
+  const modal = qs("#adminPanelModal");
+  if (modal) {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  syncBodyModalLock();
+}
+
+function wireAdminQuickMenu() {
+  if (ADMIN_UI_STATE.wired) return;
+  ADMIN_UI_STATE.wired = true;
+
+  const toggle = qs("#adminQuickToggle");
+  const panel = qs("#adminQuickPanel");
+  const modal = qs("#adminPanelModal");
+  const closeBtn = qs("#closeAdminPanelModal");
+  const closeBtn2 = qs("#closeAdminPanelModal2");
+
+  toggle?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setAdminMenuOpen(!ADMIN_UI_STATE.menuOpen);
+  });
+
+  panel?.addEventListener("click", (e) => e.stopPropagation());
+
+  document.querySelectorAll("[data-admin-open]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      openAdminPanelModal(btn.getAttribute("data-admin-open"));
+    });
+  });
+
+  document.querySelectorAll("[data-admin-close]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      closeAdminPanelModal();
+    });
+  });
+
+  closeBtn?.addEventListener("click", closeAdminPanelModal);
+  closeBtn2?.addEventListener("click", closeAdminPanelModal);
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeAdminPanelModal();
+  });
+
+  document.addEventListener("click", (e) => {
+    const menu = qs("#adminQuickMenu");
+    if (!ADMIN_UI_STATE.menuOpen || !menu || menu.contains(e.target)) return;
+    setAdminMenuOpen(false);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (ADMIN_UI_STATE.menuOpen) setAdminMenuOpen(false);
+      else if (modal?.classList.contains("open")) closeAdminPanelModal();
+    }
+  });
+}
+
 function setAhdAdminVisibility() {
   const wrap = qs("#ahdAdminWrap");
   const manageBox = qs("#ahdManageBox");
-  if (wrap) wrap.style.display = FB_STATE.isAdmin ? "block" : "none";
-  if (manageBox) manageBox.style.display = FB_STATE.isAdmin ? "block" : "none";
+  const show = FB_STATE.isAdmin && ADMIN_UI_STATE.activePanel === "ahd";
+  if (wrap) {
+    wrap.style.display = show ? "block" : "none";
+    wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+  if (manageBox) manageBox.style.display = show ? "block" : "none";
+}
+
+function setMemberManageAdminVisibility() {
+  const wrap = qs("#memberManageAdminWrap");
+  const show = FB_STATE.isAdmin && ADMIN_UI_STATE.activePanel === "member-manage";
+  if (wrap) {
+    wrap.style.display = show ? "block" : "none";
+    wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  }
 }
 
 function renderAhdPublicList() {
@@ -2899,11 +3965,14 @@ function initAhdPage() {
       FB_STATE.user = user || null;
       FB_STATE.isAdmin = Boolean(user && user.uid === AMJAD_ADMIN_UID);
 
+      setAdminMenuVisibility();
       setAhdAdminVisibility();
       renderAhdPublicList();
       setMemberStatusAdminVisibility();
+      setMemberManageAdminVisibility();
       if (FB_STATE.isAdmin) {
         renderMemberStatusAdminList();
+        renderMemberManageAdminList();
       }
 
       resetFirestoreStreaksForAllMembersOnce();
@@ -2916,7 +3985,9 @@ function initAhdPage() {
     });
 
     attachAhdFirestoreListener();
+    setAdminMenuVisibility();
     setAhdAdminVisibility();
+    setMemberManageAdminVisibility();
     renderAhdPublicList();
   };
 
@@ -4306,7 +5377,11 @@ const PENDING_MEMBER_STATUS = new Map(); // memberId -> elite | active | lazy | 
 
 function setMemberStatusAdminVisibility() {
   const wrap = qs("#memberStatusAdminWrap");
-  if (wrap) wrap.style.display = FB_STATE.isAdmin ? "block" : "none";
+  const show = FB_STATE.isAdmin && ADMIN_UI_STATE.activePanel === "member-status";
+  if (wrap) {
+    wrap.style.display = show ? "block" : "none";
+    wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  }
 }
 
 function refreshMemberStatusUI() {
@@ -4319,6 +5394,7 @@ function refreshMemberStatusUI() {
   if (FB_STATE.isAdmin) {
     try { renderAhdAdminLists(qs("#ahdAdminSearch")?.value || ""); } catch {}
     try { renderMemberStatusAdminList(); } catch {}
+    try { renderMemberManageAdminList(); } catch {}
   }
 }
 
@@ -4454,6 +5530,7 @@ function initMemberStatusSystem() {
         document.body.appendChild(adminModal);
       }
 
+      initMemberDirectorySystem();
       decorateMemberCardsWithStreaks();
 
       // Bootstrap members cache and attempt automatic entry.
