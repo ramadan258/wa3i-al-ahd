@@ -319,6 +319,35 @@
 }
 #today .azkar-open-btn:hover{ opacity: .8; }
 
+#today .quran-plan-box{
+  margin-top: 12px;
+  padding: 12px 13px;
+  border-radius: 14px;
+  border: 1px solid rgba(245,200,66,.14);
+  background: rgba(245,200,66,.06);
+}
+
+#today .quran-plan-kicker{
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .3px;
+}
+
+#today .quran-plan-range{
+  margin-top: 5px;
+  color: var(--text-light);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+#today .quran-plan-meta{
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
 
 /* ─── Azkar Modal ─────────────────────────────────────── */
 .azkar-modal-overlay{
@@ -575,6 +604,14 @@
     line-height: 2;
   }
 
+  .quran-summary-grid{
+    grid-template-columns: 1fr;
+  }
+
+  .quran-reader-frame{
+    height: min(54vh, 560px);
+  }
+
   .tafsir-ayah-head{
     flex-direction: column;
     align-items: flex-start;
@@ -721,6 +758,12 @@
   font-weight: 900;
 }
 
+.quran-page-chip.is-active{
+  background: rgba(78,205,196,.18);
+  border-color: rgba(78,205,196,.28);
+  color: var(--primary);
+}
+
 .quran-loader{
   color: var(--text-muted);
   font-size: 13px;
@@ -809,6 +852,65 @@
   padding: 10px 14px;
   cursor: pointer;
   font-weight: 900;
+}
+
+.quran-summary-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.quran-summary-card{
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.quran-summary-kicker{
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .4px;
+}
+
+.quran-summary-value{
+  margin-top: 8px;
+  color: var(--text-light);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.quran-summary-sub{
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.quran-reader-shell{
+  margin-top: 12px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.25);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+}
+
+.quran-reader-frame{
+  width: 100%;
+  height: min(58vh, 680px);
+  border: 0;
+  display: block;
+  background: #0f141a;
+}
+
+.quran-reader-hint{
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.8;
 }
 
 /* =========================
