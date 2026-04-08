@@ -151,9 +151,9 @@ function renderMemberStatusAdminList() {
         const normalizedCode = code.toUpperCase();
         const authInfo = FB_STATE.isAdmin
           ? "صلاحية أمجد مفعلة"
-          : (hasMemberStatusAdminAccess() ? "صلاحية سعد مفعلة" : "لا توجد صلاحية مفعلة");
-        if (code === "SAAD_BINDING_LOCAL_ONLY") {
-          showIdentityToast("تعذّر الحفظ: ربط سعد موجود محليًا فقط، ولم يكتمل الربط السحابي بعد.");
+          : (hasMemberStatusAdminAccess() ? "صلاحية محلية مفعلة" : "لا توجد صلاحية مفعلة");
+        if (code === "LOCAL_MEMBER_STATUS_BINDING_ONLY") {
+          showIdentityToast("تعذّر الحفظ: الربط المحلي موجود فقط، ولم يكتمل الربط السحابي بعد.");
           return;
         }
         if (!FB_STATE.isAdmin && hasMemberStatusAdminAccess() && (
@@ -162,10 +162,10 @@ function renderMemberStatusAdminList() {
           normalizedCode.includes("MISSING OR INSUFFICIENT PERMISSIONS")
         )) {
           if (isCustomManagedMemberId(memberId)) {
-            showIdentityToast("تعذّر الحفظ: هذا عضو مضاف يدويًا، وقواعد Firebase الحالية تسمح لسعد بتقييم الأعضاء الأساسيين فقط، لا الأعضاء ذوي المعرّف custom_member.");
+            showIdentityToast("تعذّر الحفظ: هذا عضو مضاف يدويًا، وقواعد Firebase الحالية لا تسمح للحساب الحالي بتقييم هذا النوع من الأعضاء.");
             return;
           }
-          showIdentityToast("تعذّر الحفظ: قواعد Firebase الحالية لا تسمح لسعد بحفظ تقييم الأعضاء بعد.");
+          showIdentityToast("تعذّر الحفظ: قواعد Firebase الحالية لا تسمح للحساب الحالي بحفظ تقييم الأعضاء.");
           return;
         }
         showIdentityToast(`تعذّر الحفظ: ${code} — ${authInfo}`);
@@ -181,7 +181,7 @@ async function updateMemberStatus(memberId, status) {
   if (isLimitedAdmin) {
     const binding = await ensureMemberBinding(currentUserId());
     if (binding?.localOnly) {
-      throw new Error("SAAD_BINDING_LOCAL_ONLY");
+      throw new Error("LOCAL_MEMBER_STATUS_BINDING_ONLY");
     }
     await getFreshFirebaseIdToken();
   }

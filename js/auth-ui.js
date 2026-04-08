@@ -14,19 +14,13 @@ function closeAllModals() {
 
 let PENDING_ADMIN_USER = null;
 let ADMIN_MODAL_WIRED = false;
-const SAAD_ADMIN_LOGIN_NAME = "سعد";
-const SAAD_ADMIN_LOGIN_PASSWORD = "12345";
 
 function isAmjadMember(user) {
   return Boolean(user && String(user.name || "").trim() === "أمجد");
 }
 
-function isSaadMember(user) {
-  return Boolean(user && String(user.name || "").trim() === "سعد");
-}
-
 function isPrivilegedMember(user) {
-  return isAmjadMember(user) || isSaadMember(user);
+  return isAmjadMember(user);
 }
 
 function openAdminLoginModal(user) {
@@ -43,22 +37,12 @@ function openAdminLoginModal(user) {
   if (email) email.value = "";
   if (pass) pass.value = "";
 
-  if (isSaadMember(user)) {
-    if (title) title.textContent = "دخول سعد";
-    if (sub) sub.textContent = "اكتب اسم الدخول وكلمة المرور لفتح لوحة تقييم الأعضاء فقط.";
-    if (email) {
-      email.type = "text";
-      email.setAttribute("inputmode", "text");
-      email.placeholder = "اسم الدخول";
-    }
-  } else {
-    if (title) title.textContent = "دخول أمجد";
-    if (sub) sub.textContent = "أدخل البريد وكلمة المرور للدخول الكامل إلى لوحات الإدارة.";
-    if (email) {
-      email.type = "email";
-      email.setAttribute("inputmode", "email");
-      email.placeholder = "البريد الإلكتروني";
-    }
+  if (title) title.textContent = "دخول أمجد";
+  if (sub) sub.textContent = "أدخل البريد وكلمة المرور للدخول الكامل إلى لوحات الإدارة.";
+  if (email) {
+    email.type = "email";
+    email.setAttribute("inputmode", "email");
+    email.placeholder = "البريد الإلكتروني";
   }
 
   if (!modal) return;
@@ -86,59 +70,9 @@ async function submitAdminLogin() {
   const status = qs("#adminLoginStatus");
   const email = (qs("#adminLoginEmail")?.value || "").trim();
   const password = (qs("#adminLoginPassword")?.value || "").trim();
-  const isSaadFlow = isSaadMember(pending);
 
   if (!email || !password) {
-    if (status) status.textContent = isSaadFlow ? "اكتب اسم الدخول وكلمة المرور." : "اكتب البريد وكلمة المرور.";
-    return;
-  }
-
-  if (isSaadFlow) {
-    if (email !== SAAD_ADMIN_LOGIN_NAME || password !== SAAD_ADMIN_LOGIN_PASSWORD) {
-      if (status) status.textContent = "بيانات دخول سعد غير صحيحة.";
-      return;
-    }
-
-    if (status) status.textContent = "جاري تفعيل صلاحية سعد…";
-    let binding = null;
-    try {
-      if (!pending) throw new Error("NO_PENDING_USER");
-      if (!fbAvailable()) throw new Error("FB_NOT_READY");
-      try {
-        await window.FB.setPersistence(window.FB.auth, window.FB.inMemoryPersistence);
-      } catch {}
-      if (window.FB.auth?.currentUser) {
-        try { await window.FB.signOut(window.FB.auth); } catch {}
-      }
-      binding = await ensureMemberBinding(pending.id);
-      await getFreshFirebaseIdToken();
-    } catch (e) {
-      const msg = String(e?.message || "");
-      if (msg === "BOUND_TO_OTHER_MEMBER") {
-        const bound = memberNameById(e.boundMemberId) || e.boundMemberId || "عضو آخر";
-        if (status) status.textContent = `هذا الجهاز مربوط مسبقًا بالعضو “${bound}”. استخدم إعادة ضبط الجهاز أولًا إذا أردت نقل صلاحية سعد هنا.`;
-        return;
-      }
-      if (isBindingUnavailableError(e) || msg.includes("FB_NOT_READY")) {
-        if (status) status.textContent = "تعذّر تفعيل سعد الآن لأن Firebase غير متاح. جرّب مرة أخرى مع اتصال مستقر.";
-        return;
-      }
-      if (status) status.textContent = "تعذّر تفعيل صلاحية سعد الآن.";
-      return;
-    }
-
-    closeAdminLoginModal();
-    if (pending) {
-      grantLocalAdminAccess({
-        owner: pending.name,
-        memberStatus: true,
-      });
-      saveCurrentUser({ id: pending.id, name: pending.name, kind: "member" });
-      startApp();
-      showIdentityToast(binding?.localOnly
-        ? "تم دخول سعد، لكن الربط السحابي لم يكتمل بعد."
-        : "تم تفعيل صلاحية تقييم الأعضاء لسعد.");
-    }
+    if (status) status.textContent = "اكتب البريد وكلمة المرور.";
     return;
   }
 
