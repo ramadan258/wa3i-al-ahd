@@ -62,17 +62,106 @@ function formatRescueLogDate(isoString) {
   });
 }
 
-function renderRescuePlanPreview(plan) {
-  const preview = qs("#rescueCenterPlanPreview");
-  if (!preview) return;
-
-  const items = [
+function getRescueCenterPlanItems(plan) {
+  return [
     { title: "أخطر وقت", value: plan.dangerTime },
     { title: "أخطر مكان أو وضع", value: plan.dangerPlace },
     { title: "أول علامة", value: plan.firstSign },
     { title: "أفضل بديل سريع", value: plan.bestReplacement },
     { title: "رفيق التثبيت", value: plan.supportPerson },
   ].filter((item) => item.value);
+}
+
+function getCurrentRescueCenterEvaluation() {
+  return WA3I_CTX.riskEvaluation || evaluateRiskCheck(WA3I_CTX.state?.riskCheck);
+}
+
+function syncRescueCenterPanelBadges() {
+  qsa("#rescue .rescue-center-panel").forEach((panel) => {
+    const badge = panel.querySelector(".rescue-center-panel-badge");
+    if (!badge) return;
+    badge.textContent = panel.open ? "إخفاء" : "افتح";
+  });
+}
+
+function setRescueCenterPanelDefaults(state, evaluation) {
+  const planPanel = qs("#rescueCenterPlanPanel");
+  const logPanel = qs("#rescueCenterLogPanel");
+  const hasPlan = getRescueCenterPlanItems(state.plan).length > 0;
+
+  if (planPanel) {
+    planPanel.open = !hasPlan && evaluation?.level !== "high";
+  }
+
+  if (logPanel) {
+    logPanel.open = false;
+  }
+
+  syncRescueCenterPanelBadges();
+}
+
+function renderRescueCenterOverview(state, evaluation) {
+  const planItems = getRescueCenterPlanItems(state.plan);
+  const levelMeta = qs("#rescueCenterLevelMeta");
+  const planMeta = qs("#rescueCenterPlanMeta");
+  const logMeta = qs("#rescueCenterLogMeta");
+  const planSummary = qs("#rescueCenterPlanSummaryText");
+  const logSummary = qs("#rescueCenterLogSummaryText");
+  const breathBtn = qs("#rescueCenterBreathBtn");
+  const breathTitle = qs("#rescueCenterBreathTitle");
+  const breathDesc = qs("#rescueCenterBreathDesc");
+  const runningBreath = Boolean(WA3I_CTX.state?.breathRunning);
+
+  if (levelMeta) {
+    levelMeta.textContent = evaluation?.pill || "لم يُفحص بعد";
+  }
+
+  if (planMeta) {
+    planMeta.textContent = planItems.length ? `${formatArabicNumber(planItems.length)}/٥ مكتوبة` : "غير مكتوبة";
+  }
+
+  if (logMeta) {
+    logMeta.textContent = state.log.length ? `${formatArabicNumber(state.log.length)} محاولة` : "فارغ";
+  }
+
+  if (planSummary) {
+    planSummary.textContent = planItems.length
+      ? `مكتوب منها ${formatArabicNumber(planItems.length)} من ٥ عناصر تساعدك وقت الضعف.`
+      : "اكتبها مرة واحدة، ثم ارجع إليها وقت الضعف بدل أن تبدأ من الصفر.";
+  }
+
+  if (logSummary) {
+    logSummary.textContent = state.log.length
+      ? `لديك ${formatArabicNumber(state.log.length)} محاولة نجاة مسجلة. ارجع إليها لتعرف ما الذي نفعك.`
+      : "فارغ الآن. كل مرة تنجو فيها من موجة ضعف، سجّل ما نفعك هنا.";
+  }
+
+  if (breathBtn) {
+    breathBtn.classList.toggle("urgent", evaluation?.level === "high");
+  }
+
+  if (breathTitle) {
+    breathTitle.textContent = runningBreath
+      ? "التنفس جارٍ الآن"
+      : evaluation?.level === "high"
+        ? "ابدأ التهدئة الآن"
+        : "دقيقة تهدئة";
+  }
+
+  if (breathDesc) {
+    breathDesc.textContent = runningBreath
+      ? "أكمل الدقيقة ثم اختر الخطوة التالية."
+      : evaluation?.level === "high"
+        ? "هذه أول خطوة قبل أي شيء آخر."
+        : "اقطع التوتر الأول قبل أن يكبر.";
+  }
+}
+
+function renderRescuePlanPreview(plan) {
+  const preview = qs("#rescueCenterPlanPreview");
+  if (!preview) return;
+
+  const items = getRescueCenterPlanItems(plan);
 
   if (!items.length) {
     preview.innerHTML = `<div class="rescue-center-empty">لم تُكتب خطتك الشخصية بعد. املأ الحقول أعلاه، وعندما يأتيك الضعف سيظهر لك ما يلزمك أنت بالذات بدل النص العام.</div>`;
@@ -158,11 +247,13 @@ function renderRescueCenterStatus(evaluation) {
 
 function renderRescueCenterModal() {
   const state = getRescueCenterState();
-  const evaluation = WA3I_CTX.riskEvaluation || evaluateRiskCheck(WA3I_CTX.state?.riskCheck);
+  const evaluation = getCurrentRescueCenterEvaluation();
   fillRescueCenterPlanInputs(state.plan);
   renderRescuePlanPreview(state.plan);
   renderRescueLog(state.log);
   renderRescueCenterStatus(evaluation);
+  renderRescueCenterOverview(state, evaluation);
+  return { state, evaluation };
 }
 
 function saveRescueCenterPlan() {
@@ -176,6 +267,7 @@ function saveRescueCenterPlan() {
   };
   setRescueCenterState(current);
   renderRescuePlanPreview(current.plan);
+  renderRescueCenterOverview(current, getCurrentRescueCenterEvaluation());
   showToast("تم حفظ خطتك الشخصية ✅");
 }
 
@@ -198,6 +290,7 @@ function saveRescueLogEntry() {
   current.log = current.log.slice(0, 8);
   setRescueCenterState(current);
   renderRescueLog(current.log);
+  renderRescueCenterOverview(current, getCurrentRescueCenterEvaluation());
 
   const triggerInput = qs("#rescueLogTrigger");
   const helpedInput = qs("#rescueLogHelped");
@@ -207,66 +300,71 @@ function saveRescueLogEntry() {
 }
 
 function setupRescueCenterModal() {
-  const modal = qs("#rescueCenterModal");
+  const page = qs("#rescue");
   const openBtn = qs("#openRescueCenter");
-  const closeBtn = qs("#closeRescueCenterModal");
-  const closeBtn2 = qs("#closeRescueCenterModal2");
   const breathBtn = qs("#rescueCenterBreathBtn");
   const azkarBtn = qs("#rescueCenterAzkarBtn");
   const libraryBtn = qs("#rescueCenterLibraryBtn");
   const classicPlanBtn = qs("#rescueCenterClassicPlanBtn");
   const savePlanBtn = qs("#saveRescuePlanBtn");
   const saveLogBtn = qs("#saveRescueLogBtn");
-  if (!modal) return;
+  if (!page) return;
 
-  function openModal() {
-    renderRescueCenterModal();
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+  qsa("#rescue .rescue-center-panel").forEach((panel) => {
+    panel.addEventListener("toggle", () => syncRescueCenterPanelBadges());
+  });
+
+  function openPage() {
+    if (typeof getStandalonePageUrl === "function") {
+      window.location.href = getStandalonePageUrl("rescue");
+      return;
+    }
+
+    try {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.searchParams.set("view", "rescue");
+      window.location.href = `${url.pathname}${url.search}`;
+    } catch {
+      window.location.href = "index.html?view=rescue";
+    }
   }
 
-  function closeModal() {
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
+  if (openBtn) openBtn.onclick = () => openPage();
+
+  if (typeof getStandaloneView === "function" && getStandaloneView() === "rescue") {
+    const snapshot = renderRescueCenterModal();
+    setRescueCenterPanelDefaults(snapshot.state, snapshot.evaluation);
   }
-
-  if (openBtn) openBtn.onclick = () => openModal();
-  if (closeBtn) closeBtn.onclick = () => closeModal();
-  if (closeBtn2) closeBtn2.onclick = () => closeModal();
-
-  modal.onclick = (e) => {
-    if (e.target === modal) closeModal();
-  };
 
   if (breathBtn) {
     breathBtn.onclick = () => {
       const todayISO = WA3I_CTX.todayISO;
       const state = WA3I_CTX.state;
       if (!todayISO || !state) return;
-      if (!state.breathRunning) startBreathTimer(todayISO, state);
-      else showToast("مؤقت التنفس يعمل بالفعل.");
+      if (!state.breathRunning) {
+        startBreathTimer(todayISO, state);
+        renderRescueCenterOverview(getRescueCenterState(), getCurrentRescueCenterEvaluation());
+      } else {
+        showToast("مؤقت التنفس يعمل بالفعل.");
+      }
     };
   }
 
   if (azkarBtn) {
     azkarBtn.onclick = () => {
-      closeModal();
       openAzkarReader(chooseRiskAzkarConfig(WA3I_CTX.state));
     };
   }
 
   if (libraryBtn) {
     libraryBtn.onclick = () => {
-      closeModal();
       qs("#openRecoveryLibrary")?.click();
     };
   }
 
   if (classicPlanBtn) {
     classicPlanBtn.onclick = () => {
-      closeModal();
       if (typeof window.openRescuePlanModal === "function") {
         window.openRescuePlanModal();
       }

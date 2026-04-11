@@ -319,7 +319,8 @@
 }
 #today .azkar-open-btn:hover{ opacity: .8; }
 
-#today .quran-plan-box{
+#today .quran-plan-box,
+#today .qa-plan-box{
   margin-top: 12px;
   padding: 12px 13px;
   border-radius: 14px;
@@ -327,21 +328,24 @@
   background: rgba(245,200,66,.06);
 }
 
-#today .quran-plan-kicker{
+#today .quran-plan-kicker,
+#today .qa-plan-kicker{
   color: var(--gold);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: .3px;
 }
 
-#today .quran-plan-range{
+#today .quran-plan-range,
+#today .qa-plan-range{
   margin-top: 5px;
   color: var(--text-light);
   font-size: 15px;
   font-weight: 900;
 }
 
-#today .quran-plan-meta{
+#today .quran-plan-meta,
+#today .qa-plan-meta{
   margin-top: 5px;
   color: var(--text-muted);
   font-size: 12px;
@@ -628,22 +632,28 @@
     width: 100%;
   }
 
-  .rescue-center-grid{
-    grid-template-columns: 1fr;
-  }
-
-  .rescue-center-section{
+  .rescue-center-hero,
+  .rescue-center-section,
+  .rescue-center-panel-summary,
+  .rescue-center-panel-body{
     border-radius: 16px;
-    padding: 14px;
+    padding-right: 14px;
+    padding-left: 14px;
   }
 
-  .rescue-center-actions{
+  .rescue-center-panel-summary{
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .rescue-center-actions .btn{
-    width: 100%;
-    min-width: 0;
+  .rescue-center-panel-badge{
+    align-self: flex-start;
+  }
+
+  .rescue-center-meta,
+  .rescue-center-route,
+  .rescue-center-actions{
+    grid-template-columns: 1fr;
   }
 
   .rescue-center-log-head{
@@ -741,26 +751,116 @@
   background: rgba(0,0,0,.18);
 }
 
-.quran-page-nav{
+.quran-page-shell{
+  display:grid;
+  gap: 14px;
+}
+
+.quran-page-hero{
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(245,200,66,.14);
+  background:
+    radial-gradient(circle at top right, rgba(245,200,66,.1), transparent 40%),
+    linear-gradient(180deg, rgba(17,22,35,.96), rgba(9,13,23,.94));
+  box-shadow: 0 18px 34px rgba(0,0,0,.18);
+}
+
+.quran-page-kicker{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(245,200,66,.18);
+  background: rgba(245,200,66,.08);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.quran-page-title{
+  margin-top: 12px;
+  color: var(--text-light);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.quran-page-range{
+  margin-top: 8px;
+  color: var(--text-light);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.quran-page-actions{
+  margin-top: 14px;
   display:flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  justify-content:flex-start;
+}
+
+.quran-page-nav{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
   margin-bottom: 12px;
 }
 
 .quran-page-chip{
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.22);
+  min-width: 0;
+  display:grid;
+  gap: 6px;
+  justify-items:center;
+  text-align:center;
+  padding: 14px 10px 12px;
+  border: 1px solid rgba(255,255,255,.09);
+  background: linear-gradient(180deg, rgba(15,23,35,.96), rgba(9,14,24,.94));
   color: var(--text-light);
-  border-radius: 999px;
-  padding: 8px 10px;
+  border-radius: 20px;
   cursor:pointer;
+  font-family: inherit;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.quran-page-chip:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.14);
+}
+
+.quran-page-chip-label{
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.quran-page-chip-number{
+  color: var(--text-light);
+  font-size: 26px;
+  line-height: 1;
   font-weight: 900;
 }
 
+.quran-page-chip-hint{
+  color: rgba(234,236,240,.72);
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .quran-page-chip.is-active{
-  background: rgba(78,205,196,.18);
+  background:
+    radial-gradient(circle at top, rgba(78,205,196,.14), transparent 55%),
+    linear-gradient(180deg, rgba(15,41,42,.96), rgba(8,22,25,.94));
   border-color: rgba(78,205,196,.28);
+  box-shadow: 0 14px 28px rgba(0,0,0,.18);
+}
+
+.quran-page-chip.is-active .quran-page-chip-label,
+.quran-page-chip.is-active .quran-page-chip-hint{
+  color: rgba(203,255,251,.78);
+}
+
+.quran-page-chip.is-active .quran-page-chip-number{
   color: var(--primary);
 }
 
@@ -1141,49 +1241,149 @@
 /* =========================
    Rescue Center
 ========================= */
-.rescue-center-grid{
+.rescue-center-flow{
   display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
-.rescue-center-section{
-  background: rgba(255,255,255,.03);
+.rescue-center-hero,
+.rescue-center-section,
+.rescue-center-panel{
   border: 1px solid rgba(255,255,255,.06);
-  border-radius: 18px;
-  padding: 16px;
+  border-radius: 20px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
 }
 
+.rescue-center-hero{
+  padding: 18px;
+  background:
+    radial-gradient(circle at top, rgba(78,205,196,.16), transparent 56%),
+    linear-gradient(160deg, rgba(17,24,36,.98), rgba(10,14,23,.98));
+}
+
+.rescue-center-kicker,
+.rescue-center-section-kicker,
+.rescue-center-panel-kicker{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(78,205,196,.2);
+  background: rgba(78,205,196,.1);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.rescue-center-hero-title{
+  margin-top: 12px;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.rescue-center-hero-sub{
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.85;
+}
+
+.rescue-center-meta{
+  margin-top: 16px;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rescue-center-meta-card{
+  min-width: 0;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.05);
+}
+
+.rescue-center-meta-label{
+  display:block;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.rescue-center-meta-value{
+  display:block;
+  margin-top: 6px;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.rescue-center-route{
+  margin-top: 14px;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rescue-center-route-item{
+  min-width: 0;
+  display:grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.05);
+}
+
+.rescue-center-route-item span{
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.rescue-center-route-item strong{
+  color: var(--text-light);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.rescue-center-section{
+  padding: 18px;
+  background: rgba(255,255,255,.03);
+}
+
 .rescue-center-section.priority{
-  grid-column: 1 / -1;
-  background: linear-gradient(160deg, rgba(20,29,42,.96), rgba(11,16,28,.98));
+  background: linear-gradient(160deg, rgba(18,26,39,.98), rgba(10,15,24,.98));
 }
 
 .rescue-center-section-title{
-  font-size: 17px;
+  margin-top: 10px;
+  font-size: 20px;
   font-weight: 900;
   color: var(--text-light);
 }
 
 .rescue-center-section-sub{
-  margin-top: 6px;
+  margin-top: 8px;
   color: var(--text-muted);
   font-size: 13px;
-  line-height: 1.8;
+  line-height: 1.85;
 }
 
 .rescue-center-status{
-  margin-top: 14px;
+  margin-top: 16px;
   display:grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .rescue-center-status-box{
-  padding: 14px;
-  border-radius: 16px;
+  padding: 16px;
+  border-radius: 18px;
   border: 1px solid rgba(255,255,255,.08);
-  background: rgba(0,0,0,.2);
+  background: rgba(0,0,0,.22);
 }
 
 .rescue-center-status-box.low{
@@ -1232,9 +1432,10 @@
 
 .rescue-center-status-title{
   margin-top: 10px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 900;
   color: var(--text-light);
+  line-height: 1.45;
 }
 
 .rescue-center-status-desc{
@@ -1245,18 +1446,106 @@
 }
 
 .rescue-center-actions{
-  margin-top: 14px;
-  display:flex;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  flex-wrap: wrap;
 }
 
-.rescue-center-actions .btn{
-  min-width: 148px;
+.rescue-center-action-card{
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: var(--text-light);
+  display:flex;
+  align-items:flex-start;
+  gap: 12px;
+  text-align: right;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.rescue-center-action-card:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+
+.rescue-center-action-card.primary{
+  background: linear-gradient(160deg, rgba(245,200,66,.18), rgba(40,28,10,.5));
+  border-color: rgba(245,200,66,.28);
+}
+
+.rescue-center-action-card.primary.urgent{
+  background: linear-gradient(160deg, rgba(255,120,120,.18), rgba(43,17,20,.52));
+  border-color: rgba(255,120,120,.3);
+}
+
+.rescue-center-action-step{
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--gold);
+  display:grid;
+  place-items:center;
+  flex: 0 0 30px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.rescue-center-action-body{
+  min-width: 0;
+  display:grid;
+  gap: 4px;
+}
+
+.rescue-center-action-title{
+  color: var(--text-light);
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.rescue-center-action-desc{
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.rescue-center-inline-link{
+  justify-self: flex-start;
+  width: fit-content;
+  border: 0;
+  background: transparent;
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0;
+}
+
+.rescue-center-inline-link:hover{
+  opacity: .88;
+}
+
+.rescue-center-advice-block{
+  display:grid;
+  gap: 10px;
+}
+
+.rescue-center-advice-title{
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 900;
 }
 
 .rescue-center-advice{
-  margin-top: 14px;
   display:grid;
   gap: 8px;
 }
@@ -1277,6 +1566,70 @@
 .rescue-center-advice-mark{
   color: var(--gold);
   font-weight: 900;
+}
+
+.rescue-center-panel{
+  overflow:hidden;
+  background: rgba(255,255,255,.03);
+}
+
+.rescue-center-panel[open]{
+  background: rgba(255,255,255,.04);
+}
+
+.rescue-center-panel-summary{
+  list-style: none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 14px;
+  padding: 18px;
+  cursor: pointer;
+}
+
+.rescue-center-panel-summary::-webkit-details-marker{
+  display:none;
+}
+
+.rescue-center-panel-copy{
+  min-width: 0;
+}
+
+.rescue-center-panel-title{
+  margin-top: 10px;
+  color: var(--text-light);
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.rescue-center-panel-sub{
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.rescue-center-panel-badge{
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 900;
+  background: rgba(255,255,255,.04);
+}
+
+.rescue-center-panel[open] .rescue-center-panel-badge{
+  color: var(--gold);
+  border-color: rgba(245,200,66,.22);
+  background: rgba(245,200,66,.08);
+}
+
+.rescue-center-panel-body{
+  padding: 0 18px 18px;
+  border-top: 1px solid rgba(255,255,255,.05);
 }
 
 .rescue-center-form{
@@ -1389,4 +1742,505 @@
 .rescue-center-log-line span{
   color: var(--gold);
   font-weight: 900;
+}
+
+.qa-page-shell{
+  display:grid;
+  gap: 18px;
+}
+
+.qa-page-hero{
+  padding: 24px;
+  border-radius: 26px;
+  border: 1px solid rgba(78,205,196,.12);
+  background:
+    radial-gradient(circle at top right, rgba(78,205,196,.14), transparent 38%),
+    linear-gradient(180deg, rgba(12,26,34,.96), rgba(9,18,30,.96));
+  box-shadow: 0 24px 60px rgba(0,0,0,.32);
+}
+
+.qa-page-kicker{
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+
+.qa-page-title{
+  margin-top: 8px;
+  color: var(--text-light);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 900;
+}
+
+.qa-page-sub{
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.9;
+  max-width: 720px;
+}
+
+.qa-page-stats{
+  margin-top: 18px;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.qa-page-stat{
+  display:grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+
+.qa-page-stat span{
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.qa-page-stat strong{
+  color: var(--gold);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.qa-category-rail{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.qa-category-card{
+  display:grid;
+  gap: 8px;
+  width:100%;
+  text-align:right;
+  text-decoration:none;
+  padding: 16px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(78,205,196,.12);
+  background: linear-gradient(180deg, rgba(11,24,35,.96), rgba(9,17,28,.96));
+  color: var(--text-light);
+  cursor:pointer;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.qa-category-card:hover{
+  transform: translateY(-2px);
+  border-color: rgba(78,205,196,.28);
+  box-shadow: 0 18px 36px rgba(0,0,0,.22);
+}
+
+.qa-category-card.is-active{
+  border-color: rgba(245,200,66,.34);
+  background:
+    radial-gradient(circle at top right, rgba(245,200,66,.12), transparent 40%),
+    linear-gradient(180deg, rgba(28,26,18,.98), rgba(18,17,13,.98));
+}
+
+.qa-category-card-title{
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.8;
+}
+
+.qa-category-card-count{
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.qa-question-panel{
+  display:grid;
+  gap: 14px;
+}
+
+.qa-question-panel-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.qa-question-panel-copy{
+  display:grid;
+  gap: 6px;
+}
+
+.qa-question-panel-kicker{
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.qa-question-panel-title{
+  color: var(--text-light);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.qa-question-panel-meta{
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.qa-back-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 10px 16px;
+  text-decoration:none;
+  border-radius: 999px;
+  border: 1px solid rgba(78,205,196,.18);
+  background: rgba(12, 24, 34, .9);
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.qa-question-list{
+  display:grid;
+  gap: 12px;
+}
+
+.qa-question-item{
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: linear-gradient(180deg, rgba(16,24,35,.96), rgba(11,18,29,.96));
+  overflow:hidden;
+}
+
+.qa-question-summary{
+  list-style:none;
+  display:flex;
+  align-items:center;
+  gap: 14px;
+  padding: 18px 18px 16px;
+  cursor:pointer;
+}
+
+.qa-question-summary::-webkit-details-marker{
+  display:none;
+}
+
+.qa-question-index{
+  flex:0 0 auto;
+  min-width: 34px;
+  height: 34px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 999px;
+  background: rgba(245,200,66,.12);
+  border: 1px solid rgba(245,200,66,.22);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.qa-question-text{
+  color: var(--text-light);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.9;
+}
+
+.qa-answer-body{
+  padding: 0 18px 18px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 2;
+}
+
+.qa-page-empty,
+.qa-inline-empty{
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px dashed rgba(255,255,255,.12);
+  color: var(--text-muted);
+  text-align:center;
+  line-height: 1.9;
+}
+
+.qa-admin-grid{
+  display:grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.qa-admin-side,
+.qa-admin-main{
+  display:grid;
+  gap: 12px;
+}
+
+.qa-admin-textarea{
+  min-height: 110px;
+  resize: vertical;
+}
+
+.qa-admin-answer{
+  min-height: 170px;
+}
+
+.qa-admin-category-list,
+.qa-admin-item-list{
+  display:grid;
+  gap: 10px;
+}
+
+.qa-admin-category-card,
+.qa-admin-item-card{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+
+.qa-admin-category-card.is-active{
+  border-color: rgba(245,200,66,.26);
+  background: rgba(245,200,66,.06);
+}
+
+.qa-admin-category-card.is-editing,
+.qa-admin-item-card.is-editing{
+  border-color: rgba(78,205,196,.28);
+  box-shadow: inset 0 0 0 1px rgba(78,205,196,.12);
+}
+
+.qa-admin-category-main{
+  display:grid;
+  gap: 5px;
+  flex:1;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align:right;
+  color: var(--text-light);
+  font: inherit;
+  cursor: pointer;
+}
+
+.qa-admin-category-name{
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.qa-admin-category-count{
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.qa-admin-item-copy{
+  display:grid;
+  gap: 8px;
+  flex:1;
+}
+
+.qa-admin-item-question{
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.8;
+}
+
+.qa-admin-item-answer{
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.qa-admin-action-stack{
+  display:grid;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.qa-admin-edit-btn,
+.qa-admin-delete-btn{
+  flex:0 0 auto;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.qa-admin-edit-btn{
+  border: 1px solid rgba(78,205,196,.24);
+  background: rgba(78,205,196,.09);
+  color: #d8fffb;
+}
+
+.qa-admin-delete-btn{
+  border: 1px solid rgba(255,140,140,.24);
+  background: rgba(255,140,140,.08);
+  color: #ffb4b4;
+}
+
+.qa-admin-empty{
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px dashed rgba(255,255,255,.12);
+  color: var(--text-muted);
+  text-align:center;
+}
+
+@media (max-width: 860px){
+  .qa-admin-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px){
+  #rescue .rescue-center-flow{
+    gap: 12px;
+  }
+
+  #rescue .rescue-center-hero,
+  #rescue .rescue-center-section,
+  #rescue .rescue-center-panel{
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  #rescue .rescue-center-page-title{
+    margin-bottom: 10px;
+    font-size: clamp(24px, 7.5vw, 30px);
+  }
+
+  #rescue .rescue-center-hero-title,
+  #rescue .rescue-center-section-title,
+  #rescue .rescue-center-status-title{
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  #rescue .rescue-center-hero-sub,
+  #rescue .rescue-center-section-sub,
+  #rescue .rescue-center-status-desc{
+    font-size: 12px;
+    line-height: 1.85;
+  }
+
+  #rescue .rescue-center-status-box{
+    padding: 14px;
+  }
+
+  #rescue .rescue-center-route{
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  #rescue .rescue-center-route-item{
+    padding: 10px 12px;
+  }
+
+  #rescue .rescue-center-actions{
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  #rescue .rescue-center-action-card{
+    align-items: center;
+    gap: 10px;
+    padding: 14px 12px;
+  }
+
+  #rescue .rescue-center-action-title,
+  #rescue .rescue-center-action-desc{
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #rescue .rescue-center-action-title{
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  #rescue .rescue-center-action-desc{
+    font-size: 11px;
+    line-height: 1.75;
+  }
+
+  #rescue .rescue-center-inline-link{
+    font-size: 12px;
+  }
+
+  #rescue .rescue-center-advice-item{
+    padding: 10px;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  #rescue .rescue-center-panel-summary{
+    gap: 10px;
+    padding: 14px;
+  }
+
+  #rescue .rescue-center-panel-title{
+    font-size: 16px;
+  }
+
+  #rescue .rescue-center-panel-sub,
+  #rescue .rescue-center-preview-value,
+  #rescue .rescue-center-log-line,
+  #rescue .rescue-center-empty{
+    font-size: 12px;
+    line-height: 1.85;
+  }
+
+  .qa-page-hero{
+    padding: 20px 18px;
+    border-radius: 24px;
+  }
+
+  .qa-page-stats{
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .qa-category-rail{
+    grid-template-columns: 1fr;
+  }
+
+  .qa-question-panel-head{
+    align-items:stretch;
+  }
+
+  .qa-back-btn{
+    width:100%;
+  }
+
+  .qa-question-summary{
+    padding: 16px 16px 14px;
+    gap: 12px;
+  }
+
+  .qa-answer-body{
+    padding: 0 16px 16px;
+  }
+}
+
+@media (max-width: 420px){
+  #rescue .rescue-center-meta{
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  #rescue .rescue-center-action-step{
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    font-size: 11px;
+  }
 }

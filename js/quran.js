@@ -46,6 +46,7 @@ function buildLocalQuranUrl(page) {
 
 let LOCAL_QURAN_PDF_AVAILABLE = null;
 let LOCAL_QURAN_PDF_CHECK = null;
+let ACTIVE_QURAN_PLAN = null;
 
 async function canUseLocalQuranPdf() {
   if (LOCAL_QURAN_PDF_AVAILABLE !== null) {
@@ -107,12 +108,60 @@ function describeQuranPlan(quranPlan) {
   };
 }
 
+async function renderStandaloneQuranPage(quranPlan) {
+  const page = qs("#quran");
+  const rangeEl = qs("#quranPlanRange");
+  const navEl = qs("#quranPageNav");
+  const frameEl = qs("#quranReaderFrame");
+  const hintEl = qs("#quranReaderHint");
+  if (!page || !rangeEl || !navEl || !frameEl) return;
+
+  ACTIVE_QURAN_PLAN = quranPlan || WA3I_CTX.quranPlan || computeDailyQuranPages(new Date());
+  const summary = describeQuranPlan(ACTIVE_QURAN_PLAN);
+  rangeEl.textContent = summary.rangeText;
+
+  navEl.innerHTML = ACTIVE_QURAN_PLAN.pages.map((pageNumber) => `
+    <button class="quran-page-chip${pageNumber === ACTIVE_QURAN_PLAN.start ? " is-active" : ""}" type="button" data-quran-page="${pageNumber}">
+      <span class="quran-page-chip-label">الصفحة</span>
+      <strong class="quran-page-chip-number">${formatArabicNumber(pageNumber)}</strong>
+      <span class="quran-page-chip-hint">${pageNumber === ACTIVE_QURAN_PLAN.start ? "ابدأ هنا" : "ثم أكمل"}</span>
+    </button>
+  `).join("");
+
+  navEl.querySelectorAll("[data-quran-page]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setActiveQuranPage(Number(btn.getAttribute("data-quran-page")));
+    });
+  });
+
+  const hasLocalPdf = await canUseLocalQuranPdf();
+  if (!hasLocalPdf) {
+    frameEl.removeAttribute("src");
+    if (hintEl) {
+      hintEl.hidden = false;
+      hintEl.textContent = "المصحف المحلي غير متاح هنا الآن. استخدم زر فتح المصحف لفتح الورد في تبويب مستقل.";
+    }
+    return;
+  }
+
+  if (hintEl) {
+    hintEl.hidden = true;
+    hintEl.textContent = "";
+  }
+
+  setActiveQuranPage(ACTIVE_QURAN_PLAN.start);
+}
+
 function renderQuranTaskMeta(quranPlan) {
   const rangeEl = qs("#quranDailyPages");
   const metaEl = qs("#quranDailyMeta");
   const summary = describeQuranPlan(quranPlan);
   if (rangeEl) rangeEl.textContent = summary.rangeText;
   if (metaEl) metaEl.textContent = `${summary.cycleText} • ${summary.dayText}`;
+
+  if (typeof getStandaloneView === "function" && getStandaloneView() === "quran") {
+    renderStandaloneQuranPage(quranPlan);
+  }
 }
 
 function openUrlInNewTab(url) {
@@ -138,152 +187,54 @@ async function openDailyQuran(quranPlan) {
   return true;
 }
 
-function openDailyQuranOnline(quranPlan) {
-  const startPage = Math.max(1, Number(quranPlan?.start || 1));
-  openUrlInNewTab(buildWebQuranUrl(startPage));
+function setActiveQuranPage(page) {
+  const frameEl = qs("#quranReaderFrame");
+  const navEl = qs("#quranPageNav");
+  const safePage = Math.max(1, Math.min(CONFIG.QURAN.TOTAL_PAGES, Number(page || ACTIVE_QURAN_PLAN?.start || 1)));
+
+  if (frameEl) {
+    frameEl.src = buildLocalQuranUrl(safePage);
+  }
+
+  navEl?.querySelectorAll("[data-quran-page]").forEach((btn) => {
+    const btnPage = Number(btn.getAttribute("data-quran-page"));
+    btn.classList.toggle("is-active", btnPage === safePage);
+  });
 }
 
 function setupQuranModal() {
-  const modal = qs("#quranModal");
+  const page = qs("#quran");
   const openBtn = qs("#openQuranReading");
-  const closeBtn = qs("#closeQuranModal");
-  const closeBtn2 = qs("#closeQuranModal2");
   const localBtn = qs("#quranOpenLocalTab");
-  const webBtn = qs("#quranOpenWebTab");
-  const copyBtn = qs("#quranCopyPlan");
-  const markDoneBtn = qs("#quranMarkDone");
-  const subEl = qs("#quranModalSub");
-  const rangeEl = qs("#quranPlanRange");
-  const metaEl = qs("#quranPlanMeta");
-  const noteEl = qs("#quranNote");
-  const navEl = qs("#quranPageNav");
-  const frameEl = qs("#quranReaderFrame");
-  const hintEl = qs("#quranReaderHint");
-  if (!modal) return;
-
-  let activePlan = null;
+  if (!page) return;
 
   function getPlan() {
     return WA3I_CTX.quranPlan || computeDailyQuranPages(new Date());
   }
 
-  function updateDoneButton() {
-    if (!markDoneBtn) return;
-    const completed = Boolean(WA3I_CTX.state?.tasks?.quran_reading);
-    markDoneBtn.textContent = completed ? "مكتمل اليوم ✅" : "تمت القراءة ✅";
-  }
-
-  function setActivePage(page) {
-    const safePage = Math.max(1, Math.min(CONFIG.QURAN.TOTAL_PAGES, Number(page || activePlan?.start || 1)));
-    if (frameEl) frameEl.src = buildLocalQuranUrl(safePage);
-
-    navEl?.querySelectorAll("[data-quran-page]").forEach((btn) => {
-      const btnPage = Number(btn.getAttribute("data-quran-page"));
-      btn.classList.toggle("is-active", btnPage === safePage);
-    });
-
-    if (hintEl && activePlan) {
-      const rangeText = activePlan.start === activePlan.end
-        ? `ورد اليوم هو الصفحة ${formatArabicNumber(activePlan.start)}.`
-        : `ورد اليوم من الصفحة ${formatArabicNumber(activePlan.start)} إلى ${formatArabicNumber(activePlan.end)}.`;
-      hintEl.textContent = `الصفحة ${formatArabicNumber(safePage)} مفتوحة الآن من المصحف المحلي. ${rangeText} إذا لم يظهر العرض داخل الصفحة عندك، استخدم زر "فتح المصحف" أو افتح على quran.com.`;
-    }
-  }
-
-  function renderPlan(plan) {
-    activePlan = plan;
-    const summary = describeQuranPlan(plan);
-
-    if (subEl) {
-      subEl.textContent = `ورد اليوم يبدأ من ${summary.rangeText}. يمكنك القراءة داخل الموقع أو فتحه في تبويب مستقل.`;
-    }
-    if (rangeEl) rangeEl.textContent = summary.rangeText;
-    if (metaEl) metaEl.textContent = `${summary.cycleText} • ${summary.dayText}`;
-    if (noteEl) {
-      noteEl.textContent = `المصحف المحلي مضبوط على ورد اليوم: ${summary.rangeText}. خيار quran.com موجود كبديل سريع إذا أحببت.`;
-    }
-
-    if (navEl) {
-      navEl.innerHTML = plan.pages.map((page) => `
-        <button class="quran-page-chip${page === plan.start ? " is-active" : ""}" type="button" data-quran-page="${page}">
-          صفحة ${formatArabicNumber(page)}
-        </button>
-      `).join("");
-
-      navEl.querySelectorAll("[data-quran-page]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          setActivePage(Number(btn.getAttribute("data-quran-page")));
-        });
-      });
-    }
-
-    updateDoneButton();
-    setActivePage(plan.start);
-  }
-
-  async function openModal() {
-    const hasLocalPdf = await canUseLocalQuranPdf();
-    if (!hasLocalPdf) {
-      openDailyQuranOnline(getPlan());
-      showToast("المصحف المحلي غير مرفوع على هذه النسخة بعد، فتم فتح ورد اليوم على quran.com.");
+  function openPage() {
+    if (typeof getStandalonePageUrl === "function") {
+      window.location.href = getStandalonePageUrl("quran");
       return;
     }
 
-    renderPlan(getPlan());
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    try {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.searchParams.set("view", "quran");
+      window.location.href = `${url.pathname}${url.search}`;
+    } catch {
+      window.location.href = "index.html?view=quran";
+    }
   }
 
-  function closeModal() {
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-  }
-
-  openBtn?.addEventListener("click", () => {
-    openModal();
-  });
-  closeBtn?.addEventListener("click", closeModal);
-  closeBtn2?.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-  });
+  openBtn?.addEventListener("click", openPage);
 
   localBtn?.addEventListener("click", () => {
-    openDailyQuran(activePlan || getPlan());
+    openDailyQuran(ACTIVE_QURAN_PLAN || getPlan());
   });
 
-  webBtn?.addEventListener("click", () => {
-    openDailyQuranOnline(activePlan || getPlan());
-  });
-
-  copyBtn?.addEventListener("click", async () => {
-    const summary = describeQuranPlan(activePlan || getPlan());
-    const text = `ورد القرآن اليوم: ${summary.rangeText} • ${summary.cycleText}`;
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast("تم نسخ ورد اليوم ✅");
-    } catch {
-      showToast("تعذّر النسخ تلقائيًا.");
-    }
-  });
-
-  markDoneBtn?.addEventListener("click", () => {
-    const todayISO = WA3I_CTX.todayISO;
-    const state = WA3I_CTX.state;
-    if (!todayISO || !state) return;
-
-    state.tasks.quran_reading = true;
-    setCheckbox("quran_reading", true);
-    updateProgressUI(state);
-    renderRiskCheckUI(state);
-    maybeUpdateStreakOnFullCompletion(todayISO, state);
-    setDailyState(todayISO, state);
-    updateDoneButton();
-    showToast("تم تعليم ورد القرآن كمكتمل ✅");
-  });
+  if (typeof getStandaloneView === "function" && getStandaloneView() === "quran") {
+    renderStandaloneQuranPage(getPlan());
+  }
 }

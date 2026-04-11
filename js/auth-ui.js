@@ -1,4 +1,7 @@
 function closeAllModals() {
+  try {
+    if (typeof closeMemberCanvasWindow === "function") closeMemberCanvasWindow();
+  } catch {}
   document.querySelectorAll(".tafsir-modal-overlay.open").forEach((m) => {
     m.classList.remove("open");
     m.setAttribute("aria-hidden", "true");
@@ -9,6 +12,7 @@ function closeAllModals() {
   setMemberStatusAdminVisibility();
   setAhdAdminVisibility();
   setMemberManageAdminVisibility();
+  if (typeof setQaAdminVisibility === "function") setQaAdminVisibility();
   syncBodyModalLock();
 }
 
@@ -151,10 +155,15 @@ function wireSwitchUserButton() {
 function startApp() {
   wireSwitchUserButton();
   wireAdminQuickMenu();
+  wireMemberCanvasWindows();
+  applyStandaloneViewMode();
+  mountMemberCanvasMembersSection();
   hideGate();
   initCountdown();
   initDailyFlow();
+  if (typeof initQaPage === "function") initQaPage();
   setupAzkarModal();
+  wireDashboardQuickActions();
   initAhdPage();
 }
 

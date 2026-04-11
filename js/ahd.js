@@ -12,28 +12,60 @@ function setAhdAdminVisibility() {
 function renderAhdPublicList() {
   const el = qs("#ahdPublicList");
   const count = qs("#ahdCount");
-  if (!el || !count) return;
+  const canvasEl = qs("#memberCanvasAhdStrip");
+  if (!el && !count && !canvasEl) return;
 
   const ahdMembers = Array.from(FB_STATE.ahd)
     .map((id) => ({ id, ...(FB_STATE.tribe.get(id) || { name: id, src: "" }) }))
     .sort(compareMembersByStatusThenName);
 
-  count.textContent = `${formatArabicNumber(ahdMembers.length)} عضو`;
+  const previewFallbackMembers =
+    !ahdMembers.length && typeof previewModeEnabled === "function" && previewModeEnabled() && typeof readMembersFromDOM === "function"
+      ? readMembersFromDOM().slice(0, 6)
+      : [];
 
-  el.innerHTML = ahdMembers.length
-    ? ahdMembers
-        .map((m) => {
-          const status = getMemberStatus(m.id);
-          const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
-          return `
-        <div class="identity-item" style="cursor:default">
+  const publicMembers = ahdMembers.length ? ahdMembers : previewFallbackMembers;
+  const visibleCanvasMembers = publicMembers.slice(0, 6);
+  const extraCanvasCount = Math.max(0, publicMembers.length - visibleCanvasMembers.length);
+
+  if (count) {
+    count.textContent = `${formatArabicNumber(publicMembers.length)} عضو`;
+  }
+
+  if (el) {
+    el.innerHTML = publicMembers.length
+      ? publicMembers
+          .map((m) => {
+            const status = getMemberStatus(m.id);
+            const statusClass = status ? memberStatusClass(status) : "";
+            const avatarClass = status ? `member-avatar ${statusClass}` : "member-avatar";
+            const cardClass = status ? `slide-card ahd-slide-card ${statusClass}` : "slide-card ahd-slide-card";
+            return `
+        <div class="${cardClass}" data-member-id="${escapeHtml(m.id)}" style="cursor:default">
           <img class="${avatarClass}" src="${m.src || "images/person1.jpg"}" alt="${escapeHtml(m.name || m.id)}" />
-          <div class="identity-name">${escapeHtml(m.name || m.id)}</div>
+          <h3>${escapeHtml(m.name || m.id)}</h3>
         </div>
       `;
-        })
-        .join("")
-    : `<div class="identity-empty">لا يوجد أعضاء في العهد بعد.</div>`;
+          })
+          .join("")
+      : `<div class="identity-empty ahd-public-empty">لا يوجد أعضاء في العهد بعد.</div>`;
+  }
+
+  if (canvasEl) {
+    canvasEl.innerHTML = visibleCanvasMembers.length
+      ? visibleCanvasMembers
+          .map((m) => {
+            const status = getMemberStatus(m.id);
+            const avatarClass = status ? `member-canvas-ahd-avatar member-avatar ${memberStatusClass(status)}` : "member-canvas-ahd-avatar member-avatar";
+            return `
+        <div class="member-canvas-ahd-item" title="${escapeHtml(m.name || m.id)}" aria-label="${escapeHtml(m.name || m.id)}">
+          <img class="${avatarClass}" src="${m.src || "images/person1.jpg"}" alt="${escapeHtml(m.name || m.id)}" />
+        </div>
+      `;
+          })
+          .join("") + (extraCanvasCount ? `<div class="member-canvas-ahd-more">+${formatArabicNumber(extraCanvasCount)}</div>` : "")
+      : "";
+  }
 
   if (FB_STATE.isAdmin) {
     renderAhdAdminLists(qs("#ahdAdminSearch")?.value || "");
@@ -159,11 +191,15 @@ function initAhdPage() {
       renderAhdPublicList();
       setMemberStatusAdminVisibility();
       setMemberManageAdminVisibility();
+      if (typeof setQaAdminVisibility === "function") setQaAdminVisibility();
       if (hasMemberStatusAdminAccess()) {
         renderMemberStatusAdminList();
       }
       if (hasMemberManageAdminAccess()) {
         renderMemberManageAdminList();
+      }
+      if (typeof renderQaAdminPanel === "function" && hasQaAdminAccess()) {
+        renderQaAdminPanel();
       }
 
       resetFirestoreStreaksForAllMembersOnce();
@@ -178,6 +214,7 @@ function initAhdPage() {
     setAdminMenuVisibility();
     setAhdAdminVisibility();
     setMemberManageAdminVisibility();
+    if (typeof setQaAdminVisibility === "function") setQaAdminVisibility();
     renderAhdPublicList();
   };
 

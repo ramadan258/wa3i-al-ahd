@@ -79,7 +79,7 @@
       },
 
       QURAN: {
-            START_DATE_ISO: "2026-01-26T00:00:00", // بداية الورد المشتركة للجميع
+            START_DATE_ISO: "2026-04-11T00:00:00", // أعيد ضبط بداية الورد لتبدأ من الصفحة 1 اليوم
             TOTAL_PAGES: 604,
             PAGES_PER_DAY: 3,
             PAGE_URL_TEMPLATE: "https://quran.com/page/{page}",
@@ -90,7 +90,7 @@
     const TASK_KEYS = [
       "morning_adhkar",
       "deep_breath",
-      "quran_reading",
+      "qa_review",
       "evening_adhkar",
       "rescue_plan",
       "recovery_book",
@@ -121,11 +121,12 @@
       ])
     );
 
-    const WA3I_CTX = { todayISO: null, state: null, riskEvaluation: null, quranPlan: null };
+    const WA3I_CTX = { todayISO: null, state: null, riskEvaluation: null };
     let breathInterval = null;
     let AZKAR_MODAL_WIRED = false;
     let RISK_CHECK_WIRED = false;
     let DAILY_VISIBILITY_WIRED = false;
+    let DASHBOARD_QUICK_ACTIONS_WIRED = false;
 
     function qs(sel) { return document.querySelector(sel); }
     function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
@@ -828,12 +829,25 @@ let LOCAL_ADMIN_ACCESS = {
   memberStatus: false,
   ahd: false,
   memberManage: false,
+  qa: false,
 };
 
 const ADMIN_UI_STATE = {
   activePanel: null,
   menuOpen: false,
   wired: false,
+};
+
+const CANVAS_WINDOW_STATE = {
+  wired: false,
+  activeNode: null,
+  originalParent: null,
+  originalNextSibling: null,
+  originalHidden: false,
+};
+
+const CANVAS_INLINE_STATE = {
+  membersMounted: false,
 };
 
 function fbAvailable() {
@@ -852,11 +866,16 @@ function hasMemberManageAdminAccess() {
   return Boolean(FB_STATE.isAdmin || LOCAL_ADMIN_ACCESS.memberManage);
 }
 
+function hasQaAdminAccess() {
+  return Boolean(FB_STATE.isAdmin || LOCAL_ADMIN_ACCESS.qa);
+}
+
 function hasAnyAdminAccess() {
   return Boolean(
     hasMemberStatusAdminAccess() ||
     hasAhdAdminAccess() ||
-    hasMemberManageAdminAccess()
+    hasMemberManageAdminAccess() ||
+    hasQaAdminAccess()
   );
 }
 
@@ -864,6 +883,7 @@ function canAccessAdminPanel(panelKey) {
   if (panelKey === "member-status") return hasMemberStatusAdminAccess();
   if (panelKey === "ahd") return hasAhdAdminAccess();
   if (panelKey === "member-manage") return hasMemberManageAdminAccess();
+  if (panelKey === "qa") return hasQaAdminAccess();
   return false;
 }
 
@@ -873,11 +893,13 @@ function grantLocalAdminAccess(nextAccess = {}) {
     memberStatus: Boolean(nextAccess.memberStatus),
     ahd: Boolean(nextAccess.ahd),
     memberManage: Boolean(nextAccess.memberManage),
+    qa: Boolean(nextAccess.qa),
   };
   setAdminMenuVisibility();
   setMemberStatusAdminVisibility();
   setAhdAdminVisibility();
   setMemberManageAdminVisibility();
+  if (typeof setQaAdminVisibility === "function") setQaAdminVisibility();
 }
 
 function resetLocalAdminAccess() {
@@ -919,6 +941,7 @@ function setAdminMenuVisibility() {
     setMemberStatusAdminVisibility();
     setAhdAdminVisibility();
     setMemberManageAdminVisibility();
+    if (typeof setQaAdminVisibility === "function") setQaAdminVisibility();
     syncBodyModalLock();
   }
 
@@ -937,11 +960,222 @@ function setActiveAdminPanel(panelKey) {
   setMemberStatusAdminVisibility();
   setAhdAdminVisibility();
   setMemberManageAdminVisibility();
+  if (typeof setQaAdminVisibility === "function") setQaAdminVisibility();
 }
 
 function syncBodyModalLock() {
   const hasOpenModal = Boolean(document.querySelector(".tafsir-modal-overlay.open, .azkar-modal-overlay.open"));
   document.body.style.overflow = hasOpenModal ? "hidden" : "";
+}
+
+function openMemberCanvasWindow(targetSelector, titleText = "", subText = "") {
+  const modal = qs("#memberCanvasWindow");
+  const mount = qs("#memberCanvasWindowMount");
+  const title = qs("#memberCanvasWindowTitle");
+  const sub = qs("#memberCanvasWindowSub");
+  const target = qs(targetSelector);
+
+  if (!modal || !mount || !target) return;
+
+  closeMemberCanvasWindow();
+
+  CANVAS_WINDOW_STATE.activeNode = target;
+  CANVAS_WINDOW_STATE.originalParent = target.parentNode;
+  CANVAS_WINDOW_STATE.originalNextSibling = target.nextSibling;
+  CANVAS_WINDOW_STATE.originalHidden = target.hidden;
+
+  target.hidden = false;
+  target.classList.add("member-canvas-window-mounted");
+  mount.appendChild(target);
+
+  if (title) title.textContent = String(titleText || "").trim() || "نافذة";
+  if (sub) sub.textContent = String(subText || "").trim() || "—";
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  syncBodyModalLock();
+}
+
+function closeMemberCanvasWindow() {
+  const modal = qs("#memberCanvasWindow");
+  const mount = qs("#memberCanvasWindowMount");
+
+  if (CANVAS_WINDOW_STATE.activeNode && CANVAS_WINDOW_STATE.originalParent) {
+    const node = CANVAS_WINDOW_STATE.activeNode;
+    const parent = CANVAS_WINDOW_STATE.originalParent;
+    const nextSibling = CANVAS_WINDOW_STATE.originalNextSibling;
+
+    node.classList.remove("member-canvas-window-mounted");
+    node.hidden = Boolean(CANVAS_WINDOW_STATE.originalHidden);
+
+    if (nextSibling && nextSibling.parentNode === parent) {
+      parent.insertBefore(node, nextSibling);
+    } else {
+      parent.appendChild(node);
+    }
+  }
+
+  CANVAS_WINDOW_STATE.activeNode = null;
+  CANVAS_WINDOW_STATE.originalParent = null;
+  CANVAS_WINDOW_STATE.originalNextSibling = null;
+  CANVAS_WINDOW_STATE.originalHidden = false;
+
+  if (mount) mount.innerHTML = "";
+  if (modal) {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  syncBodyModalLock();
+}
+
+function mountMemberCanvasMembersSection() {
+  if (CANVAS_INLINE_STATE.membersMounted) return;
+  if (typeof getStandaloneView === "function" && getStandaloneView()) return;
+
+  const slot = qs("#memberCanvasMembersSlot");
+  const membersSection = qs("#members");
+  if (!slot || !membersSection) return;
+
+  slot.appendChild(membersSection);
+  CANVAS_INLINE_STATE.membersMounted = true;
+}
+
+function getStandaloneView() {
+  try {
+    const value = new URL(window.location.href).searchParams.get("view");
+    return String(value || "").trim().toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+function getStandalonePageUrl(viewKey) {
+  const url = new URL(window.location.href);
+  url.pathname = /index\.html$/i.test(url.pathname) ? url.pathname : `${url.pathname.replace(/\/?$/, "/")}index.html`;
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("view", String(viewKey || "").trim().toLowerCase());
+  if (typeof previewModeEnabled === "function" && previewModeEnabled()) {
+    url.searchParams.set("preview", "1");
+  }
+  return `${url.pathname}${url.search}`;
+}
+
+function getHomePageUrl() {
+  const url = new URL(window.location.href);
+  url.pathname = /index\.html$/i.test(url.pathname) ? url.pathname : `${url.pathname.replace(/\/?$/, "/")}index.html`;
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("resume", "1");
+  if (typeof previewModeEnabled === "function" && previewModeEnabled()) {
+    url.searchParams.set("preview", "1");
+  }
+  return `${url.pathname}${url.search}`;
+}
+
+function openStandalonePage(viewKey) {
+  const nextUrl = getStandalonePageUrl(viewKey);
+  window.open(nextUrl, "_blank", "noopener,noreferrer");
+}
+
+function mountStandalonePageTopbar() {
+  const topbar = qs("#standalonePageTopbar");
+  const homeBtn = qs("#standaloneBackHomeBtn");
+  if (homeBtn) {
+    homeBtn.setAttribute("href", getHomePageUrl());
+  }
+  if (getStandaloneView()) {
+    topbar?.removeAttribute("hidden");
+  }
+}
+
+function mountAhdStandaloneExtras() {
+  const countdownSlot = qs("#ahdStandaloneCountdownSlot");
+  const countdownSection = qs("#countdown");
+
+  if (getStandaloneView() !== "ahd") return;
+
+  countdownSlot?.removeAttribute("hidden");
+
+  if (countdownSlot && countdownSection) {
+    countdownSlot.appendChild(countdownSection);
+    countdownSection.classList.add("ahd-embedded-countdown");
+  }
+}
+
+function applyStandaloneViewMode() {
+  const view = getStandaloneView();
+  if (!view) return;
+
+  document.body.classList.add("member-standalone-view");
+
+  mountStandalonePageTopbar();
+
+  const standaloneTargets = {
+    ahd: "#ahd",
+    feelings: "#feelings",
+    quran: "#qa",
+    qa: "#qa",
+    rescue: "#rescue",
+    today: "#today",
+  };
+  const target = qs(standaloneTargets[view] || "");
+  if (target) {
+    target.classList.add("member-standalone-active");
+  }
+
+  if (view === "ahd") {
+    mountAhdStandaloneExtras();
+  }
+}
+
+function wireMemberCanvasWindows() {
+  if (CANVAS_WINDOW_STATE.wired) return;
+  CANVAS_WINDOW_STATE.wired = true;
+
+  qsa("[data-canvas-window]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      openMemberCanvasWindow(
+        btn.getAttribute("data-canvas-window") || "",
+        btn.getAttribute("data-window-title") || "",
+        btn.getAttribute("data-window-sub") || ""
+      );
+    });
+  });
+
+  qsa("[data-canvas-scroll]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = qs(btn.getAttribute("data-canvas-scroll") || "");
+      if (!target) return;
+      try {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch {
+        target.scrollIntoView();
+      }
+    });
+  });
+
+  qsa("[data-canvas-page]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const viewKey = String(btn.getAttribute("data-canvas-page") || "").trim();
+      if (!viewKey) return;
+      openStandalonePage(viewKey);
+    });
+  });
+
+  qs("#closeMemberCanvasWindow")?.addEventListener("click", closeMemberCanvasWindow);
+  qs("#closeMemberCanvasWindow2")?.addEventListener("click", closeMemberCanvasWindow);
+
+  qs("#memberCanvasWindow")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeMemberCanvasWindow();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && qs("#memberCanvasWindow")?.classList.contains("open")) {
+      closeMemberCanvasWindow();
+    }
+  });
 }
 
 function getAdminPanelConfig(panelKey) {
@@ -972,6 +1206,15 @@ function getAdminPanelConfig(panelKey) {
     };
   }
 
+  if (panelKey === "qa") {
+    return {
+      title: "تعديل صفحة سؤال وجواب",
+      sub: "أضف القوائم والأسئلة والأجوبة أو احذفها مباشرة من هذه اللوحة.",
+      wrap: "#qaAdminWrap",
+      slot: "#qaAdminSlot",
+    };
+  }
+
   return null;
 }
 
@@ -979,7 +1222,7 @@ function restoreAdminPanelFromModal() {
   const mount = qs("#adminPanelModalMount");
   if (!mount) return;
 
-  ["member-status", "ahd", "member-manage"].forEach((panelKey) => {
+  ["member-status", "ahd", "member-manage", "qa"].forEach((panelKey) => {
     const cfg = getAdminPanelConfig(panelKey);
     const wrap = cfg ? qs(cfg.wrap) : null;
     const slot = cfg ? qs(cfg.slot) : null;
@@ -1368,6 +1611,10 @@ function openAdminPanelModal(panelKey) {
     renderMemberManageAdminList();
     setTimeout(() => qs("#memberManageName")?.focus?.(), 60);
   }
+  if (panelKey === "qa" && typeof renderQaAdminPanel === "function") {
+    renderQaAdminPanel();
+    setTimeout(() => qs("#qaAdminCategoryName")?.focus?.(), 60);
+  }
 }
 
 function closeAdminPanelModal() {
@@ -1520,6 +1767,10 @@ function toLocalISODate(d) {
       if (!rawState || typeof rawState !== "object") return base;
 
       TASK_KEYS.forEach((k) => {
+        if (k === "qa_review") {
+          base.tasks[k] = Boolean(rawState.tasks && (rawState.tasks[k] || rawState.tasks.quran_reading));
+          return;
+        }
         base.tasks[k] = Boolean(rawState.tasks && rawState.tasks[k]);
       });
 
@@ -1586,7 +1837,7 @@ function toLocalISODate(d) {
           advices: [
             "لا تبق وحدك ولا تترك نفسك مع الشاشة في فراغ صامت.",
             "ابدأ 60 ثانية تنفس الآن ثم نفّذ أول خطوة من خطة النجاة مباشرة.",
-            "افتح الأذكار أو القرآن لتشغل ذهنك ووقتك بشيء نافع فورًا.",
+            "افتح الأذكار أو سؤالًا وجوابًا لتشغل ذهنك ووقتك بشيء نافع فورًا.",
             "إذا أمكن، اقترب من الناس أو أرسل رسالة سريعة لشخص تثق به.",
           ],
           score,
@@ -1603,7 +1854,7 @@ function toLocalISODate(d) {
           advices: [
             "ابدأ دقيقة التنفس الآن لكسر التوتر الأول.",
             "لا تطل الجلوس في عزلة؛ تحرك أو بدّل مكانك ولو لدقائق.",
-            "افتح الأذكار أو القرآن قبل أن يتحول التعب إلى انجراف.",
+            "افتح الأذكار أو سؤالًا وجوابًا قبل أن يتحول التعب إلى انجراف.",
           ],
           score,
         };
@@ -1705,6 +1956,10 @@ function toLocalISODate(d) {
         rescueCard.classList.remove("is-watch", "is-urgent");
         if (evaluation.level === "high") rescueCard.classList.add("is-urgent");
         else if (evaluation.level === "medium") rescueCard.classList.add("is-watch");
+      }
+
+      if (getStandaloneView() === "rescue" && typeof renderRescueCenterModal === "function") {
+        renderRescueCenterModal();
       }
     }
 
@@ -1862,7 +2117,7 @@ function previousISODate(isoDate) {
         const taskMap = {
           "tcard-morning": "morning_adhkar",
           "tcard-breath": "deep_breath",
-          "tcard-quran": "quran_reading",
+          "tcard-qa": "qa_review",
           "tcard-evening": "evening_adhkar",
           "tcard-rescue": "rescue_plan",
           "tcard-library": "recovery_book"
@@ -2010,11 +2265,17 @@ function previousISODate(isoDate) {
 
     function getAzkarReaderUrl(cfg) {
       const key = String(cfg?.key || "morning").trim().toLowerCase() === "evening" ? "evening" : "morning";
-      return `azkar.html?type=${encodeURIComponent(key)}`;
+      const url = new URL("azkar.html", window.location.href);
+      url.searchParams.set("type", key);
+      url.searchParams.set("fresh", "20260411p");
+      if (previewModeEnabled()) {
+        url.searchParams.set("preview", "1");
+      }
+      return `${url.pathname}${url.search}`;
     }
 
     function openAzkarReader(cfg) {
-      window.open(getAzkarReaderUrl(cfg), "_blank", "noopener,noreferrer");
+      window.open(getAzkarReaderUrl(cfg), "_blank", "noopener");
     }
 
     // ---------------------------
@@ -2025,6 +2286,22 @@ function previousISODate(isoDate) {
       AZKAR_MODAL_WIRED = true;
       qs("#openMorningAzkar")?.addEventListener("click", () => openAzkarReader(CONFIG.AZKAR.MORNING));
       qs("#openEveningAzkar")?.addEventListener("click", () => openAzkarReader(CONFIG.AZKAR.EVENING));
+    }
+
+    function wireDashboardQuickActions() {
+      if (DASHBOARD_QUICK_ACTIONS_WIRED) return;
+      DASHBOARD_QUICK_ACTIONS_WIRED = true;
+
+      qsa("[data-forward-click]").forEach((btn) => {
+        const selector = String(btn.getAttribute("data-forward-click") || "").trim();
+        if (!selector) return;
+
+        btn.addEventListener("click", () => {
+          const target = qs(selector);
+          if (!target) return;
+          target.click();
+        });
+      });
     }
 
     function safeJsonParse(raw, fallbackValue) {
@@ -2062,15 +2339,13 @@ function previousISODate(isoDate) {
       let state = getDailyState(todayISO);
       if (!state) state = defaultDailyState();
       state = normalizeDailyState(state);
-      const quranPlan = computeDailyQuranPages(today);
 
       WA3I_CTX.todayISO = todayISO;
       WA3I_CTX.state = state;
-      WA3I_CTX.quranPlan = quranPlan;
 
       wireRiskCheckUI();
       wireDailyVisibilityPause();
-      renderQuranTaskMeta(quranPlan);
+      if (typeof renderQaTaskMeta === "function") renderQaTaskMeta();
 
       TASK_KEYS.forEach((k) => {
         if (typeof state.tasks?.[k] !== "boolean") state.tasks[k] = false;
@@ -2122,7 +2397,35 @@ function previousISODate(isoDate) {
       };
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function previewModeEnabled() {
+      try {
+        return new URL(window.location.href).searchParams.get("preview") === "1";
+      } catch {
+        return false;
+      }
+    }
+
+    function seedPreviewDailyState() {
+      const today = new Date();
+      const todayISO = toLocalISODate(today);
+      const previewState = defaultDailyState();
+
+      previewState.tasks.morning_adhkar = true;
+      previewState.tasks.qa_review = true;
+      previewState.tasks.recovery_book = true;
+      previewState.riskCheck = {
+        mood: "calm",
+        isolation: "connected",
+        urge: "light",
+        level: "low",
+        score: 1,
+        answeredAt: new Date().toISOString(),
+      };
+
+      setDailyState(todayISO, previewState);
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
 // Fix: allow Amjad admin login modal to show while the identity gate is open.
       // The gate hides #appRoot (which originally contains the modal), so we move the modal under <body>.
       const adminModal = qs("#adminLoginModal");
@@ -2138,18 +2441,46 @@ function previousISODate(isoDate) {
       resetLocalStreaksForAllMembersOnce();
       startSharedStreaksListener();
       initMemberStatusSystem();
-      setupQuranModal();
-      setupRecoveryLibrary();
-      setupRescuePlanModal();
-      setupRescueCenterModal();
+    if (typeof setupQaPage === "function") setupQaPage();
+    setupRecoveryLibrary();
+    setupRescuePlanModal();
+    setupRescueCenterModal();
 
+      let shouldResumeToHome = false;
       try {
         const url = new URL(window.location.href);
+        shouldResumeToHome = url.searchParams.has("resume");
         if (url.searchParams.has("resume")) {
           url.searchParams.delete("resume");
           history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
         }
       } catch {}
+
+      if (previewModeEnabled()) {
+        saveCurrentUser({ id: "preview_member", name: "معاينة", kind: "member" });
+        seedPreviewDailyState();
+        startApp();
+        return;
+      }
+
+      if (shouldResumeToHome || getStandaloneView()) {
+        const rememberedUser = readCurrentUser();
+        if (rememberedUser) {
+          saveCurrentUser(rememberedUser);
+          startApp();
+          return;
+        }
+
+        try {
+          if (typeof tryAutoStartFromBinding === "function") {
+            const resumed = await tryAutoStartFromBinding();
+            if (resumed) {
+              startApp();
+              return;
+            }
+          }
+        } catch {}
+      }
 
       initIdentityGate();
     });

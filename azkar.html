@@ -372,7 +372,7 @@
 <body>
   <div class="azkar-page">
     <div class="azkar-topbar">
-      <a class="azkar-back" href="index.html#today">← الرجوع إلى رحلة اليوم</a>
+      <a class="azkar-back" id="azkarBackHome" href="index.html?resume=1">← العودة للصفحة الرئيسية</a>
     </div>
 
     <section class="azkar-shell">
@@ -421,6 +421,7 @@
       };
 
       const root = document.documentElement;
+      const backHome = qs("#azkarBackHome");
       const titleEl = qs("#azkarTitle");
       const subEl = qs("#azkarSub");
       const metaEl = qs("#azkarMetaText");
@@ -428,6 +429,47 @@
       const emptyEl = qs("#azkarEmpty");
       const switchMorning = qs("#switchMorning");
       const switchEvening = qs("#switchEvening");
+
+      function previewFlagEnabled() {
+        try {
+          const currentUrl = new URL(window.location.href);
+          if (currentUrl.searchParams.get("preview") === "1") return true;
+        } catch {}
+        try {
+          const ref = new URL(document.referrer);
+          if (ref.searchParams.get("preview") === "1") return true;
+        } catch {}
+        return false;
+      }
+
+      function buildHomeUrl() {
+        const homeUrl = new URL("index.html", window.location.href);
+        homeUrl.search = "";
+        homeUrl.hash = "";
+        homeUrl.searchParams.set("resume", "1");
+        if (previewFlagEnabled()) {
+          homeUrl.searchParams.set("preview", "1");
+        }
+        return `${homeUrl.pathname}${homeUrl.search}`;
+      }
+
+      function buildAzkarTypeUrl(nextType) {
+        const pageUrl = new URL("azkar.html", window.location.href);
+        pageUrl.search = "";
+        pageUrl.hash = "";
+        pageUrl.searchParams.set("type", nextType === "evening" ? "evening" : "morning");
+        pageUrl.searchParams.set("fresh", "20260411p");
+        if (previewFlagEnabled()) {
+          pageUrl.searchParams.set("preview", "1");
+        }
+        return `${pageUrl.pathname}${pageUrl.search}`;
+      }
+
+      try {
+        if (backHome) backHome.href = buildHomeUrl();
+        if (switchMorning) switchMorning.href = buildAzkarTypeUrl("morning");
+        if (switchEvening) switchEvening.href = buildAzkarTypeUrl("evening");
+      } catch {}
       const expandAllBtn = qs("#expandAllBtn");
       const zoomValueEl = qs("#zoomValue");
 
