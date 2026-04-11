@@ -380,7 +380,7 @@
         <div>
           <div class="azkar-kicker">صفحة أذكار محلية داخل الموقع</div>
           <h1 class="azkar-title" id="azkarTitle">أذكار الصباح</h1>
-          <p class="azkar-sub" id="azkarSub">قراءة مريحة على الهاتف بدون صور أو إطارات حول الأذكار، مع إمكانية تصغير أو تكبير النص.</p>
+          <p class="azkar-sub" id="azkarSub" hidden></p>
         </div>
 
         <div class="azkar-controls">
@@ -394,7 +394,7 @@
 
       <div class="azkar-body">
         <div class="azkar-meta">
-          <div class="azkar-meta-text" id="azkarMetaText">تحميل الأذكار...</div>
+          <div class="azkar-meta-text" id="azkarMetaText" hidden></div>
           <div class="azkar-zoom" aria-label="التحكم في حجم النص">
             <button id="zoomOutBtn" type="button" aria-label="تصغير">−</button>
             <div class="azkar-zoom-value" id="zoomValue">100%</div>
@@ -499,8 +499,8 @@
         const pageTitle = titleMap[type];
         document.title = `${pageTitle} | واعي`;
         titleEl.textContent = pageTitle;
-        subEl.textContent = "النصوص معروضة داخل الموقع مباشرة، لذلك لن ترى صورًا أو إطارات بيضاء حول الأذكار بعد الآن.";
-        metaEl.textContent = `${pageTitle} • ${totalCount} ذكر • المصدر: قاعدة بيانات أذكار الصباح والمساء المفتوحة المبنية على حصن المسلم`;
+        if (subEl) subEl.hidden = true;
+        if (metaEl) metaEl.hidden = true;
         switchMorning.classList.toggle("active", type === "morning");
         switchEvening.classList.toggle("active", type === "evening");
       }
