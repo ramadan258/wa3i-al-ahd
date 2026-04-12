@@ -125,7 +125,7 @@ setDoc,
   </script>
 
   <link rel="stylesheet" href="css/index-page.css" />
-  <link rel="stylesheet" href="css/member-dashboard-redesign.css?v=20260412qa8" />
+  <link rel="stylesheet" href="css/member-dashboard-redesign.css?v=20260412dockcolors1" />
 </head>
 
 <body class="member-design-canvas-mode">
@@ -208,16 +208,18 @@ setDoc,
     <div id="memberCanvasMembersSlot" class="member-canvas-members-slot"></div>
 
     <div class="member-canvas-hub" aria-label="روابط الواجهة الرئيسية">
-      <button class="member-canvas-link is-feelings" type="button" data-canvas-page="feelings">
-        <span class="member-canvas-link__label">مشاعرك</span>
-      </button>
       <button class="member-canvas-link is-featured" type="button" data-canvas-page="today">
         <span class="member-canvas-link__label">مهام اليوم</span>
+      </button>
+      <button class="member-canvas-link is-feelings" type="button" data-canvas-page="qa">
+        <span class="member-canvas-link__label">سؤال وجواب</span>
       </button>
       <button class="member-canvas-link is-ahd" type="button" data-canvas-page="ahd">
         <span class="member-canvas-link__label">العهد</span>
       </button>
     </div>
+
+    <button id="openFeelingsPage" type="button" data-canvas-page="feelings" hidden aria-hidden="true"></button>
 
     <div id="memberCanvasPanels" hidden>
       <article id="memberCanvasAhdGuide" class="member-canvas-info-panel" hidden>
@@ -953,10 +955,10 @@ setDoc,
   </footer>
 
   <div class="member-mobile-dock" aria-label="شريط الهاتف السفلي">
+    <button class="mobile-dock-item qa" type="button" data-forward-click="#openFeelingsPage">مشاعرك</button>
     <button class="mobile-dock-item rescue" type="button" data-forward-click="#openRescueCenter">النجدة</button>
-    <button class="mobile-dock-item azkar" type="button" data-forward-click="#openMorningAzkar">الأذكار</button>
     <a class="mobile-dock-item report" href="daily_report.html">التقرير</a>
-    <button class="mobile-dock-item qa" type="button" data-forward-click="#openQaPage">سؤال وجواب</button>
+    <button class="mobile-dock-item azkar" type="button" data-forward-click="#openMorningAzkar">الأذكار</button>
     <button class="mobile-dock-item library" type="button" data-forward-click="#openRecoveryLibrary">المكتبة</button>
   </div>
 

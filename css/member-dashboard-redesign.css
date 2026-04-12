@@ -1279,18 +1279,28 @@ footer.member-footer p {
   transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
-.mobile-dock-item.rescue,
+.mobile-dock-item.rescue {
+  background: linear-gradient(180deg, rgba(10, 44, 50, 0.98), rgba(8, 31, 38, 0.98));
+  border-color: rgba(88, 224, 214, 0.4);
+  color: #e2fffc;
+}
+
 .mobile-dock-item.azkar {
-  background: linear-gradient(180deg, rgba(11, 40, 48, 0.98), rgba(8, 28, 36, 0.98));
-  border-color: rgba(78, 205, 196, 0.38);
-  color: #dffcf8;
+  background: linear-gradient(180deg, rgba(8, 52, 58, 0.98), rgba(7, 35, 41, 0.98));
+  border-color: rgba(53, 187, 197, 0.42);
+  color: #ddfbff;
 }
 
 .mobile-dock-item.quran,
-.mobile-dock-item.qa,
+.mobile-dock-item.qa {
+  background: linear-gradient(180deg, rgba(21, 30, 52, 0.98), rgba(13, 19, 35, 0.98));
+  border-color: rgba(132, 149, 255, 0.22);
+  color: #eff2ff;
+}
+
 .mobile-dock-item.library {
-  background: linear-gradient(180deg, rgba(17, 27, 42, 0.98), rgba(11, 18, 30, 0.98));
-  border-color: rgba(140, 156, 182, 0.18);
+  background: linear-gradient(180deg, rgba(17, 25, 39, 0.98), rgba(11, 17, 28, 0.98));
+  border-color: rgba(146, 160, 184, 0.18);
   color: #edf1f8;
 }
 
