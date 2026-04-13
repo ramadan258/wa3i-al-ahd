@@ -254,6 +254,7 @@ const MEMBER_DIRECTORY_STATE = {
   listenersAttached: false,
   controlsWired: false,
   pendingImageDataUrl: "",
+  editingMemberId: "",
 };
 
 function extractMembersFromCards(cards) {
@@ -358,10 +359,20 @@ function getMergedHiddenMemberIds() {
 function getAllMembersList(options = {}) {
   const includeHidden = Boolean(options.includeHidden);
   const base = Array.isArray(MEMBER_DIRECTORY_STATE.baseMembers) ? MEMBER_DIRECTORY_STATE.baseMembers : [];
-  const custom = Array.from(getMergedCustomMembersMap().values());
   const hidden = getMergedHiddenMemberIds();
-  const merged = [...base, ...custom];
-  return merged.filter((member) => {
+  const merged = new Map();
+  base.forEach((member) => {
+    const id = String(member?.id || "").trim();
+    if (!id) return;
+    merged.set(id, member);
+  });
+  getMergedCustomMembersMap().forEach((member, id) => {
+    const key = String(id || member?.id || "").trim();
+    if (!key || !member?.name || !member?.src) return;
+    merged.set(key, { id: key, name: member.name, src: member.src, source: "custom" });
+  });
+
+  return Array.from(merged.values()).filter((member) => {
     if (includeHidden) return true;
     const id = String(member.id || "").trim();
     return !hidden.has(id);
@@ -1200,7 +1211,7 @@ function getAdminPanelConfig(panelKey) {
   if (panelKey === "member-manage") {
     return {
       title: "إدارة الأعضاء",
-      sub: "إضافة عضو جديد مع صورته أو حذف عضو موجود من نافذة مستقلة.",
+      sub: "إضافة عضو جديد أو تعديل اسم عضو وصورته أو حذفه من نافذة مستقلة.",
       wrap: "#memberManageAdminWrap",
       slot: "#memberManageAdminSlot",
     };
@@ -1240,8 +1251,39 @@ function setMemberManageStatus(message, isError = false) {
   el.style.color = isError ? "#ffb4b4" : "";
 }
 
+function getEditingManagedMember() {
+  const id = String(MEMBER_DIRECTORY_STATE.editingMemberId || "").trim();
+  if (!id) return null;
+  return getAllMembersList({ includeHidden: true }).find((member) => String(member.id || "").trim() === id) || null;
+}
+
+function refreshMemberManageFormState() {
+  const title = qs("#memberManageFormTitle");
+  const hint = qs("#memberManageFormHint");
+  const addBtn = qs("#memberManageAddBtn");
+  const resetBtn = qs("#memberManageResetBtn");
+  const editingMember = getEditingManagedMember();
+  const editing = Boolean(editingMember);
+
+  if (title) {
+    title.textContent = editing ? `تعديل العضو (${editingMember?.name || "—"})` : "إضافة عضو جديد";
+  }
+  if (hint) {
+    hint.textContent = editing
+      ? "يمكنك تعديل الاسم فقط أو اختيار صورة جديدة. إذا لم تختر صورة فستبقى الصورة الحالية كما هي."
+      : "تُضغط الصورة تلقائيًا بقوة لتناسب الرفع والعرض داخل الموقع.";
+  }
+  if (addBtn) {
+    addBtn.textContent = editing ? "حفظ التعديل" : "إضافة العضو";
+  }
+  if (resetBtn) {
+    resetBtn.textContent = editing ? "إلغاء التعديل" : "إعادة ضبط";
+  }
+}
+
 function resetMemberManageForm() {
   MEMBER_DIRECTORY_STATE.pendingImageDataUrl = "";
+  MEMBER_DIRECTORY_STATE.editingMemberId = "";
   const name = qs("#memberManageName");
   const image = qs("#memberManageImage");
   const preview = qs("#memberManagePreview");
@@ -1249,6 +1291,29 @@ function resetMemberManageForm() {
   if (image) image.value = "";
   if (preview) preview.src = "images/person1.jpg";
   setMemberManageStatus("");
+  refreshMemberManageFormState();
+}
+
+function beginEditManagedMember(memberId) {
+  const id = String(memberId || "").trim();
+  if (!id) return;
+  const member = getAllMembersList({ includeHidden: true }).find((item) => String(item.id || "").trim() === id);
+  if (!member) return;
+
+  MEMBER_DIRECTORY_STATE.editingMemberId = id;
+  MEMBER_DIRECTORY_STATE.pendingImageDataUrl = String(member.src || "").trim();
+
+  const name = qs("#memberManageName");
+  const image = qs("#memberManageImage");
+  const preview = qs("#memberManagePreview");
+  if (name) name.value = member.name || "";
+  if (image) image.value = "";
+  if (preview) preview.src = member.src || "images/person1.jpg";
+
+  setMemberManageStatus("عدّل الاسم أو الصورة ثم اضغط حفظ التعديل.");
+  refreshMemberManageFormState();
+  renderMemberManageAdminList();
+  name?.focus?.();
 }
 
 function createManagedMemberId(name) {
@@ -1331,8 +1396,9 @@ function renderMemberManageAdminList() {
         const isCustom = member.source === "custom";
         const locked = isAmjadMember(member);
         const status = getMemberStatus(member.id);
+        const isEditing = String(MEMBER_DIRECTORY_STATE.editingMemberId || "").trim() === String(member.id || "").trim();
         return `
-          <div class="member-manage-card">
+          <div class="member-manage-card${isEditing ? " is-editing" : ""}">
             <div class="member-manage-head">
               <img class="${status ? `member-avatar ${memberStatusClass(status)}` : "member-avatar"}" src="${member.src}" alt="${escapeHtml(member.name)}" />
               <div>
@@ -1344,13 +1410,22 @@ function renderMemberManageAdminList() {
               <span class="member-manage-badge ${isCustom ? "custom" : "static"}">${isCustom ? "مضاف من أمجد" : "عضو أساسي"}</span>
               <span class="member-manage-badge">${escapeHtml(memberStatusLabel(status))}</span>
             </div>
-            <button class="member-manage-remove" type="button" data-member-remove="${escapeHtml(member.id)}" ${locked ? "disabled" : ""}>
-              ${locked ? "لا يمكن حذف أمجد" : "حذف العضو"}
-            </button>
+            <div class="member-manage-card-actions">
+              <button class="member-manage-edit" type="button" data-member-edit="${escapeHtml(member.id)}">تعديل</button>
+              <button class="member-manage-remove" type="button" data-member-remove="${escapeHtml(member.id)}" ${locked ? "disabled" : ""}>
+                ${locked ? "لا يمكن حذف أمجد" : "حذف العضو"}
+              </button>
+            </div>
           </div>
         `;
       }).join("")
     : `<div class="member-manage-empty">لا يوجد أعضاء ظاهرون الآن.</div>`;
+
+  el.querySelectorAll("[data-member-edit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      beginEditManagedMember(btn.getAttribute("data-member-edit"));
+    });
+  });
 
   el.querySelectorAll("[data-member-remove]").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -1363,6 +1438,7 @@ function renderMemberManageAdminList() {
 async function addManagedMember() {
   if (!FB_STATE.isAdmin) return;
 
+  const editingMember = getEditingManagedMember();
   const name = String(qs("#memberManageName")?.value || "").trim();
   const src = MEMBER_DIRECTORY_STATE.pendingImageDataUrl;
 
@@ -1375,36 +1451,56 @@ async function addManagedMember() {
     return;
   }
 
-  const exists = getAllMembersList().some((member) => String(member.name || "").trim() === name);
+  const exists = getAllMembersList({ includeHidden: true }).some((member) => (
+    String(member.name || "").trim() === name &&
+    String(member.id || "").trim() !== String(editingMember?.id || "").trim()
+  ));
   if (exists) {
     setMemberManageStatus("يوجد عضو ظاهر بهذا الاسم بالفعل. اختر اسمًا مختلفًا.", true);
     return;
   }
 
-  const id = createManagedMemberId(name);
+  const id = editingMember?.id || createManagedMemberId(name);
   const nextMember = { id, name, src, source: "custom" };
   MEMBER_DIRECTORY_STATE.localCustomMembers.set(id, nextMember);
   MEMBER_DIRECTORY_STATE.localHiddenMemberIds.delete(id);
   persistLocalMemberDirectoryState();
   refreshMemberDirectoryUI();
-  setMemberManageStatus("جارٍ إضافة العضو...");
+  setMemberManageStatus(editingMember ? "جارٍ حفظ التعديل..." : "جارٍ إضافة العضو...");
 
   const { db, doc, setDoc, serverTimestamp } = window.FB;
   try {
+    const payload = {
+      type: "custom_member",
+      memberId: id,
+      name,
+      src,
+      updatedAt: serverTimestamp(),
+    };
+    if (!editingMember) {
+      payload.createdAt = serverTimestamp();
+    }
     await setDoc(
       doc(db, FIRESTORE_CUSTOM_MEMBERS, customMemberDocId(id)),
-      { type: "custom_member", memberId: id, name, src, createdAt: serverTimestamp() },
+      payload,
       { merge: true }
     );
     resetMemberManageForm();
     renderMemberManageAdminList();
-    showIdentityToast(`تمت إضافة العضو ${name}`);
+    showIdentityToast(editingMember ? `تم تحديث العضو ${name}` : `تمت إضافة العضو ${name}`);
   } catch (e) {
-    resetMemberManageForm();
+    MEMBER_DIRECTORY_STATE.editingMemberId = editingMember?.id || "";
+    MEMBER_DIRECTORY_STATE.pendingImageDataUrl = src;
+    refreshMemberManageFormState();
     renderMemberManageAdminList();
     const code = String(e?.code || e?.message || "unknown-error");
-    setMemberManageStatus(`تمت إضافة العضو على هذا الجهاز، لكن المزامنة السحابية تعذّرت. (${code})`, true);
-    console.error("Failed to sync added member", e);
+    setMemberManageStatus(
+      editingMember
+        ? `تم حفظ التعديل على هذا الجهاز، لكن المزامنة السحابية تعذّرت. (${code})`
+        : `تمت إضافة العضو على هذا الجهاز، لكن المزامنة السحابية تعذّرت. (${code})`,
+      true
+    );
+    console.error("Failed to sync managed member", e);
   }
 }
 
@@ -1495,8 +1591,9 @@ function wireMemberManageAdminControls() {
   fileInput?.addEventListener("change", async () => {
     const file = fileInput.files?.[0];
     if (!file) {
-      MEMBER_DIRECTORY_STATE.pendingImageDataUrl = "";
-      if (preview) preview.src = "images/person1.jpg";
+      const editingMember = getEditingManagedMember();
+      MEMBER_DIRECTORY_STATE.pendingImageDataUrl = editingMember?.src || "";
+      if (preview) preview.src = editingMember?.src || "images/person1.jpg";
       return;
     }
 
@@ -1519,6 +1616,7 @@ function wireMemberManageAdminControls() {
   nameInput?.addEventListener("keydown", (e) => {
     if (e.key === "Enter") addManagedMember();
   });
+  refreshMemberManageFormState();
 }
 
 function initMemberDirectorySystem() {

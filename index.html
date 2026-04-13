@@ -796,16 +796,16 @@ setDoc,
       </div>
 
       <div class="panel-sub" style="margin-top:10px">
-        أضف عضوًا جديدًا مع صورته، أو احذف عضوًا موجودًا من القبيلة. الحذف يخفي العضو من الواجهة العامة ومن قوائم الإدارة.
+        أضف عضوًا جديدًا، أو عدّل اسم عضو أو صورته، أو احذف عضوًا موجودًا من القبيلة. الحذف يخفي العضو من الواجهة العامة ومن قوائم الإدارة.
       </div>
 
       <div class="member-manage-grid" style="margin-top:16px">
         <aside class="member-manage-form">
-          <div class="panel-title">إضافة عضو جديد</div>
+          <div class="panel-title" id="memberManageFormTitle">إضافة عضو جديد</div>
           <img id="memberManagePreview" class="member-manage-preview" src="images/person1.jpg" alt="معاينة صورة العضو" />
           <input id="memberManageName" class="text-input" type="text" placeholder="اسم العضو" autocomplete="off" />
           <input id="memberManageImage" class="text-input" type="file" accept="image/*" style="margin-top:10px" />
-          <div class="panel-sub" style="margin-top:10px">
+          <div id="memberManageFormHint" class="panel-sub" style="margin-top:10px">
             تُضغط الصورة تلقائيًا بقوة لتناسب الرفع والعرض داخل الموقع.
           </div>
           <div class="member-manage-actions">

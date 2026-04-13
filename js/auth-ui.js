@@ -20,7 +20,9 @@ let PENDING_ADMIN_USER = null;
 let ADMIN_MODAL_WIRED = false;
 
 function isAmjadMember(user) {
-  return Boolean(user && String(user.name || "").trim() === "أمجد");
+  const id = String(user?.id || "").trim();
+  const name = String(user?.name || "").trim();
+  return id === "member_9" || name === "أمجد";
 }
 
 function isPrivilegedMember(user) {
