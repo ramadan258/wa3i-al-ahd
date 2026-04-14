@@ -640,6 +640,11 @@
       background: rgba(78,205,196,.1);
       color: var(--primary);
     }
+    .saved-day-btn.danger {
+      border-color: rgba(255,99,99,.24);
+      background: rgba(255,99,99,.1);
+      color: #ffb4b4;
+    }
     .saved-day-preview {
       border: 1px solid rgba(255,255,255,.06);
       border-radius: 20px;
@@ -925,6 +930,7 @@
                 <div class="saved-day-actions">
                   <button class="saved-day-btn primary" type="button" data-archive-view="${index}">عرض</button>
                   <button class="saved-day-btn" type="button" data-archive-copy="${index}">نسخ</button>
+                  <button class="saved-day-btn danger" type="button" data-archive-delete="${index}">حذف</button>
                 </div>
               </div>
             `;
@@ -956,6 +962,20 @@
         const entry = archive[index];
         if(!entry?.report) return;
         await copyText(entry.report, "تم نسخ التقرير المحفوظ ✅");
+      });
+    });
+
+    panel.querySelectorAll("[data-archive-delete]").forEach((btn)=>{
+      btn.addEventListener("click", ()=>{
+        const index = Number(btn.getAttribute("data-archive-delete") || "-1");
+        if(index < 0 || index >= archive.length) return;
+        const title = formatSavedDayTitle(archive[index], index);
+        if(!confirm(`هل تريد حذف التقرير المحفوظ: ${title} ؟`)) return;
+        const nextArchive = archive.filter((_, itemIndex)=> itemIndex !== index);
+        selectedArchiveIndex = Math.max(0, Math.min(selectedArchiveIndex, nextArchive.length - 1));
+        saveArchive(nextArchive);
+        renderSavedDaysPanel(panel);
+        toast("تم حذف التقرير المحفوظ ✅");
       });
     });
 
