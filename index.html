@@ -60,36 +60,9 @@
   </script>
 
   <!-- Firebase (Firestore + Auth) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signInWithEmailAndPassword,
-      signOut,
-      setPersistence,
-      inMemoryPersistence,
-      browserSessionPersistence,
-          signInAnonymously,
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      doc,
-      
-      getDoc,
-setDoc,
-      deleteDoc,
-      deleteField,
-      serverTimestamp,
-      onSnapshot,
-      getDocs,
-      query,
-      orderBy,
-      limitToLast,
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-    const firebaseConfig = {
+  <script>
+    window.FB = window.FB || null;
+    window.__WA3I_FIREBASE_CONFIG = {
       apiKey: "AIzaSyBYROgGM5ZOSBKNX1cYkJa3s395yf8HDVE",
       authDomain: "tribe-app-e3e9c.firebaseapp.com",
       projectId: "tribe-app-e3e9c",
@@ -97,36 +70,78 @@ setDoc,
       messagingSenderId: "1087669498056",
       appId: "1:1087669498056:web:f04aed42afb4af483eb5fd",
     };
+    window.__wa3iFirebaseLoadPromise = null;
+    window.__wa3iFirebaseWarmupScheduled = false;
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    window.ensureFirebase = async function ensureFirebase() {
+      if (window.FB?.db && window.FB?.auth) return window.FB;
+      if (window.__wa3iFirebaseLoadPromise) return window.__wa3iFirebaseLoadPromise;
 
-    // Expose minimal API to non-module scripts.
-    window.FB = {
-      auth,
-      db,
-      projectId: firebaseConfig.projectId,
-      onAuthStateChanged,
-      signInWithEmailAndPassword,
-      signOut,
-      setPersistence,
-      inMemoryPersistence,
-      browserSessionPersistence,
-      signInAnonymously,
-      collection,
-      doc,
-      
-      getDoc,
-setDoc,
-      deleteDoc,
-      deleteField,
-      serverTimestamp,
-      onSnapshot,
-      getDocs,
-      query,
-      orderBy,
-      limitToLast,
+      window.__wa3iFirebaseLoadPromise = (async () => {
+        const [{ initializeApp }, authMod, firestoreMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js"),
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"),
+        ]);
+
+        const app = initializeApp(window.__WA3I_FIREBASE_CONFIG);
+        const auth = authMod.getAuth(app);
+        const db = firestoreMod.getFirestore(app);
+
+        window.FB = {
+          auth,
+          db,
+          projectId: window.__WA3I_FIREBASE_CONFIG.projectId,
+          onAuthStateChanged: authMod.onAuthStateChanged,
+          signInWithEmailAndPassword: authMod.signInWithEmailAndPassword,
+          signOut: authMod.signOut,
+          setPersistence: authMod.setPersistence,
+          inMemoryPersistence: authMod.inMemoryPersistence,
+          browserSessionPersistence: authMod.browserSessionPersistence,
+          signInAnonymously: authMod.signInAnonymously,
+          collection: firestoreMod.collection,
+          doc: firestoreMod.doc,
+          getDoc: firestoreMod.getDoc,
+          setDoc: firestoreMod.setDoc,
+          deleteDoc: firestoreMod.deleteDoc,
+          deleteField: firestoreMod.deleteField,
+          serverTimestamp: firestoreMod.serverTimestamp,
+          onSnapshot: firestoreMod.onSnapshot,
+          getDocs: firestoreMod.getDocs,
+          query: firestoreMod.query,
+          orderBy: firestoreMod.orderBy,
+          limitToLast: firestoreMod.limitToLast,
+        };
+
+        window.__wa3iFirebaseWarmupScheduled = false;
+        return window.FB;
+      })();
+
+      try {
+        return await window.__wa3iFirebaseLoadPromise;
+      } catch (error) {
+        window.__wa3iFirebaseLoadPromise = null;
+        window.__wa3iFirebaseWarmupScheduled = false;
+        throw error;
+      }
+    };
+
+    window.scheduleFirebaseWarmup = function scheduleFirebaseWarmup() {
+      if (window.FB?.db && window.FB?.auth) return;
+      if (window.__wa3iFirebaseWarmupScheduled) return;
+      window.__wa3iFirebaseWarmupScheduled = true;
+
+      const warm = () => {
+        window.ensureFirebase?.().catch(() => {
+          window.__wa3iFirebaseWarmupScheduled = false;
+        });
+      };
+
+      if ("requestAnimationFrame" in window) {
+        requestAnimationFrame(() => setTimeout(warm, 120));
+      } else {
+        setTimeout(warm, 220);
+      }
     };
   </script>
 
@@ -674,158 +689,7 @@ setDoc,
     <div class="member-members-basmala">بسم الله الرحمن الرحيم</div>
 
     <div class="slider-container">
-      <div class="slider">
-        
-        <div class="slide-card" data-member-id="member_7">
-          <img src="images/person6.jpg" alt="مؤقد" />
-          <h3>موحد</h3>
-        </div>
-        
-        <div class="slide-card" data-member-id="member_0">
-          <img src="images/person12.jpg" alt="الفقير إلى الله" />
-          <h3>الفقير إلى الله</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_11">
-          <img src="images/person17.jpg" alt="أواب" />
-          <h3>أواب</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_10">
-          <img src="images/person9.jpg" alt="صالح" />
-          <h3>صالح</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_3">
-          <img src="images/person3.jpg" alt="طموح" />
-          <h3>طموح</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_2">
-          <img src="images/person23.jpeg" alt="أحمد عمرو" />
-          <h3>أحمد عمرو</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_4">
-          <img src="images/person4.jpg" alt="الريس" />
-          <h3>الريس</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_9">
-          <img src="images/person8.jpg" alt="أمجد" />
-          <h3>أمجد</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_6">
-          <img src="images/person11.jpg" alt="محمد" />
-          <h3>محمد</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_8">
-          <img src="images/person7.jpg" alt="سيف الدين" />
-          <h3>سيف الدين</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_20">
-          <img src="images/person1.jpg" alt="عبد الله جنيبة" />
-          <h3>عبد الله جنيبة</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_14">
-          <img src="images/person29.jpeg" alt="سعد" />
-          <h3>سعد</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_19">
-          <img src="images/person5.jpg" alt="مجاهد ☝🏻" />
-          <h3>مجاهد ☝🏻</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_15">
-          <img src="images/person30.jpeg" alt="يوسف" />
-          <h3>يوسف</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_16">
-          <img src="images/person15.jpg" alt="أبوبكر" />
-          <h3>أبوبكر</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_12">
-          <img src="images/person27.jpeg" alt="المقداد" />
-          <h3>المقداد</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_13">
-          <img src="images/person16.jpg" alt="أبو يزن" />
-          <h3>أبو يزن</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_18">
-          <img src="images/person20.jpeg" alt="عبدالرحمن" />
-          <h3>عبدالرحمن</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_21">
-          <img src="images/person24.jpeg" alt="أحمد هاني" />
-          <h3>أحمد هاني</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_5">
-          <img src="images/person10.jpg" alt="مجاهد" />
-          <h3>مجاهد</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_22">
-          <img src="images/person25.jpeg" alt="إيهاب سامح" />
-          <h3>إيهاب سامح</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_23">
-          <img src="images/person21.jpeg" alt="علاء" />
-          <h3>علاء</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_24">
-          <img src="images/person10.jpg" alt="راجي لطف الله" />
-          <h3>راجي لطف الله</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_25">
-          <img src="images/person26.jpeg" alt="الأسد الضرغام" />
-          <h3>الأسد الضرغام</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_26">
-          <img src="images/person10.jpg" alt="محمد بفضل الله" />
-          <h3>محمد بفضل الله</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_28">
-          <img src="images/person10.jpg" alt="ميدو علي" />
-          <h3>ميدو علي</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_29">
-          <img src="images/person19.jpg" alt="التحرر 1" />
-          <h3>التحرر 1</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_30">
-          <img src="images/person28.jpeg" alt="عبد الرحمن حامد" />
-          <h3>عبد الرحمن حامد</h3>
-        </div>
-
-        <div class="slide-card" data-member-id="member_17">
-          <img src="images/person32.png" alt="mahmoud" />
-          <h3>mahmoud</h3>
-        </div>
-        
-        <div class="slide-card" data-member-id="member_27">
-          <img src="images/person19.jpg" alt="راج عفو ربه" />
-          <h3>راج عفو ربه</h3>
-        </div>
-      </div>
+      <div class="slider" aria-live="polite"></div>
     </div>
 
     <div id="memberStatusAdminSlot" hidden></div>
@@ -861,7 +725,7 @@ setDoc,
       <div class="member-manage-grid" style="margin-top:16px">
         <aside class="member-manage-form">
           <div class="panel-title" id="memberManageFormTitle">إضافة عضو جديد</div>
-          <img id="memberManagePreview" class="member-manage-preview" src="images/person1.jpg" alt="معاينة صورة العضو" />
+          <img id="memberManagePreview" class="member-manage-preview" src="images/avatars/person1.jpg" alt="معاينة صورة العضو" />
           <input id="memberManageName" class="text-input" type="text" placeholder="اسم العضو" autocomplete="off" />
           <input id="memberManageAccessPin" class="text-input" type="password" inputmode="numeric" maxlength="5" placeholder="كلمة مرور الدخول (1-5 أرقام)" autocomplete="new-password" style="margin-top:10px" />
           <button id="memberManageClearPinBtn" class="identity-btn ghost" type="button" style="margin-top:10px; display:none">مسح كلمة السر</button>

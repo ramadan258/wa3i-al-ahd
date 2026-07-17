@@ -140,10 +140,60 @@
     let RISK_CHECK_WIRED = false;
     let DAILY_VISIBILITY_WIRED = false;
     let DASHBOARD_QUICK_ACTIONS_WIRED = false;
+    const AVATAR_PLACEHOLDER_SRC = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+    let DEFERRED_IMAGE_OBSERVER = null;
 
     function qs(sel) { return document.querySelector(sel); }
     function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
     function pad2(n) { return String(n).padStart(2, "0"); }
+
+    function loadDeferredImage(img) {
+      if (!img) return;
+      const src = String(img.getAttribute("data-src") || "").trim();
+      if (!src) return;
+      img.setAttribute("src", src);
+      img.removeAttribute("data-src");
+    }
+
+    function getDeferredImageObserver() {
+      if (DEFERRED_IMAGE_OBSERVER || typeof IntersectionObserver === "undefined") {
+        return DEFERRED_IMAGE_OBSERVER;
+      }
+
+      DEFERRED_IMAGE_OBSERVER = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          loadDeferredImage(entry.target);
+          DEFERRED_IMAGE_OBSERVER.unobserve(entry.target);
+        });
+      }, {
+        rootMargin: "180px 0px",
+        threshold: 0.01,
+      });
+
+      return DEFERRED_IMAGE_OBSERVER;
+    }
+
+    function hydrateDeferredImages(root, eagerCount = 8) {
+      if (!root) return;
+      const images = Array.from(root.querySelectorAll("img[data-src]"));
+      if (!images.length) return;
+
+      images.slice(0, eagerCount).forEach(loadDeferredImage);
+
+      const remaining = images.slice(eagerCount).filter((img) => img.hasAttribute("data-src"));
+      if (!remaining.length) return;
+
+      const observer = getDeferredImageObserver();
+      if (observer) {
+        remaining.forEach((img) => observer.observe(img));
+        return;
+      }
+
+      window.setTimeout(() => {
+        remaining.forEach(loadDeferredImage);
+      }, 180);
+    }
 
     
 
@@ -297,6 +347,39 @@ const MEMBER_DIRECTORY_STATE = {
   pendingLegacyAccessCleanupIds: new Set(),
   legacyAccessCleanupTimer: null,
 };
+
+const STATIC_BASE_MEMBERS = [
+  { id: "member_7", name: "موحد", src: "images/avatars/person6.jpg", source: "static" },
+  { id: "member_0", name: "الفقير إلى الله", src: "images/avatars/person12.jpg", source: "static" },
+  { id: "member_11", name: "أواب", src: "images/avatars/person17.jpg", source: "static" },
+  { id: "member_10", name: "صالح", src: "images/avatars/person9.jpg", source: "static" },
+  { id: "member_3", name: "طموح", src: "images/avatars/person3.jpg", source: "static" },
+  { id: "member_2", name: "أحمد عمرو", src: "images/avatars/person23.jpg", source: "static" },
+  { id: "member_4", name: "الريس", src: "images/avatars/person4.jpg", source: "static" },
+  { id: "member_9", name: "أمجد", src: "images/avatars/person8.jpg", source: "static" },
+  { id: "member_6", name: "محمد", src: "images/avatars/person11.jpg", source: "static" },
+  { id: "member_8", name: "سيف الدين", src: "images/avatars/person7.jpg", source: "static" },
+  { id: "member_20", name: "عبد الله جنيبة", src: "images/avatars/person1.jpg", source: "static" },
+  { id: "member_14", name: "سعد", src: "images/avatars/person29.jpg", source: "static" },
+  { id: "member_19", name: "مجاهد ☝🏻", src: "images/avatars/person5.jpg", source: "static" },
+  { id: "member_15", name: "يوسف", src: "images/avatars/person30.jpg", source: "static" },
+  { id: "member_16", name: "أبوبكر", src: "images/avatars/person15.jpg", source: "static" },
+  { id: "member_12", name: "المقداد", src: "images/avatars/person27.jpg", source: "static" },
+  { id: "member_13", name: "أبو يزن", src: "images/avatars/person16.jpg", source: "static" },
+  { id: "member_18", name: "عبدالرحمن", src: "images/avatars/person20.jpg", source: "static" },
+  { id: "member_21", name: "أحمد هاني", src: "images/avatars/person24.jpg", source: "static" },
+  { id: "member_5", name: "مجاهد", src: "images/avatars/person10.jpg", source: "static" },
+  { id: "member_22", name: "إيهاب سامح", src: "images/avatars/person25.jpg", source: "static" },
+  { id: "member_23", name: "علاء", src: "images/avatars/person21.jpg", source: "static" },
+  { id: "member_24", name: "راجي لطف الله", src: "images/avatars/person10.jpg", source: "static" },
+  { id: "member_25", name: "الأسد الضرغام", src: "images/avatars/person26.jpg", source: "static" },
+  { id: "member_26", name: "محمد بفضل الله", src: "images/avatars/person10.jpg", source: "static" },
+  { id: "member_28", name: "ميدو علي", src: "images/avatars/person10.jpg", source: "static" },
+  { id: "member_29", name: "التحرر 1", src: "images/avatars/person19.jpg", source: "static" },
+  { id: "member_30", name: "عبد الرحمن حامد", src: "images/avatars/person28.jpg", source: "static" },
+  { id: "member_17", name: "mahmoud", src: "images/avatars/person32.jpg", source: "static" },
+  { id: "member_27", name: "راج عفو ربه", src: "images/avatars/person19.jpg", source: "static" },
+];
 
 function extractMembersFromCards(cards) {
   const out = [];
@@ -532,17 +615,30 @@ function renderMembersSection() {
   const members = getAllMembersList();
   slider.innerHTML = members.map((member) => `
         <div class="slide-card" data-member-id="${escapeHtml(member.id)}" data-member-source="${member.source === "custom" ? "custom" : "static"}">
-          <img src="${member.src}" alt="${escapeHtml(member.name)}" />
+          <img loading="lazy" decoding="async" fetchpriority="low" src="${member.src}" alt="${escapeHtml(member.name)}" />
           <h3>${escapeHtml(member.name)}</h3>
         </div>
       `).join("");
 }
 
-function refreshMemberDirectoryUI() {
-  renderMembersSection();
+function shouldRenderMembersSectionUI() {
+  const app = qs("#appRoot");
+  return Boolean(app && !app.classList.contains("is-hidden"));
+}
+
+function refreshMemberDirectoryUI(options = {}) {
+  const renderMembers = typeof options.renderMembers === "boolean"
+    ? options.renderMembers
+    : shouldRenderMembersSectionUI();
+
+  if (renderMembers) {
+    renderMembersSection();
+  }
   IDENTITY_MEMBERS_CACHE = readMembersFromDOM();
   rebuildTribeMapFromDOM();
-  try { decorateMemberCardsWithStreaks(); } catch {}
+  if (renderMembers) {
+    try { decorateMemberCardsWithStreaks(); } catch {}
+  }
   try {
     const q = qs("#identitySearch")?.value || "";
     renderIdentityGrid(IDENTITY_MEMBERS_CACHE, q);
@@ -637,13 +733,15 @@ function renderIdentityGrid(members, filterText = "") {
           const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
           return `
         <button class="identity-item" type="button" data-user-id="${escapeHtml(m.id)}" aria-label="${escapeHtml(m.name)}">
-          <img class="${avatarClass}" src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <img class="${avatarClass}" loading="lazy" decoding="async" fetchpriority="low" src="${AVATAR_PLACEHOLDER_SRC}" data-src="${m.src}" alt="${escapeHtml(m.name)}" />
           <div class="identity-name">${escapeHtml(m.name)}</div>
         </button>
       `;
         })
         .join("")
     : `<div class="identity-empty">لا توجد نتائج… جرّب اسمًا آخر أو ادخل كضيف.</div>`;
+
+  hydrateDeferredImages(grid, 6);
 
   grid.querySelectorAll(".identity-item").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -668,6 +766,9 @@ function renderIdentityGrid(members, filterText = "") {
 }
 
 function wireGuestEntry() {
+  if (wireGuestEntry._wired) return;
+  wireGuestEntry._wired = true;
+
   const btn = qs("#enterGuestBtn");
   const input = qs("#guestName");
 
@@ -1500,7 +1601,7 @@ function resetMemberManageForm() {
   if (name) name.value = "";
   if (pin) pin.value = "";
   if (image) image.value = "";
-  if (preview) preview.src = "images/person1.jpg";
+  if (preview) preview.src = "images/avatars/person1.jpg";
   setMemberManageStatus("");
   refreshMemberManageFormState();
 }
@@ -1522,7 +1623,7 @@ function beginEditManagedMember(memberId) {
   if (name) name.value = member.name || "";
   if (pin) pin.value = "";
   if (image) image.value = "";
-  if (preview) preview.src = member.src || "images/person1.jpg";
+  if (preview) preview.src = member.src || "images/avatars/person1.jpg";
 
   setMemberManageStatus(memberHasAccessPin(id) ? "يمكنك تعديل الاسم أو الصورة أو كتابة كلمة مرور جديدة." : "هذا العضو لا يملك كلمة مرور دخول بعد. أضف واحدة إذا أردت.");
   refreshMemberManageFormState();
@@ -1632,7 +1733,7 @@ function renderMemberManageAdminList() {
         return `
           <div class="member-manage-card${isEditing ? " is-editing" : ""}">
             <div class="member-manage-head">
-              <img class="${status ? `member-avatar ${memberStatusClass(status)}` : "member-avatar"}" src="${member.src}" alt="${escapeHtml(member.name)}" />
+              <img class="${status ? `member-avatar ${memberStatusClass(status)}` : "member-avatar"}" loading="lazy" decoding="async" fetchpriority="low" src="${member.src}" alt="${escapeHtml(member.name)}" />
               <div>
                 <div class="member-manage-name">${escapeHtml(member.name)}</div>
                 <div class="member-manage-meta">المعرّف: ${escapeHtml(member.id)}</div>
@@ -1864,7 +1965,7 @@ function wireMemberManageAdminControls() {
     if (!file) {
       const editingMember = getEditingManagedMember();
       MEMBER_DIRECTORY_STATE.pendingImageDataUrl = editingMember?.src || "";
-      if (preview) preview.src = editingMember?.src || "images/person1.jpg";
+      if (preview) preview.src = editingMember?.src || "images/avatars/person1.jpg";
       return;
     }
 
@@ -1876,7 +1977,7 @@ function wireMemberManageAdminControls() {
       setMemberManageStatus("الصورة جاهزة للإضافة.");
     } catch (e) {
       MEMBER_DIRECTORY_STATE.pendingImageDataUrl = "";
-      if (preview) preview.src = "images/person1.jpg";
+      if (preview) preview.src = "images/avatars/person1.jpg";
       const code = String(e?.message || "");
       setMemberManageStatus(code === "IMAGE_TOO_LARGE" ? "الصورة ما تزال كبيرة جدًا بعد الضغط. اختر صورة أصغر." : "تعذّر قراءة الصورة المختارة.", true);
     }
@@ -1897,19 +1998,19 @@ function wireMemberManageAdminControls() {
   refreshMemberManageFormState();
 }
 
-function initMemberDirectorySystem() {
+function initMemberDirectorySystem(options = {}) {
+  const activateRemote = Boolean(options.activateRemote);
+  const renderMembers = Boolean(options.renderMembers);
+
   if (!MEMBER_DIRECTORY_STATE.baseMembers.length) {
-    MEMBER_DIRECTORY_STATE.baseMembers = extractMembersFromCards(qsa("#members .slide-card")).map((member) => ({
-      ...member,
-      source: "static",
-    }));
+    MEMBER_DIRECTORY_STATE.baseMembers = STATIC_BASE_MEMBERS.map((member) => ({ ...member }));
   }
 
   loadLocalMemberDirectoryState();
   wireMemberManageAdminControls();
-  refreshMemberDirectoryUI();
+  refreshMemberDirectoryUI({ renderMembers });
 
-  if (MEMBER_DIRECTORY_STATE.listenersAttached) return;
+  if (!activateRemote || MEMBER_DIRECTORY_STATE.listenersAttached) return;
 
   const tryInit = () => {
     if (!fbAvailable()) return setTimeout(tryInit, 80);
@@ -2831,18 +2932,12 @@ function previousISODate(isoDate) {
         document.body.appendChild(adminModal);
       }
 
-      initMemberDirectorySystem();
+      initMemberDirectorySystem({ activateRemote: false, renderMembers: false });
       decorateMemberCardsWithStreaks();
 
       // Bootstrap members cache and attempt automatic entry.
       IDENTITY_MEMBERS_CACHE = readMembersFromDOM();
       resetLocalStreaksForAllMembersOnce();
-      startSharedStreaksListener();
-      initMemberStatusSystem();
-    if (typeof setupQaPage === "function") setupQaPage();
-    setupRecoveryLibrary();
-    setupRescuePlanModal();
-    setupRescueCenterModal();
 
       let shouldResumeToHome = false;
       try {
