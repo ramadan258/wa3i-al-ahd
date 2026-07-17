@@ -395,7 +395,7 @@ function isLegacyRemovedStaticMemberId(memberId) {
 }
 
 const STATIC_BASE_MEMBERS = [
-  { id: AMJAD_MEMBER_ID, name: AMJAD_MEMBER_NAME, src: "images/avatars/person8.jpg", source: "static" },
+  { id: AMJAD_MEMBER_ID, name: AMJAD_MEMBER_NAME, src: DEFAULT_MEMBER_AVATAR_SRC, source: "static" },
 ];
 
 function extractMembersFromCards(cards) {
@@ -1793,8 +1793,8 @@ function renderMemberManageAdminList() {
 
   el.innerHTML = members.length
     ? members.map((member) => {
-        const isCustom = member.source === "custom";
         const locked = isAmjadMember(member);
+        const isCustom = member.source === "custom" && !locked;
         const status = getMemberStatus(member.id);
         const accessRecord = getMemberAccessRecord(member.id);
         const hasPin = Boolean(accessRecord?.passwordHash);
@@ -3002,7 +3002,7 @@ function previousISODate(isoDate) {
         document.body.appendChild(adminModal);
       }
 
-      initMemberDirectorySystem({ activateRemote: false, renderMembers: false });
+      initMemberDirectorySystem({ activateRemote: true, renderMembers: false });
       decorateMemberCardsWithStreaks();
 
       // Bootstrap members cache and attempt automatic entry.
