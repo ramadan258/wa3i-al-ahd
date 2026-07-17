@@ -65,7 +65,7 @@ function renderAhdPublicList() {
             const cardClass = status ? `slide-card ahd-slide-card ${statusClass}` : "slide-card ahd-slide-card";
             return `
         <div class="${cardClass}" data-member-id="${escapeHtml(member.id)}" style="cursor:default">
-          <img class="${avatarClass}" loading="lazy" decoding="async" src="${member.src || "images/avatars/person1.jpg"}" alt="${escapeHtml(member.name || member.id)}" />
+          <img class="${avatarClass}" loading="lazy" decoding="async" src="${typeof resolveMemberAvatarSrc === "function" ? resolveMemberAvatarSrc(member.src) : (member.src || window.WA3I_DEFAULT_MEMBER_AVATAR_SRC || "")}" alt="${escapeHtml(member.name || member.id)}" />
           <h3>${escapeHtml(member.name || member.id)}</h3>
         </div>
       `;
@@ -84,7 +84,7 @@ function renderAhdPublicList() {
               : "member-canvas-ahd-avatar member-avatar";
             return `
         <div class="member-canvas-ahd-item" title="${escapeHtml(member.name || member.id)}" aria-label="${escapeHtml(member.name || member.id)}">
-          <img class="${avatarClass}" loading="lazy" decoding="async" src="${member.src || "images/avatars/person1.jpg"}" alt="${escapeHtml(member.name || member.id)}" />
+          <img class="${avatarClass}" loading="lazy" decoding="async" src="${typeof resolveMemberAvatarSrc === "function" ? resolveMemberAvatarSrc(member.src) : (member.src || window.WA3I_DEFAULT_MEMBER_AVATAR_SRC || "")}" alt="${escapeHtml(member.name || member.id)}" />
         </div>
       `;
           })
@@ -154,7 +154,7 @@ function renderAhdAdminLists(filterText = "", orphanIdsArg = null) {
       ? orphanIds
           .map((id) => `
         <button class="identity-item" type="button" data-remove-ahd-orphan="${escapeHtml(id)}" aria-label="حذف ${escapeHtml(id)} من العهد">
-          <img class="identity-avatar member-avatar" loading="lazy" decoding="async" src="images/avatars/person1.jpg" alt="${escapeHtml(id)}" />
+          <img class="identity-avatar member-avatar" loading="lazy" decoding="async" src="${window.WA3I_DEFAULT_MEMBER_AVATAR_SRC || ""}" alt="${escapeHtml(id)}" />
           <div class="identity-name">${escapeHtml(id)}</div>
         </button>
       `)

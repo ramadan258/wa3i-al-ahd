@@ -330,6 +330,7 @@ const FIRESTORE_HIDDEN_MEMBERS = "featuredMembers";
 const FIRESTORE_MEMBER_ACCESS = "featuredMembers";
 const LOCAL_MEMBER_DIRECTORY_CUSTOM_KEY = "wa3i_member_directory_custom_v1";
 const LOCAL_MEMBER_DIRECTORY_HIDDEN_KEY = "wa3i_member_directory_hidden_v1";
+const LOCAL_LEGACY_MEMBER_CLEANUP_KEY = "wa3i_legacy_member_cleanup_v1";
 const MEMBER_DIRECTORY_STATE = {
   baseMembers: [],
   remoteCustomMembers: new Map(),
@@ -346,39 +347,55 @@ const MEMBER_DIRECTORY_STATE = {
   pendingAccessPinRemoval: false,
   pendingLegacyAccessCleanupIds: new Set(),
   legacyAccessCleanupTimer: null,
+  legacyRemovedMembersCleanupRunning: false,
 };
 
+const AMJAD_MEMBER_ID = "member_9";
+const AMJAD_MEMBER_NAME = "أمجد";
+const DEFAULT_MEMBER_AVATAR_SRC = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%23132633'/%3E%3Cstop offset='1' stop-color='%230e2430'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' rx='36' fill='url(%23g)'/%3E%3Ccircle cx='80' cy='58' r='28' fill='%23d8e6eb' fill-opacity='.92'/%3E%3Cpath d='M34 132c8-26 31-40 46-40s38 14 46 40' fill='%23d8e6eb' fill-opacity='.92'/%3E%3C/svg%3E";
+const LEGACY_REMOVED_STATIC_MEMBER_IDS = new Set([
+  "member_0",
+  "member_2",
+  "member_3",
+  "member_4",
+  "member_5",
+  "member_6",
+  "member_7",
+  "member_8",
+  "member_10",
+  "member_11",
+  "member_12",
+  "member_13",
+  "member_14",
+  "member_15",
+  "member_16",
+  "member_17",
+  "member_18",
+  "member_19",
+  "member_20",
+  "member_21",
+  "member_22",
+  "member_23",
+  "member_24",
+  "member_25",
+  "member_26",
+  "member_27",
+  "member_28",
+  "member_29",
+  "member_30",
+]);
+window.WA3I_DEFAULT_MEMBER_AVATAR_SRC = DEFAULT_MEMBER_AVATAR_SRC;
+
+function resolveMemberAvatarSrc(src) {
+  return String(src || "").trim() || DEFAULT_MEMBER_AVATAR_SRC;
+}
+
+function isLegacyRemovedStaticMemberId(memberId) {
+  return LEGACY_REMOVED_STATIC_MEMBER_IDS.has(String(memberId || "").trim());
+}
+
 const STATIC_BASE_MEMBERS = [
-  { id: "member_7", name: "موحد", src: "images/avatars/person6.jpg", source: "static" },
-  { id: "member_0", name: "الفقير إلى الله", src: "images/avatars/person12.jpg", source: "static" },
-  { id: "member_11", name: "أواب", src: "images/avatars/person17.jpg", source: "static" },
-  { id: "member_10", name: "صالح", src: "images/avatars/person9.jpg", source: "static" },
-  { id: "member_3", name: "طموح", src: "images/avatars/person3.jpg", source: "static" },
-  { id: "member_2", name: "أحمد عمرو", src: "images/avatars/person23.jpg", source: "static" },
-  { id: "member_4", name: "الريس", src: "images/avatars/person4.jpg", source: "static" },
-  { id: "member_9", name: "أمجد", src: "images/avatars/person8.jpg", source: "static" },
-  { id: "member_6", name: "محمد", src: "images/avatars/person11.jpg", source: "static" },
-  { id: "member_8", name: "سيف الدين", src: "images/avatars/person7.jpg", source: "static" },
-  { id: "member_20", name: "عبد الله جنيبة", src: "images/avatars/person1.jpg", source: "static" },
-  { id: "member_14", name: "سعد", src: "images/avatars/person29.jpg", source: "static" },
-  { id: "member_19", name: "مجاهد ☝🏻", src: "images/avatars/person5.jpg", source: "static" },
-  { id: "member_15", name: "يوسف", src: "images/avatars/person30.jpg", source: "static" },
-  { id: "member_16", name: "أبوبكر", src: "images/avatars/person15.jpg", source: "static" },
-  { id: "member_12", name: "المقداد", src: "images/avatars/person27.jpg", source: "static" },
-  { id: "member_13", name: "أبو يزن", src: "images/avatars/person16.jpg", source: "static" },
-  { id: "member_18", name: "عبدالرحمن", src: "images/avatars/person20.jpg", source: "static" },
-  { id: "member_21", name: "أحمد هاني", src: "images/avatars/person24.jpg", source: "static" },
-  { id: "member_5", name: "مجاهد", src: "images/avatars/person10.jpg", source: "static" },
-  { id: "member_22", name: "إيهاب سامح", src: "images/avatars/person25.jpg", source: "static" },
-  { id: "member_23", name: "علاء", src: "images/avatars/person21.jpg", source: "static" },
-  { id: "member_24", name: "راجي لطف الله", src: "images/avatars/person10.jpg", source: "static" },
-  { id: "member_25", name: "الأسد الضرغام", src: "images/avatars/person26.jpg", source: "static" },
-  { id: "member_26", name: "محمد بفضل الله", src: "images/avatars/person10.jpg", source: "static" },
-  { id: "member_28", name: "ميدو علي", src: "images/avatars/person10.jpg", source: "static" },
-  { id: "member_29", name: "التحرر 1", src: "images/avatars/person19.jpg", source: "static" },
-  { id: "member_30", name: "عبد الرحمن حامد", src: "images/avatars/person28.jpg", source: "static" },
-  { id: "member_17", name: "mahmoud", src: "images/avatars/person32.jpg", source: "static" },
-  { id: "member_27", name: "راج عفو ربه", src: "images/avatars/person19.jpg", source: "static" },
+  { id: AMJAD_MEMBER_ID, name: AMJAD_MEMBER_NAME, src: "images/avatars/person8.jpg", source: "static" },
 ];
 
 function extractMembersFromCards(cards) {
@@ -504,6 +521,8 @@ function queueLegacyMemberAccessCleanup(memberId) {
 async function canResumeMemberSession(memberId) {
   const id = String(memberId || "").trim();
   if (!id) return false;
+  if (isLegacyRemovedStaticMemberId(id)) return false;
+  if (!getAllMembersList().some((member) => String(member.id || "").trim() === id)) return false;
 
   try {
     const accessRecord = await resolveMemberAccessRecord(id);
@@ -540,7 +559,7 @@ function loadLocalMemberDirectoryState() {
         const id = String(member?.id || "").trim();
         const name = String(member?.name || "").trim();
         const src = String(member?.src || "").trim();
-        if (!id || !name || !src) return;
+        if (!id || !name || !src || isLegacyRemovedStaticMemberId(id)) return;
         next.set(id, { id, name, src, source: "custom" });
       });
     }
@@ -568,6 +587,7 @@ function loadLocalMemberDirectoryState() {
 function getMergedCustomMembersMap() {
   const merged = new Map(MEMBER_DIRECTORY_STATE.remoteCustomMembers);
   MEMBER_DIRECTORY_STATE.localCustomMembers.forEach((value, key) => {
+    if (isLegacyRemovedStaticMemberId(key)) return;
     merged.set(key, value);
   });
   MEMBER_DIRECTORY_STATE.pendingDeletedCustomMemberIds.forEach((id) => {
@@ -592,12 +612,12 @@ function getAllMembersList(options = {}) {
   const merged = new Map();
   base.forEach((member) => {
     const id = String(member?.id || "").trim();
-    if (!id) return;
+    if (!id || isLegacyRemovedStaticMemberId(id)) return;
     merged.set(id, member);
   });
   getMergedCustomMembersMap().forEach((member, id) => {
     const key = String(id || member?.id || "").trim();
-    if (!key || !member?.name || !member?.src) return;
+    if (!key || !member?.name || !member?.src || isLegacyRemovedStaticMemberId(key)) return;
     merged.set(key, { id: key, name: member.name, src: member.src, source: "custom" });
   });
 
@@ -615,7 +635,7 @@ function renderMembersSection() {
   const members = getAllMembersList();
   slider.innerHTML = members.map((member) => `
         <div class="slide-card" data-member-id="${escapeHtml(member.id)}" data-member-source="${member.source === "custom" ? "custom" : "static"}">
-          <img loading="lazy" decoding="async" fetchpriority="low" src="${member.src}" alt="${escapeHtml(member.name)}" />
+          <img loading="lazy" decoding="async" fetchpriority="low" src="${resolveMemberAvatarSrc(member.src)}" alt="${escapeHtml(member.name)}" />
           <h3>${escapeHtml(member.name)}</h3>
         </div>
       `).join("");
@@ -645,9 +665,58 @@ function refreshMemberDirectoryUI(options = {}) {
   } catch {}
   try { renderAhdPublicList(); } catch {}
   if (FB_STATE.isAdmin) {
+    cleanupLegacyRemovedMembersCloudOnce().catch((error) => {
+      console.warn("Legacy member cleanup did not finish", error);
+    });
     try { renderAhdAdminLists(qs("#ahdAdminSearch")?.value || ""); } catch {}
     try { renderMemberStatusAdminList(); } catch {}
     try { renderMemberManageAdminList(); } catch {}
+  }
+}
+
+async function cleanupLegacyRemovedMembersCloudOnce() {
+  if (!FB_STATE.isAdmin || !fbAvailable() || MEMBER_DIRECTORY_STATE.legacyRemovedMembersCleanupRunning) return;
+  try {
+    if (localStorage.getItem(LOCAL_LEGACY_MEMBER_CLEANUP_KEY) === "1") return;
+  } catch {}
+
+  MEMBER_DIRECTORY_STATE.legacyRemovedMembersCleanupRunning = true;
+  try {
+    const { db, doc, setDoc, deleteDoc, serverTimestamp } = window.FB;
+    const ops = [];
+
+    LEGACY_REMOVED_STATIC_MEMBER_IDS.forEach((id) => {
+      ops.push(setDoc(
+        doc(db, FIRESTORE_HIDDEN_MEMBERS, hiddenMemberDocId(id)),
+        {
+          type: "hidden_member",
+          memberId: id,
+          hiddenAt: serverTimestamp(),
+          name: id,
+        },
+        { merge: true }
+      ));
+      ops.push(deleteDoc(doc(db, FIRESTORE_CUSTOM_MEMBERS, customMemberDocId(id))));
+      ops.push(deleteDoc(doc(db, "ahdMembers", id)));
+      ops.push(deleteDoc(doc(db, FIRESTORE_STREAKS, id)));
+      ops.push(deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, id)));
+      ops.push(deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, "elite"))));
+      ops.push(deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, "active"))));
+      ops.push(deleteDoc(doc(db, FIRESTORE_MEMBER_STATUS, memberStatusDocId(id, "lazy"))));
+      ops.push(deleteDoc(doc(db, FIRESTORE_MEMBER_ACCESS, memberAccessDocId(id))));
+    });
+
+    const results = await Promise.allSettled(ops);
+    if (results.some((item) => item.status === "rejected")) {
+      console.warn("Some legacy member cleanup operations failed", results);
+      return;
+    }
+
+    try {
+      localStorage.setItem(LOCAL_LEGACY_MEMBER_CLEANUP_KEY, "1");
+    } catch {}
+  } finally {
+    MEMBER_DIRECTORY_STATE.legacyRemovedMembersCleanupRunning = false;
   }
 }
 
@@ -733,7 +802,7 @@ function renderIdentityGrid(members, filterText = "") {
           const avatarClass = status ? `identity-avatar member-avatar ${memberStatusClass(status)}` : "identity-avatar member-avatar";
           return `
         <button class="identity-item" type="button" data-user-id="${escapeHtml(m.id)}" aria-label="${escapeHtml(m.name)}">
-          <img class="${avatarClass}" loading="lazy" decoding="async" fetchpriority="low" src="${AVATAR_PLACEHOLDER_SRC}" data-src="${m.src}" alt="${escapeHtml(m.name)}" />
+          <img class="${avatarClass}" loading="lazy" decoding="async" fetchpriority="low" src="${AVATAR_PLACEHOLDER_SRC}" data-src="${resolveMemberAvatarSrc(m.src)}" alt="${escapeHtml(m.name)}" />
           <div class="identity-name">${escapeHtml(m.name)}</div>
         </button>
       `;
@@ -1601,7 +1670,7 @@ function resetMemberManageForm() {
   if (name) name.value = "";
   if (pin) pin.value = "";
   if (image) image.value = "";
-  if (preview) preview.src = "images/avatars/person1.jpg";
+  if (preview) preview.src = DEFAULT_MEMBER_AVATAR_SRC;
   setMemberManageStatus("");
   refreshMemberManageFormState();
 }
@@ -1623,7 +1692,7 @@ function beginEditManagedMember(memberId) {
   if (name) name.value = member.name || "";
   if (pin) pin.value = "";
   if (image) image.value = "";
-  if (preview) preview.src = member.src || "images/avatars/person1.jpg";
+  if (preview) preview.src = resolveMemberAvatarSrc(member.src);
 
   setMemberManageStatus(memberHasAccessPin(id) ? "يمكنك تعديل الاسم أو الصورة أو كتابة كلمة مرور جديدة." : "هذا العضو لا يملك كلمة مرور دخول بعد. أضف واحدة إذا أردت.");
   refreshMemberManageFormState();
@@ -1733,7 +1802,7 @@ function renderMemberManageAdminList() {
         return `
           <div class="member-manage-card${isEditing ? " is-editing" : ""}">
             <div class="member-manage-head">
-              <img class="${status ? `member-avatar ${memberStatusClass(status)}` : "member-avatar"}" loading="lazy" decoding="async" fetchpriority="low" src="${member.src}" alt="${escapeHtml(member.name)}" />
+              <img class="${status ? `member-avatar ${memberStatusClass(status)}` : "member-avatar"}" loading="lazy" decoding="async" fetchpriority="low" src="${resolveMemberAvatarSrc(member.src)}" alt="${escapeHtml(member.name)}" />
               <div>
                 <div class="member-manage-name">${escapeHtml(member.name)}</div>
                 <div class="member-manage-meta">المعرّف: ${escapeHtml(member.id)}</div>
@@ -1837,6 +1906,7 @@ async function addManagedMember() {
       payload,
       { merge: true }
     ));
+    writes.push(deleteDoc(doc(db, FIRESTORE_HIDDEN_MEMBERS, hiddenMemberDocId(id))));
     if (normalizedAccessPin) {
       const passwordHash = await sha256Hex(normalizedAccessPin);
       writes.push(setDoc(
@@ -1965,7 +2035,7 @@ function wireMemberManageAdminControls() {
     if (!file) {
       const editingMember = getEditingManagedMember();
       MEMBER_DIRECTORY_STATE.pendingImageDataUrl = editingMember?.src || "";
-      if (preview) preview.src = editingMember?.src || "images/avatars/person1.jpg";
+      if (preview) preview.src = resolveMemberAvatarSrc(editingMember?.src);
       return;
     }
 
@@ -1977,7 +2047,7 @@ function wireMemberManageAdminControls() {
       setMemberManageStatus("الصورة جاهزة للإضافة.");
     } catch (e) {
       MEMBER_DIRECTORY_STATE.pendingImageDataUrl = "";
-      if (preview) preview.src = "images/avatars/person1.jpg";
+      if (preview) preview.src = DEFAULT_MEMBER_AVATAR_SRC;
       const code = String(e?.message || "");
       setMemberManageStatus(code === "IMAGE_TOO_LARGE" ? "الصورة ما تزال كبيرة جدًا بعد الضغط. اختر صورة أصغر." : "تعذّر قراءة الصورة المختارة.", true);
     }
@@ -2026,7 +2096,7 @@ function initMemberDirectorySystem(options = {}) {
         const memberId = String(data.memberId || docSnap.id.replace(/^custom__/, "")).trim();
         const name = String(data.name || "").trim();
         const src = String(data.src || "").trim();
-        if (!memberId || !name || !src) return;
+        if (!memberId || !name || !src || isLegacyRemovedStaticMemberId(memberId)) return;
         next.set(memberId, { id: memberId, name, src, source: "custom" });
       });
       MEMBER_DIRECTORY_STATE.pendingDeletedCustomMemberIds.forEach((id) => {
