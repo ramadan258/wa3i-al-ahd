@@ -1,5 +1,5 @@
 ﻿    const CONFIG = {
-      AHD_TARGET_DATE_ISO: "2026-05-27T00:00:00",
+      AHD_TARGET_DATE_ISO: "2026-08-14T00:00:00",
       FORCE_HIZB_NUMBER: null,
 
       LINKS: {
@@ -2652,7 +2652,7 @@ function previousISODate(isoDate) {
 
         if (diff <= 0) {
           const el = document.querySelector(".countdown");
-          if (el) el.innerHTML = "<p style='color:#7cf2a4;font-size:22px'>🕋 حل عيد الأضحى المبارك 🕋</p>";
+          if (el) el.innerHTML = "<p style='color:#7cf2a4;font-size:22px'>🤍 تم عهد صفر بحمد الله 🤍</p>";
           return;
         }
 
